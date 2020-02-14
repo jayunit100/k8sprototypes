@@ -2,40 +2,31 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"os"
-	"path/filepath"
-
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/tools/clientcmd"
+	"github.com/jayunit100/k8sprototypes/netpol/pkg/utils"
 )
 
 func main() {
 	fmt.Println("hi")
-	//_ = tests.Scenario{}
-	kubeconfig := filepath.Join(
-		os.Getenv("HOME"), ".kube", "config",
-	)
-	config, err := clientcmd.BuildConfigFromFlags("", kubeconfig)
-	if err != nil {
-		log.Fatal(err)
-	}
-	clientset, err := kubernetes.NewForConfig(config)
-	if err != nil {
-		log.Fatal(err)
-	}
-	api := clientset.CoreV1()
-	podList, err := api.Pods("").List(v1.ListOptions{})
-	if err == nil {
-		for _, p := range podList.Items {
-			fmt.Println("%s", p)
+
+	// Scenario creation
+	pods := []string{"a","b","c"}
+	namespaces := []string{"A","B","C"}
+
+	for _,ns := range namespaces {
+		k8s := utils.Kubernetes{}
+		k8s.CreateNamespace(ns, nil)
+		for _,pod := range pods {
+			k8s.CreateDeployment(ns, ns+pod, 1 , map[string]string{"pod":"a"}, "nginx" )
 		}
-	} else {
-		panic(err)
-		fmt.Println("failed")
 	}
-	// Create a K8sScenario, m
+
+	// An example test:
+	m := utils.ReachableMatrix{
+		DefaultExpect: false,
+		Pods: pods,
+		Namespaces: namespaces,
+	}
+	m.Expect("A","a","B","b",5)
 	/**
 			whitelist := map[string]bool{}...
 			In m:

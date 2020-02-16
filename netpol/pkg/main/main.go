@@ -2,51 +2,33 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/jayunit100/k8sprototypes/netpol/pkg/utils"
 )
 
 func main() {
-	fmt.Println("hi")
+	pods := []string{"a", "b", "c"}
+	namespaces := []string{"x", "y", "z"}
+	k8s := utils.Kubernetes{}
 
-	// Scenario creation
-	pods := []string{"a","b","c"}
-	namespaces := []string{"A","B","C"}
-
-	for _,ns := range namespaces {
-		k8s := utils.Kubernetes{}
+	for _, ns := range namespaces {
 		k8s.CreateNamespace(ns, nil)
-		for _,pod := range pods {
-			k8s.CreateDeployment(ns, ns+pod, 1 , map[string]string{"pod":"a"}, "nginx" )
+		for _, pod := range pods {
+			fmt.Println(ns)
+			k8s.CreateDeployment(ns, ns+pod, 1,
+				map[string]string{
+					"pod": "a",
+				}, "busybox")
 		}
 	}
 
 	// An example test:
 	m := utils.ReachableMatrix{
 		DefaultExpect: false,
-		Pods: pods,
-		Namespaces: namespaces,
+		Pods:          pods,
+		Namespaces:    namespaces,
 	}
-	m.Expect("A","a","B","b",5)
-	/**
-			whitelist := map[string]bool{}...
-			In m:
-			 For namespaces (a b c)
-				m.WithDeployments (a b c)
+	m.Expect("A", "a", "B", "b", 5)
 
-			p = Use the builder to make a network policy.
-			In m:
-				ApplyPolicies(p)
-
-			// validate policies on whitelist
-			r := newReachableMatrix()
-			for namespaces:
-				for pods:
-					for namespaces:
-						for pods:
-							ReachableMatrix.add(n1, pod1, n2, pod2, m.Probe(n1, pod1, n2, pod2)
-
-			testResult := false
-
-	**/
-
+	fmt.Println(k8s.Probe("x", "xb-768f8cd4-z8gsh", "y", "ya-69c5d95599-q2kg5", 8080))
 }

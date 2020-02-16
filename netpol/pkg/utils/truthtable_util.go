@@ -2,10 +2,10 @@ package utils
 
 type ReachableMatrix struct {
 	DefaultExpect bool
-	Pods []string
-	Namespaces []string
-	Expected map[string]map[string]int
-	Observed map[string]map[string]int
+	Pods          []string
+	Namespaces    []string
+	Expected      map[string]map[string]int
+	Observed      map[string]map[string]int
 }
 
 func addToMap(m map[string]map[string]int, ns string, pod string, ns2 string, pod2 string, connectionTime int) {
@@ -18,14 +18,14 @@ func addToMap(m map[string]map[string]int, ns string, pod string, ns2 string, po
 	m[ns+"_"+pod][ns2+"_"+pod2] = connectionTime
 }
 
-func (r *ReachableMatrix) init(){
+func (r *ReachableMatrix) init() {
 	if r.Expected != nil {
 		return
 	}
 
 	// create datastructures if not created yet.
 	r.Expected = map[string]map[string]int{}
-	if r.pods == nil || r.ns == nil {
+	if r.Pods == nil || r.Namespaces == nil {
 		panic("pods/ns must be existent in the struct.")
 	}
 	time := -1
@@ -33,10 +33,10 @@ func (r *ReachableMatrix) init(){
 		time = 5 // expect connect within 5 seconds
 	}
 	// create the matrix
-	for _, n := range r.ns {
-		for _, p := range r.pods {
-			for _, nn := range r.ns {
-				for _, pp := range r.pods {
+	for _, n := range r.Namespaces {
+		for _, p := range r.Pods {
+			for _, nn := range r.Namespaces {
+				for _, pp := range r.Pods {
 					addToMap(r.Expected, n, p, nn, pp, time)
 				}
 			}

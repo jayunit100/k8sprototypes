@@ -54,8 +54,8 @@ func (k *Kubernetes) Probe(ns1 string, pod1 string, ns2 string, pod2 string, por
 		//	fmt.Println("success", "out="+out, "err="+out2)
 		return true
 	} else {
-		fmt.Println("\n\n", out, out2, "\n\n")
-		panic(err)
+		fmt.Println("failed connect....", out, out2, "", ns1, pod1, ns2, pod2)
+		return false
 	}
 	return false
 }

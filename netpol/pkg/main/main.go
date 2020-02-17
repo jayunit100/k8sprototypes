@@ -28,7 +28,7 @@ func main() {
 		Pods:          pods,
 		Namespaces:    namespaces,
 	}
-	m.Expect("A", "a", "B", "b", true)
+	m.Expect("x", "a", "y", "a", true)
 
 	// better as metrics, obviously, this is only for POC.
 	for _, n1 := range namespaces {
@@ -37,7 +37,7 @@ func main() {
 				for _, p2 := range pods {
 					p1pod := k8s.GetPods(n1, "pod", p1)[0].GetName()
 					p2pod := k8s.GetPods(n2, "pod", p2)[0].GetName()
-					connected := k8s.Probe(n1, p1pod, n2, p2pod, 80)
+					connected := k8s.Probe(n1, p1pod, n2, p2pod, 81)
 					m.Observe(n1, p1, n2, p2, connected)
 				}
 			}

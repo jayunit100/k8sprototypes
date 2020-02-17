@@ -17,8 +17,8 @@ func main() {
 			fmt.Println(ns)
 			k8s.CreateDeployment(ns, ns+pod, 1,
 				map[string]string{
-					"pod": "a",
-				}, "busybox")
+					"pod": pod,
+				}, "nginx:1.8-alpine") // old nginx cause it was before people deleted everything useful from containers
 		}
 	}
 
@@ -28,7 +28,21 @@ func main() {
 		Pods:          pods,
 		Namespaces:    namespaces,
 	}
-	m.Expect("A", "a", "B", "b", 5)
+	m.Expect("A", "a", "B", "b", true)
 
-	fmt.Println(k8s.Probe("x", "xb-768f8cd4-z8gsh", "y", "ya-69c5d95599-q2kg5", 8080))
+	// better as metrics, obviously, this is only for POC.
+	for _, n1 := range namespaces {
+		for _, p1 := range pods {
+			for _, n2 := range namespaces {
+				for _, p2 := range pods {
+					p1pod := k8s.GetPods(n1, "pod", p1)[0].GetName()
+					p2pod := k8s.GetPods(n2, "pod", p2)[0].GetName()
+					connected := k8s.Probe(n1, p1pod, n2, p2pod, 80)
+					m.Observe(n1, p1, n2, p2, connected)
+				}
+			}
+		}
+	}
+	summary, pass := m.Summary()
+	fmt.Println(summary, pass)
 }

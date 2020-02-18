@@ -6,11 +6,10 @@ import (
 	"github.com/jayunit100/k8sprototypes/netpol/pkg/utils"
 )
 
-func bootstrap() {
+func bootstrap(k8s *utils.Kubernetes) {
 	pods := []string{"a", "b", "c"}
 	namespaces := []string{"x", "y", "z"}
-	k8s := utils.Kubernetes{}
-	//p81 := 81
+ 	//p81 := 81
 
 	for _, ns := range namespaces {
 		k8s.CreateNamespace(ns, map[string]string{"ns": ns})
@@ -24,41 +23,38 @@ func bootstrap() {
 	}
 }
 
-func validate(m *utils.ReachableMatrix) {
+func validate(k8s *utils.Kubernetes, m *utils.ReachableMatrix) {
 	pods := []string{"a", "b", "c"}
 	namespaces := []string{"x", "y", "z"}
-	k8s := utils.Kubernetes{}
-
 	// better as metrics, obviously, this is only for POC.
 	for _, n1 := range namespaces {
-		log.Infof("invoked ", n1)
 		for _, p1 := range pods {
 			for _, n2 := range namespaces {
 				for _, p2 := range pods {
 					fmt.Println("main observ:", n1, p1, n2, p2)
-					connected, err := k8s.Probe(n1, p1, n2, p2, 80)
+					connected, _ := k8s.Probe(n1, p1, n2, p2, 80)
 					m.Observe(n1,p1,n2,p2,connected)
-					if err != nil {
-						//log.Info("....confirm firewall on ",n1,p1,n2,p2)
+					if !connected {
+						if m.Expected[n1+"_"+p1][n2+"_"+p2] {
+							log.Warnf("FAILED CONNECTION FOR WHITELISTED PODS %v %v -> %v %v !!!! ", n1, p1, n2, p2)
+						}
 					}
 				}
 			}
 		}
 	}
-
 }
 
 func main(){
-	bootstrap()
-	matrix := TestPodLabelWhitelistingFromBToA()
-	validate(matrix)
+	k8s := utils.Kubernetes{}
+	bootstrap(&k8s)
+	matrix := TestPodLabelWhitelistingFromBToA(&k8s)
+	validate(&k8s, matrix)
 	summary, pass := matrix.Summary()
 	fmt.Println(summary, pass)
-
 }
 
-func TestPodLabelWhitelistingFromBToA() *utils.ReachableMatrix{
-	k8s := utils.Kubernetes{}
+func TestPodLabelWhitelistingFromBToA(k8s *utils.Kubernetes) *utils.ReachableMatrix{
 	pods := []string{"a", "b", "c"}
 	namespaces := []string{"x", "y", "z"}
 	p80 := 80
@@ -79,6 +75,9 @@ func TestPodLabelWhitelistingFromBToA() *utils.ReachableMatrix{
 	m.Expect("y", "b", "x", "a", true)
 	m.Expect("z", "b", "x", "a", true)
 	m.Expect("x", "a", "x", "a", true)
-
+	// TODO move this to a unit test !
+	if m.Expected["z_c"]["x_a"] == true  {
+		panic("expectatilns are wrongg")
+	}
 	return m
 }

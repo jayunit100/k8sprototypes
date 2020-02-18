@@ -70,10 +70,15 @@ func (r *ReachableMatrix) Expect(ns string, pod string, ns2 string, pod2 string,
 }
 
 // ExpectAllIngress defines that any traffic going into the pod in 'ns' will be allowed/denied (true/false)
-func (r ReachableMatrix) ExpectAllIngress(ns, pod string, connected bool) {
+func (r *ReachableMatrix) ExpectAllIngress(ns, pod string, connected bool) {
+	r.init()
+
 	for _, nsFrom := range r.Namespaces {
 		for _, podFrom := range r.Pods {
 			r.Expect(nsFrom, podFrom, ns, pod, connected)
+			if ! connected {
+				log.Infof("Blacklisting %v %v %v %v", nsFrom, podFrom , ns, pod)
+			}
 		}
 	}
 }

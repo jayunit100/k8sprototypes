@@ -169,7 +169,11 @@ func (k *Kubernetes) CreateDeployment(ns, deploymentName string, replicas int32,
 	return d, err
 }
 
-func (k *Kubernetes) CreateNetworkPolicy(netpol *v1net.NetworkPolicy) (*v1net.NetworkPolicy, error) {
-	np, err := Client().NetworkingV1().NetworkPolicies("").Create(netpol)
+func (k *Kubernetes) CreateNetworkPolicy(ns string, netpol *v1net.NetworkPolicy) (*v1net.NetworkPolicy, error) {
+	np, err := Client().NetworkingV1().NetworkPolicies(ns).Create(netpol)
+	fmt.Println(err)
+	if err != nil {
+		panic(err)
+	}
 	return np, err
 }

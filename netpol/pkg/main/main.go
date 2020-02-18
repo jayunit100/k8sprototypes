@@ -11,6 +11,9 @@ func main() {
 	namespaces := []string{"x", "y", "z"}
 	k8s := utils.Kubernetes{}
 
+	p80 := 80
+	//p81 := 81
+
 	for _, ns := range namespaces {
 		k8s.CreateNamespace(ns, nil)
 		for _, pod := range pods {
@@ -24,12 +27,27 @@ func main() {
 
 	// An example test:
 	m := utils.ReachableMatrix{
-		DefaultExpect: false,
+		DefaultExpect: true,
 		Pods:          pods,
 		Namespaces:    namespaces,
 	}
-
-	m.Expect("x", "a", "y", "a", true)
+	// Verify all connectivity
+	builder := &utils.NetworkPolicySpecBuilder{}
+	builder = builder.SetName("allow-client-a-via-pod-selector").SetPodSelector(map[string]string{"pod": "a"})
+	builder.SetTypeIngress()
+	builder.AddIngress(nil, &p80, nil, nil, map[string]string{"pod": "b"}, nil, nil, nil)
+	k8s.CreateNetworkPolicy("x", builder.Get())
+	for _, n1 := range namespaces {
+		for _, p1 := range pods {
+			for _, n2 := range namespaces {
+				for _, p2 := range pods {
+					if p2 == "a" && n1 == "x" {
+						m.Expect(n1, p1, n2, p2, p1 == "b")
+					}
+				}
+			}
+		}
+	}
 
 	// better as metrics, obviously, this is only for POC.
 	for _, n1 := range namespaces {

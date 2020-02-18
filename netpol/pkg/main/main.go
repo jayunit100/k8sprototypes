@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/jayunit100/k8sprototypes/netpol/pkg/utils"
 )
@@ -60,7 +61,10 @@ func main() {
 			for _, n2 := range namespaces {
 				for _, p2 := range pods {
 					fmt.Println("main observ:", n1, p1, n2, p2)
-					connected := k8s.Probe(n1, p1, n2, p2, 80)
+					connected, err := k8s.Probe(n1, p1, n2, p2, 80)
+					if err != nil {
+						log.Errorf("%s", err)
+					}
 					m.Observe(n1, p1, n2, p2, connected)
 				}
 			}

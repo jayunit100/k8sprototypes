@@ -1,8 +1,12 @@
-# Test netpolicies with truth tables!
+# A comprehensive Network Policy construction and testing library
 
 This repo implements https://github.com/vmware-tanzu/antrea/blob/community-network-policy-tests/docs/design/cni-testing-initiative-upstream.md, a fast, comprehensive truth table matrix for network policy's which can be used to ensure that you're CNI provider is fast, reliably, and air-tight.
 
-## How to make a new test
+(Note this is a new repo, so some features not implemented yet, like Egress Builders)
+
+## A super-simple builder for experimenting with and validating your own network policys
+
+One hard thing about network policies is *testing* that they do *exactly* what you thought they did.  You can fork this repo and code up a network policy quickly, and in a few lines of code, verify that it works perfectly.
 
 You can add a new test in just a few lines of code, for example, this test creates a network policy which ensures that 
 only traffic from `b` pods in the 3 namespaces `x,y,z` can access a the `a` pod, which lives in namespace `x`.

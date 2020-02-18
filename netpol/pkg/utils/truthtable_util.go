@@ -1,6 +1,9 @@
 package utils
 
-import "fmt"
+import (
+	"fmt"
+	log "github.com/sirupsen/logrus"
+)
 
 // TODO A Graph data model might be better for this class.
 type ReachableMatrix struct {
@@ -66,6 +69,15 @@ func (r *ReachableMatrix) Expect(ns string, pod string, ns2 string, pod2 string,
 	}
 }
 
+// ExpectAllIngress defines that any traffic going into the pod in 'ns' will be allowed/denied (true/false)
+func (r ReachableMatrix) ExpectAllIngress(ns, pod string, connected bool) {
+	for _, nsFrom := range r.Namespaces {
+		for _, podFrom := range r.Pods {
+			r.Expect(nsFrom, podFrom, ns, pod, connected)
+		}
+	}
+}
+
 func (r *ReachableMatrix) Observe(ns string, pod string, ns2 string, pod2 string, conn bool) {
 	r.init()
 	if r.HasNS(ns, pod) && r.HasNS(ns2, pod2) {
@@ -98,18 +110,15 @@ func (r *ReachableMatrix) Summary() (string, bool) {
 				for _, p2 := range r.Pods {
 					from := Key(n1, p1)
 					to := Key(n2, p2)
-					if _, ok := r.Expected[from][to]; !ok {
-						panic("missing Expected val")
-					}
 					if _, ok := r.Observed[from][to]; !ok {
-						panic("missing Observation val")
+						log.Infof("WARNING ----> Observation vals not done yet... from:%v, to:%v obsFromPods:%v, matrix:%v", from , to,  len(r.Observed[from]), r.Observed[from])
 					}
 					if r.Expected[from][to] == r.Observed[from][to] {
 						trueObs++
 					} else {
-						fmt.Print(from, "->", to, " not matching expect=")
-						fmt.Print(r.Expected[from][to], ", observed=")
-						fmt.Println(r.Observed[from][to])
+						//fmt.Print(from, "->", to, " not matching expect=")
+						//fmt.Print(r.Expected[from][to], ", observed=")
+						//fmt.Println(r.Observed[from][to])
 						falseObs++
 					}
 				}

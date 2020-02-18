@@ -5,6 +5,7 @@ import (
 	//	"context"
 	"bytes"
 	"fmt"
+	"k8s.io/client-go/rest"
 	"os"
 	"path/filepath"
 	"strings"
@@ -22,9 +23,17 @@ import (
 )
 
 type Kubernetes struct {
+	podCache map[string][]v1.Pod
 }
 
 func (k *Kubernetes) GetPods(ns string, key, val string) ([]v1.Pod, error) {
+	if k.podCache == nil {
+		k.podCache = map[string][]v1.Pod{}
+	}
+	if p, ok := k.podCache[fmt.Sprintf("%v_%v_%v",ns,key,val)]; ok{
+		return p, nil
+	}
+
 	client, err := Client()
 	if err != nil {
 		return nil, errors.WithMessagef(err, "unable to get client")
@@ -33,22 +42,22 @@ func (k *Kubernetes) GetPods(ns string, key, val string) ([]v1.Pod, error) {
 	if err != nil {
 		return nil, errors.WithMessage(err, "unable to list pods")
 	}
-
-	log.Infof("pod list length: %d", len(v1PodList.Items))
 	pods := []v1.Pod{}
 	for _, pod := range v1PodList.Items {
-		log.Infof("check: %s, %s, %s, %s", pod.Name, pod.Labels, key, val)
+		// log.Infof("check: %s, %s, %s, %s", pod.Name, pod.Labels, key, val)
 		if pod.Labels[key] == val {
 			pods = append(pods, pod)
 		}
 	}
-	log.Infof("list in ns %s: %d -> %d", ns, len(v1PodList.Items), len(pods))
+
+	//log.Infof("list in ns %s: %d -> %d", ns, len(v1PodList.Items), len(pods))
+	k.podCache[fmt.Sprintf("%v_%v_%v",ns,key,val)] = pods
+
 	return pods, nil
 }
 
 func (k *Kubernetes) Probe(ns1 string, pod1 string, ns2 string, pod2 string, port int) (bool, error) {
 	toIP := "1.1.1.1"
-
 	// TODO add err return for GetPods and handle
 	fromPods, err := k.GetPods(ns1, "pod", pod1)
 	if err != nil {
@@ -64,29 +73,14 @@ func (k *Kubernetes) Probe(ns1 string, pod1 string, ns2 string, pod2 string, por
 
 	toIP = toPod.Status.PodIP
 
-	//fmt.Println("Pod ip", pod.Status.PodIP)
-	// delete index.html before curling.
-
-	//fmt.Println("exec starts now ...")
-	removeIndexCommand := []string{"rm", "-f", "index.html"}
-	log.Infof("about to remove index: %+v", removeIndexCommand)
-	_, _, err = ExecuteRemoteCommand(fromPod, removeIndexCommand)
-	if err != nil {
-		return false, errors.WithMessagef(err, "unable to execute remote command")
-	}
-	exec := []string{"wget", "-T", "1", "http://" + toIP + ":" + fmt.Sprintf("%v", port)}
-	log.Infof("about to run command %+v", exec)
+	exec := []string{"wget", "-s","-T", "1", "http://" + toIP + ":" + fmt.Sprintf("%v", port)}
+	log.Info("Running: kubectl exec -t -i " + fromPod.Name + " -n " + fromPod.Namespace + " -- " + strings.Join(exec, " "))
 	out, out2, err := ExecuteRemoteCommand(fromPod, exec)
-
-	log.Info(fromPod.Name + " lives in "+ns1+" as pod: "+pod1+" ------> "+toPod.Name+" "+toPod.Namespace)
-	log.Info("kubectl exec -t -i " + fromPod.Name + " -n " + fromPod.Namespace + " " + strings.Join(exec, " "))
-
+	log.Info(".... Done")
 	if err != nil {
 		log.Errorf("failed connect.... %v %v %v %v %v %v", out, out2, ns1, pod1, ns2, pod2)
 		return false, errors.WithMessagef(err, "unable to execute remote command %+v", exec)
 	}
-
-	log.Infof("success! out=%s, err=%s", out, out2)
 	return true, nil
 }
 
@@ -133,19 +127,20 @@ func ExecuteRemoteCommand(pod v1.Pod, command []string) (string, string, error) 
 }
 
 func Client() (*kubernetes.Clientset, error) {
-	// TODO borrowed from e2e upstream.
-	kubeconfig := filepath.Join(
-		os.Getenv("HOME"), ".kube", "config",
-	)
-	config, err := clientcmd.BuildConfigFromFlags("", kubeconfig)
+	config, err := rest.InClusterConfig()
 	if err != nil {
-		return nil, errors.WithMessagef(err, "unable to build config from flags")
+		kubeconfig := filepath.Join(
+			os.Getenv("HOME"), ".kube", "config",
+		)
+		config, err = clientcmd.BuildConfigFromFlags("", kubeconfig)
+		if err != nil {
+			return nil, errors.WithMessagef(err, "unable to build config from flags, check that your KUBECONFIG file is correct !")
+		}
 	}
 	clientset, err := kubernetes.NewForConfig(config)
 	if err != nil {
 		return nil, errors.WithMessagef(err, "unable to instantiate clientset")
 	}
-
 	return clientset, nil
 }
 

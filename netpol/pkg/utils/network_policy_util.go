@@ -40,12 +40,12 @@ func (n *NetworkPolicySpecBuilder) AddIngress(protoc *v1.Protocol, port *int, po
 	var ps *metav1.LabelSelector
 	var ns *metav1.LabelSelector
 
-	if podSelector == nil {
+	if podSelector != nil {
 		ps = &metav1.LabelSelector{
 			MatchLabels: podSelector,
 		}
 	}
-	if nsSelector == nil {
+	if nsSelector != nil {
 		ns = &metav1.LabelSelector{
 			MatchLabels: nsSelector,
 		}
@@ -55,12 +55,14 @@ func (n *NetworkPolicySpecBuilder) AddIngress(protoc *v1.Protocol, port *int, po
 		From: []networkingv1.NetworkPolicyPeer{{
 			PodSelector:       ps,
 			NamespaceSelector: ns,
+			IPBlock:           nil,
 		}},
 	}
 	if n.Spec.Ingress == nil {
 		n.Spec.Ingress = []networkingv1.NetworkPolicyIngressRule{}
 	}
 	n.Spec.Ingress = append(n.Spec.Ingress, r)
+
 	return n
 }
 

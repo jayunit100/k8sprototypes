@@ -15,7 +15,7 @@ func main() {
 	//p81 := 81
 
 	for _, ns := range namespaces {
-		k8s.CreateNamespace(ns, nil)
+		k8s.CreateNamespace(ns, map[string]string{"ns": ns})
 		for _, pod := range pods {
 			fmt.Println(ns)
 			k8s.CreateDeployment(ns, ns+pod, 1,
@@ -35,28 +35,32 @@ func main() {
 	builder := &utils.NetworkPolicySpecBuilder{}
 	builder = builder.SetName("allow-client-a-via-pod-selector").SetPodSelector(map[string]string{"pod": "a"})
 	builder.SetTypeIngress()
-	builder.AddIngress(nil, &p80, nil, nil, map[string]string{"pod": "b"}, nil, nil, nil)
+	builder.AddIngress(nil, &p80, nil, nil, map[string]string{"pod": "b"}, map[string]string{"ns": "x"}, nil, nil)
+	builder.AddIngress(nil, &p80, nil, nil, map[string]string{"pod": "b"}, map[string]string{"ns": "y"}, nil, nil)
+	builder.AddIngress(nil, &p80, nil, nil, map[string]string{"pod": "b"}, map[string]string{"ns": "z"}, nil, nil)
+	fmt.Println(builder.Get())
 	k8s.CreateNetworkPolicy("x", builder.Get())
-	for _, n1 := range namespaces {
-		for _, p1 := range pods {
-			for _, n2 := range namespaces {
-				for _, p2 := range pods {
-					if p2 == "a" && n1 == "x" {
-						m.Expect(n1, p1, n2, p2, p1 == "b")
-					}
-				}
-			}
+
+	for _, ns := range namespaces {
+		for _, pod := range pods {
+			m.Expect(ns, pod, "x", "a", false)
 		}
 	}
+
+	m.Expect("x", "b", "x", "a", true)
+	m.Expect("y", "b", "x", "a", true)
+	m.Expect("z", "b", "x", "a", true)
+	m.Expect("x", "a", "x", "a", true)
+
+	fmt.Println(k8s.Probe("y", "a", "x", "b", 80))
 
 	// better as metrics, obviously, this is only for POC.
 	for _, n1 := range namespaces {
 		for _, p1 := range pods {
 			for _, n2 := range namespaces {
 				for _, p2 := range pods {
-					p1pod := k8s.GetPods(n1, "pod", p1)[0].GetName()
-					p2pod := k8s.GetPods(n2, "pod", p2)[0].GetName()
-					connected := k8s.Probe(n1, p1pod, n2, p2pod, 80)
+					fmt.Println("main observ:", n1, p1, n2, p2)
+					connected := k8s.Probe(n1, p1, n2, p2, 80)
 					m.Observe(n1, p1, n2, p2, connected)
 				}
 			}

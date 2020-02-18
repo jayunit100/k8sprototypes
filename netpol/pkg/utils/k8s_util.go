@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/pkg/errors"
 	appsv1 "k8s.io/api/apps/v1"
@@ -24,45 +25,50 @@ type Kubernetes struct {
 }
 
 func (k *Kubernetes) GetPods(ns string, key, val string) []v1.Pod {
-	v1PodList, _ := Client().CoreV1().Pods(ns).List(metav1.ListOptions{
-		LabelSelector: "pod",
-	})
+	v1PodList, _ := Client().CoreV1().Pods(ns).List(metav1.ListOptions{})
+
+	fmt.Println("list: ", len(v1PodList.Items))
 	pods := []v1.Pod{}
 	for _, pod := range v1PodList.Items {
+		fmt.Println("check ", pod.Name, pod.Labels, " ", key, val)
 		if pod.Labels[key] == val {
 			pods = append(pods, pod)
 		}
 	}
-	return v1PodList.Items
+	fmt.Println(ns, "list: ", len(v1PodList.Items), "->", len(pods))
+	return pods
 }
 
 func (k *Kubernetes) Probe(ns1 string, pod1 string, ns2 string, pod2 string, port int) bool {
-	ip := "1.1.1.1"
-	pod, err := Client().CoreV1().Pods(ns2).Get(pod2, metav1.GetOptions{})
-	if err == nil {
-		ip = pod.Status.PodIP
-	} else {
-		panic(err)
-	}
+	toIP := "1.1.1.1"
+	// TODO add err return for GetPods and handle
+	fromPod := k.GetPods(ns1, "pod", pod1)[0]
+	toPod := k.GetPods(ns2, "pod", pod2)[0]
+	toIP = toPod.Status.PodIP
+
 	//fmt.Println("Pod ip", pod.Status.PodIP)
 	// delete index.html before curling.
 
 	//fmt.Println("exec starts now ...")
-	_, _, err = ExecuteRemoteCommand(pod, []string{"rm", "-f", "index.html"})
-	out, out2, err := ExecuteRemoteCommand(pod, []string{"wget", "http://" + ip + ":" + fmt.Sprintf("%v", port)})
+	_, _, err := ExecuteRemoteCommand(fromPod, []string{"rm", "-f", "index.html"})
+	exec := []string{"wget", "-T", "1", "http://" + toIP + ":" + fmt.Sprintf("%v", port)}
+	out, out2, err := ExecuteRemoteCommand(fromPod, exec)
+
+	fmt.Println("\n", fromPod.Name, " lives in "+ns1+" as pod: "+pod1+" ------> "+toPod.Name+" "+toPod.Namespace)
+	fmt.Println("kubectl exec -t -i " + fromPod.Name + " -n " + fromPod.Namespace + " " + strings.Join(exec, " "))
+
 	if err == nil {
 		//	fmt.Println("success", "out="+out, "err="+out2)
 		return true
 	} else {
-		fmt.Println("failed connect....", out, out2, "", ns1, pod1, ns2, pod2)
+		fmt.Println("failed connect.... %v %v %v %v %v %v", out, out2, ns1, pod1, ns2, pod2)
 		return false
 	}
-	return false
 }
 
 // ExecuteRemoteCommand executes a remote shell command on the given pod
 // returns the output from stdout and stderr
-func ExecuteRemoteCommand(pod *v1.Pod, command []string) (string, string, error) {
+func ExecuteRemoteCommand(pod v1.Pod, command []string) (string, string, error) {
 	kubeCfg := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(
 		clientcmd.NewDefaultClientConfigLoadingRules(),
 		&clientcmd.ConfigOverrides{},
@@ -173,7 +179,7 @@ func (k *Kubernetes) CreateNetworkPolicy(ns string, netpol *v1net.NetworkPolicy)
 	np, err := Client().NetworkingV1().NetworkPolicies(ns).Create(netpol)
 	fmt.Println(err)
 	if err != nil {
-		panic(err)
+		fmt.Println("error creating policy... ", err)
 	}
 	return np, err
 }

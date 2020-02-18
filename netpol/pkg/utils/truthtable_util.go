@@ -12,8 +12,6 @@ type ReachableMatrix struct {
 }
 
 func addToMap(m map[string]map[string]bool, ns string, pod string, ns2 string, pod2 string, connectionTime bool) {
-	fmt.Println(" map length", len(m))
-
 	if m == nil {
 		fmt.Println("init")
 		m = map[string]map[string]bool{}
@@ -22,7 +20,6 @@ func addToMap(m map[string]map[string]bool, ns string, pod string, ns2 string, p
 		m[ns+"_"+pod] = map[string]bool{}
 	}
 	m[ns+"_"+pod][ns2+"_"+pod2] = connectionTime
-	fmt.Println("new map length", len(m), m)
 }
 
 func (r *ReachableMatrix) init() {
@@ -76,7 +73,6 @@ func (r *ReachableMatrix) Observe(ns string, pod string, ns2 string, pod2 string
 	} else {
 		panic(fmt.Sprintf("ns/pod not found %v %v ", ns, pod))
 	}
-	fmt.Println("observing ", ns, pod, ns2, pod2, conn, " new len ", len(r.Observed))
 }
 
 func (r *ReachableMatrix) GetExpectedObserverd(ns string, pod string, ns2 string, pod2 string) (bool, bool) {
@@ -100,26 +96,29 @@ func (r *ReachableMatrix) Summary() (string, bool) {
 		for _, p1 := range r.Pods {
 			for _, n2 := range r.Namespaces {
 				for _, p2 := range r.Pods {
-					fmt.Println("checking that all expected and observed values are written.", n1, p1, n2, p2)
-					fmt.Println(len(r.Observed), len(r.Expected))
-					if _, ok := r.Expected[Key(n1, p1)][Key(n2, p2)]; !ok {
+					from := Key(n1, p1)
+					to := Key(n2, p2)
+					if _, ok := r.Expected[from][to]; !ok {
 						panic("missing Expected val")
 					}
-					if _, ok := r.Observed[Key(n1, p1)][Key(n2, p2)]; !ok {
+					if _, ok := r.Observed[from][to]; !ok {
 						panic("missing Observation val")
 					}
-
-					if r.Expected[Key(n1, p1)][Key(n2, p2)] == r.Observed[Key(n1, p1)][Key(n2, p2)] {
+					if r.Expected[from][to] == r.Observed[from][to] {
 						trueObs++
 					} else {
-						fmt.Print(n1, p1, "->", n2, p2, " not matching expect=")
-						fmt.Print(r.Expected[Key(n1, p1)][Key(n2, p2)], ", observed=")
-						fmt.Println(r.Observed[Key(n1, p1)][Key(n2, p2)])
+						fmt.Print(from, "->", to, " not matching expect=")
+						fmt.Print(r.Expected[from][to], ", observed=")
+						fmt.Println(r.Observed[from][to])
 						falseObs++
 					}
 				}
 			}
 		}
+	}
+	for k, v := range r.Observed {
+		fmt.Println(k)
+		fmt.Println("-->", v)
 	}
 	passed := falseObs == 0
 	return fmt.Sprintf("correct:%v, incorrect:%v, result=", trueObs, falseObs, passed), passed

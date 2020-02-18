@@ -1,0 +1,23 @@
+#   kubectl create clusterrolebinding netpol --clusterrole=admin --serviceaccount=kube-system:netpol
+#   kubectl create sa netpol -n kube-system
+
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: netpol
+spec:
+  selector:
+    matchLabels:
+      app: netpol
+  replicas: 1 # tells deployment to run 2 pods matching the template
+  template:
+    metadata:
+      labels:
+        app: netpol
+    spec:
+      containers:
+        - name: jay-netpol
+          image: jayunit100/netpol:0.1
+          command: ["/netpol/main"]
+          ports:
+            - containerPort: 80

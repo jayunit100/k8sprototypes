@@ -6,6 +6,19 @@ import (
 	"github.com/jayunit100/k8sprototypes/netpol/pkg/utils"
 )
 
+type NetPolConfig struct {
+	pods []string
+	namespaces []string
+	k8s *utils.Kubernetes
+}
+var p80 *int
+var p81 *int
+
+func init() {
+	p80 := 80
+	p81 := 80
+
+}
 func bootstrap(k8s *utils.Kubernetes) {
 	pods := []string{"a", "b", "c"}
 	namespaces := []string{"x", "y", "z"}
@@ -57,7 +70,6 @@ func main(){
 func TestPodLabelWhitelistingFromBToA(k8s *utils.Kubernetes) *utils.ReachableMatrix{
 	pods := []string{"a", "b", "c"}
 	namespaces := []string{"x", "y", "z"}
-	p80 := 80
 	m := &utils.ReachableMatrix{
 		DefaultExpect: true,
 		Pods:          pods,

@@ -1,5 +1,3 @@
-`cd netpol/`
-
 # Test netpolicies with truth tables!
 
 This repo implements https://github.com/vmware-tanzu/antrea/blob/community-network-policy-tests/docs/design/cni-testing-initiative-upstream.md, a fast, comprehensive truth table matrix for network policy's which can be used to ensure that you're CNI provider is fast, reliably, and air-tight.

@@ -5,11 +5,11 @@ import (
 	//	"context"
 	"bytes"
 	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/pkg/errors"
 	appsv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
@@ -24,46 +24,70 @@ import (
 type Kubernetes struct {
 }
 
-func (k *Kubernetes) GetPods(ns string, key, val string) []v1.Pod {
-	v1PodList, _ := Client().CoreV1().Pods(ns).List(metav1.ListOptions{})
+func (k *Kubernetes) GetPods(ns string, key, val string) ([]v1.Pod, error) {
+	client, err := Client()
+	if err != nil {
+		return nil, errors.WithMessagef(err, "unable to get client")
+	}
+	v1PodList, err := client.CoreV1().Pods(ns).List(metav1.ListOptions{})
+	if err != nil {
+		return nil, errors.WithMessage(err, "unable to list pods")
+	}
 
-	fmt.Println("list: ", len(v1PodList.Items))
+	log.Infof("pod list length: %d", len(v1PodList.Items))
 	pods := []v1.Pod{}
 	for _, pod := range v1PodList.Items {
-		fmt.Println("check ", pod.Name, pod.Labels, " ", key, val)
+		log.Infof("check: %s, %s, %s, %s", pod.Name, pod.Labels, key, val)
 		if pod.Labels[key] == val {
 			pods = append(pods, pod)
 		}
 	}
-	fmt.Println(ns, "list: ", len(v1PodList.Items), "->", len(pods))
-	return pods
+	log.Infof("list in ns %s: %d -> %d", ns, len(v1PodList.Items), len(pods))
+	return pods, nil
 }
 
-func (k *Kubernetes) Probe(ns1 string, pod1 string, ns2 string, pod2 string, port int) bool {
+func (k *Kubernetes) Probe(ns1 string, pod1 string, ns2 string, pod2 string, port int) (bool, error) {
 	toIP := "1.1.1.1"
+
 	// TODO add err return for GetPods and handle
-	fromPod := k.GetPods(ns1, "pod", pod1)[0]
-	toPod := k.GetPods(ns2, "pod", pod2)[0]
+	fromPods, err := k.GetPods(ns1, "pod", pod1)
+	if err != nil {
+		return false, errors.WithMessagef(err, "unable to get pods from ns %s", ns1)
+	}
+	fromPod := fromPods[0]
+
+	toPods, err := k.GetPods(ns2, "pod", pod2)
+	if err != nil {
+		return false, errors.WithMessagef(err, "unable to get pods from ns %s", ns2)
+	}
+	toPod := toPods[0]
+
 	toIP = toPod.Status.PodIP
 
 	//fmt.Println("Pod ip", pod.Status.PodIP)
 	// delete index.html before curling.
 
 	//fmt.Println("exec starts now ...")
-	_, _, err := ExecuteRemoteCommand(fromPod, []string{"rm", "-f", "index.html"})
+	removeIndexCommand := []string{"rm", "-f", "index.html"}
+	log.Infof("about to remove index: %+v", removeIndexCommand)
+	_, _, err = ExecuteRemoteCommand(fromPod, removeIndexCommand)
+	if err != nil {
+		return false, errors.WithMessagef(err, "unable to execute remote command")
+	}
 	exec := []string{"wget", "-T", "1", "http://" + toIP + ":" + fmt.Sprintf("%v", port)}
+	log.Infof("about to run command %+v", exec)
 	out, out2, err := ExecuteRemoteCommand(fromPod, exec)
 
-	fmt.Println("\n", fromPod.Name, " lives in "+ns1+" as pod: "+pod1+" ------> "+toPod.Name+" "+toPod.Namespace)
-	fmt.Println("kubectl exec -t -i " + fromPod.Name + " -n " + fromPod.Namespace + " " + strings.Join(exec, " "))
+	log.Info(fromPod.Name + " lives in "+ns1+" as pod: "+pod1+" ------> "+toPod.Name+" "+toPod.Namespace)
+	log.Info("kubectl exec -t -i " + fromPod.Name + " -n " + fromPod.Namespace + " " + strings.Join(exec, " "))
 
-	if err == nil {
-		//	fmt.Println("success", "out="+out, "err="+out2)
-		return true
-	} else {
-		fmt.Println("failed connect.... %v %v %v %v %v %v", out, out2, ns1, pod1, ns2, pod2)
-		return false
+	if err != nil {
+		log.Errorf("failed connect.... %v %v %v %v %v %v", out, out2, ns1, pod1, ns2, pod2)
+		return false, errors.WithMessagef(err, "unable to execute remote command %+v", exec)
 	}
+
+	log.Infof("success! out=%s, err=%s", out, out2)
+	return true, nil
 }
 
 // ExecuteRemoteCommand executes a remote shell command on the given pod
@@ -84,7 +108,11 @@ func ExecuteRemoteCommand(pod v1.Pod, command []string) (string, string, error) 
 
 	buf := &bytes.Buffer{}
 	errBuf := &bytes.Buffer{}
-	request := Client().CoreV1().RESTClient().Post().Namespace(pod.Namespace).Resource("pods").
+	client, err := Client()
+	if err != nil {
+		return "", "", errors.WithMessagef(err, "unable to get client")
+	}
+	request := client.CoreV1().RESTClient().Post().Namespace(pod.Namespace).Resource("pods").
 		Name(pod.Name).SubResource("exec").VersionedParams(&v1.PodExecOptions{
 		Command: command,
 		Stdin:   false,
@@ -104,21 +132,21 @@ func ExecuteRemoteCommand(pod v1.Pod, command []string) (string, string, error) 
 	return buf.String(), errBuf.String(), nil
 }
 
-func Client() *kubernetes.Clientset {
+func Client() (*kubernetes.Clientset, error) {
 	// TODO borrowed from e2e upstream.
 	kubeconfig := filepath.Join(
 		os.Getenv("HOME"), ".kube", "config",
 	)
 	config, err := clientcmd.BuildConfigFromFlags("", kubeconfig)
 	if err != nil {
-		log.Fatal(err)
+		return nil, errors.WithMessagef(err, "unable to build config from flags")
 	}
 	clientset, err := kubernetes.NewForConfig(config)
 	if err != nil {
-		log.Fatal(err)
+		return nil, errors.WithMessagef(err, "unable to instantiate clientset")
 	}
 
-	return clientset
+	return clientset, nil
 }
 
 func (k *Kubernetes) CreateNamespace(n string, labels map[string]string) (*v1.Namespace, error) {
@@ -128,14 +156,20 @@ func (k *Kubernetes) CreateNamespace(n string, labels map[string]string) (*v1.Na
 			Labels: labels,
 		},
 	}
-	nsr, err := Client().CoreV1().Namespaces().Create(ns)
-	fmt.Println(err)
+	client, err := Client()
+	if err != nil {
+		return nil, errors.WithMessagef(err, "unable to get client")
+	}
+	nsr, err := client.CoreV1().Namespaces().Create(ns)
+	if err != nil {
+		log.Errorf("%s", err)
+	}
 	return nsr, err
 }
 
 func (k *Kubernetes) CreateDeployment(ns, deploymentName string, replicas int32, labels map[string]string, image string) (*appsv1.Deployment, error) {
 	zero := int64(0)
-	fmt.Println("ns", ns)
+	log.Infof("ns %s", ns)
 	d := &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      deploymentName,
@@ -170,16 +204,21 @@ func (k *Kubernetes) CreateDeployment(ns, deploymentName string, replicas int32,
 		},
 	}
 
-	d, err := Client().AppsV1().Deployments(ns).Create(d)
-	fmt.Println(err)
-	return d, err
+	client, err := Client()
+	if err != nil {
+		return nil, errors.WithMessagef(err, "unable to get client")
+	}
+	return client.AppsV1().Deployments(ns).Create(d)
 }
 
 func (k *Kubernetes) CreateNetworkPolicy(ns string, netpol *v1net.NetworkPolicy) (*v1net.NetworkPolicy, error) {
-	np, err := Client().NetworkingV1().NetworkPolicies(ns).Create(netpol)
-	fmt.Println(err)
+	client, err := Client()
 	if err != nil {
-		fmt.Println("error creating policy... ", err)
+		return nil, errors.WithMessagef(err, "unable to get client")
+	}
+	np, err := client.NetworkingV1().NetworkPolicies(ns).Create(netpol)
+	if err != nil {
+		log.Errorf("error creating policy... %s", err)
 	}
 	return np, err
 }

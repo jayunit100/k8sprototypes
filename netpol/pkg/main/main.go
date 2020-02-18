@@ -15,8 +15,8 @@ var p80 *int
 var p81 *int
 
 func init() {
-	p80 := 80
-	p81 := 80
+	*p80 = 80
+	*p81 = 81
 
 }
 func bootstrap(k8s *utils.Kubernetes) {

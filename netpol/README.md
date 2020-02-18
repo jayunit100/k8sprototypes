@@ -13,7 +13,7 @@ We are working to merge this into upstream Kubernetes, in the meanwhile, here's 
 - *Easy to reason about:* The pods in this repo stay up forever, so you can reuse the above kubectl commands outputted by your netpol logs to exec into a pod and reproduce any failures.
 - *Scalable:* If you want to test 32 policies, all at once ? Just take a look at the example test (in `main`) and copy paste a few lines, and you'll be testing enterprise CNI application patterns in a heartbeat.
 
-## Create 
+## Test Your Dang CNI !  Now !
 
 Create the policy probe tests... 
 

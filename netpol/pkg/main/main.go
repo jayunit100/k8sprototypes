@@ -11,10 +11,13 @@ type NetPolConfig struct {
 	namespaces []string
 	k8s        *utils.Kubernetes
 }
-
 var p80 int = 80
 var p81 int = 81
 
+func init() {
+	p80 = 80
+	p81 = 81
+}
 func bootstrap(k8s *utils.Kubernetes) {
 	pods := []string{"a", "b", "c"}
 	namespaces := []string{"x", "y", "z"}

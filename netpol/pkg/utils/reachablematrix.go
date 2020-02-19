@@ -76,8 +76,8 @@ func (r *ReachableMatrix) ExpectAllIngress(ns, pod string, connected bool) {
 	for _, nsFrom := range r.Namespaces {
 		for _, podFrom := range r.Pods {
 			r.Expect(nsFrom, podFrom, ns, pod, connected)
-			if ! connected {
-				log.Infof("Blacklisting %v %v %v %v", nsFrom, podFrom , ns, pod)
+			if !connected {
+				log.Infof("Blacklisting %v %v %v %v", nsFrom, podFrom, ns, pod)
 			}
 		}
 	}
@@ -116,7 +116,7 @@ func (r *ReachableMatrix) Summary() (string, bool) {
 					from := Key(n1, p1)
 					to := Key(n2, p2)
 					if _, ok := r.Observed[from][to]; !ok {
-						log.Infof("WARNING ----> Observation vals not done yet... from:%v, to:%v obsFromPods:%v, matrix:%v", from , to,  len(r.Observed[from]), r.Observed[from])
+						log.Infof("WARNING ----> Observation vals not done yet... from:%v, to:%v obsFromPods:%v, matrix:%v", from, to, len(r.Observed[from]), r.Observed[from])
 					}
 					if r.Expected[from][to] == r.Observed[from][to] {
 						trueObs++

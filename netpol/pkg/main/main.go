@@ -2,22 +2,23 @@ package main
 
 import (
 	"fmt"
-	log "github.com/sirupsen/logrus"
 	"github.com/jayunit100/k8sprototypes/netpol/pkg/utils"
+	log "github.com/sirupsen/logrus"
 )
 
 type NetPolConfig struct {
-	pods []string
+	pods       []string
 	namespaces []string
-	k8s *utils.Kubernetes
+	k8s        *utils.Kubernetes
 }
+
 var p80 int = 80
 var p81 int = 81
 
 func bootstrap(k8s *utils.Kubernetes) {
 	pods := []string{"a", "b", "c"}
 	namespaces := []string{"x", "y", "z"}
- 	//p81 := 81
+	//p81 := 81
 
 	for _, ns := range namespaces {
 		k8s.CreateNamespace(ns, map[string]string{"ns": ns})
@@ -44,7 +45,7 @@ func validate(k8s *utils.Kubernetes, m *utils.ReachableMatrix, reachability *uti
 					if err != nil {
 						log.Errorf("unable to make main observation on %s-%s -> %s-%s: %s", n1, p1, n2, p2, err)
 					}
-					m.Observe(n1,p1,n2,p2,connected)
+					m.Observe(n1, p1, n2, p2, connected)
 					reachability.Observe(utils.NewPod(n1, p1), utils.NewPod(n2, p2), connected)
 					if !connected {
 						if m.Expected[n1+"_"+p1][n2+"_"+p2] {
@@ -57,7 +58,7 @@ func validate(k8s *utils.Kubernetes, m *utils.ReachableMatrix, reachability *uti
 	}
 }
 
-func main(){
+func main() {
 	k8s, err := utils.NewKubernetes()
 	if err != nil {
 		panic(err)
@@ -93,7 +94,7 @@ func TestPodLabelWhitelistingFromBToA(k8s *utils.Kubernetes) (*utils.ReachableMa
 		Pods:          pods,
 		Namespaces:    namespaces,
 	}
-	m.ExpectAllIngress("x","a",false)
+	m.ExpectAllIngress("x", "a", false)
 	m.Expect("x", "b", "x", "a", true)
 	m.Expect("y", "b", "x", "a", true)
 	m.Expect("z", "b", "x", "a", true)
@@ -113,7 +114,7 @@ func TestPodLabelWhitelistingFromBToA(k8s *utils.Kubernetes) (*utils.ReachableMa
 	reachability.Expect(utils.NewPod("x", "a"), utils.NewPod("x", "a"), true)
 
 	// TODO move this to a unit test !
-	if m.Expected["z_c"]["x_a"] == true  {
+	if m.Expected["z_c"]["x_a"] == true {
 		panic("expectations are wrong")
 	}
 	return m, reachability

@@ -162,7 +162,7 @@ func NewReachability(pods []Pod) *Reachability {
 	trueVar := true
 	r := &Reachability{
 		Expected: NewTruthTable(items, &trueVar),
-		Observed: NewTruthTable(items,nil),
+		Observed: NewTruthTable(items, nil),
 		Pods:     pods,
 		podSet:   nil, // TODO remove ?
 	}

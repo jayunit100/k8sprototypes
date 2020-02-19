@@ -10,8 +10,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 	appsv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
 	v1net "k8s.io/api/networking/v1"
@@ -23,7 +23,7 @@ import (
 )
 
 type Kubernetes struct {
-	podCache map[string][]v1.Pod
+	podCache  map[string][]v1.Pod
 	ClientSet *kubernetes.Clientset
 }
 
@@ -42,7 +42,7 @@ func (k *Kubernetes) GetPods(ns string, key, val string) ([]v1.Pod, error) {
 	if k.podCache == nil {
 		k.podCache = map[string][]v1.Pod{}
 	}
-	if p, ok := k.podCache[fmt.Sprintf("%v_%v_%v",ns,key,val)]; ok{
+	if p, ok := k.podCache[fmt.Sprintf("%v_%v_%v", ns, key, val)]; ok {
 		return p, nil
 	}
 
@@ -59,7 +59,7 @@ func (k *Kubernetes) GetPods(ns string, key, val string) ([]v1.Pod, error) {
 	}
 
 	//log.Infof("list in ns %s: %d -> %d", ns, len(v1PodList.Items), len(pods))
-	k.podCache[fmt.Sprintf("%v_%v_%v",ns,key,val)] = pods
+	k.podCache[fmt.Sprintf("%v_%v_%v", ns, key, val)] = pods
 
 	return pods, nil
 }
@@ -81,7 +81,7 @@ func (k *Kubernetes) Probe(ns1 string, pod1 string, ns2 string, pod2 string, por
 
 	toIP = toPod.Status.PodIP
 
-	exec := []string{"wget", "-s","-T", "1", "http://" + toIP + ":" + fmt.Sprintf("%v", port)}
+	exec := []string{"wget", "-s", "-T", "1", "http://" + toIP + ":" + fmt.Sprintf("%v", port)}
 	log.Info("Running: kubectl exec -t -i " + fromPod.Name + " -n " + fromPod.Namespace + " -- " + strings.Join(exec, " "))
 	out, out2, err := k.ExecuteRemoteCommand(fromPod, exec)
 	log.Info(".... Done")
@@ -94,7 +94,7 @@ func (k *Kubernetes) Probe(ns1 string, pod1 string, ns2 string, pod2 string, por
 
 // ExecuteRemoteCommand executes a remote shell command on the given pod
 // returns the output from stdout and stderr
-func (k *Kubernetes)ExecuteRemoteCommand(pod v1.Pod, command []string) (string, string, error) {
+func (k *Kubernetes) ExecuteRemoteCommand(pod v1.Pod, command []string) (string, string, error) {
 	kubeCfg := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(
 		clientcmd.NewDefaultClientConfigLoadingRules(),
 		&clientcmd.ConfigOverrides{},

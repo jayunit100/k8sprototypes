@@ -177,7 +177,15 @@ func (r *Reachability) Expect(pod1 Pod, pod2 Pod, isConnected bool) {
 func (r *Reachability) ExpectAllIngress(pod Pod, connected bool) {
 	r.Expected.SetAllTo(string(pod), connected)
 	if !connected {
-		log.Infof("Blacklisting all traffic to %s", pod)
+		log.Infof("Blacklisting all traffic *to* %s", pod)
+	}
+}
+
+// ExpectAllEgress defines that any traffic going out of the pod will be allowed/denied (true/false)
+func (r *Reachability)ExpectAllEgress(pod Pod, connected bool) {
+	r.Expected.SetAllFrom(string(pod), connected)
+	if !connected {
+		log.Infof("Blacklisting all traffic *from* %s", pod)
 	}
 }
 

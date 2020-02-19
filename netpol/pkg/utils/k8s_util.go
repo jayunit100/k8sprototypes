@@ -203,6 +203,7 @@ func (k *Kubernetes) CreateDeployment(ns, deploymentName string, replicas int32,
 }
 
 func (k *Kubernetes) CreateNetworkPolicy(ns string, netpol *v1net.NetworkPolicy) (*v1net.NetworkPolicy, error) {
+	netpol.ObjectMeta.Namespace=ns
 	np, err := k.ClientSet.NetworkingV1().NetworkPolicies(ns).Create(netpol)
 	if err != nil {
 		log.Errorf("error creating policy... %s", err)

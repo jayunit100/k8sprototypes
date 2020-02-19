@@ -31,8 +31,11 @@ func validate(k8s *utils.Kubernetes, m *utils.ReachableMatrix) {
 		for _, p1 := range pods {
 			for _, n2 := range namespaces {
 				for _, p2 := range pods {
-					fmt.Println("main observ:", n1, p1, n2, p2)
-					connected, _ := k8s.Probe(n1, p1, n2, p2, 80)
+					log.Infof("main observe: %s-%s, %s-%s", n1, p1, n2, p2)
+					connected, err := k8s.Probe(n1, p1, n2, p2, 80)
+					if err != nil {
+						log.Errorf("unable to make main observation on %s-%s -> %s-%s: %s", n1, p1, n2, p2, err)
+					}
 					m.Observe(n1,p1,n2,p2,connected)
 					if !connected {
 						if m.Expected[n1+"_"+p1][n2+"_"+p2] {
@@ -46,10 +49,13 @@ func validate(k8s *utils.Kubernetes, m *utils.ReachableMatrix) {
 }
 
 func main(){
-	k8s := utils.Kubernetes{}
-	bootstrap(&k8s)
-	matrix := TestPodLabelWhitelistingFromBToA(&k8s)
-	validate(&k8s, matrix)
+	k8s, err := utils.NewKubernetes()
+	if err != nil {
+		panic(err)
+	}
+	bootstrap(k8s)
+	matrix := TestPodLabelWhitelistingFromBToA(k8s)
+	validate(k8s, matrix)
 	summary, pass := matrix.Summary()
 	fmt.Println(summary, pass)
 }
@@ -77,7 +83,7 @@ func TestPodLabelWhitelistingFromBToA(k8s *utils.Kubernetes) *utils.ReachableMat
 	m.Expect("x", "a", "x", "a", true)
 	// TODO move this to a unit test !
 	if m.Expected["z_c"]["x_a"] == true  {
-		panic("expectatilns are wrongg")
+		panic("expectations are wrong")
 	}
 	return m
 }

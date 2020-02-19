@@ -92,7 +92,7 @@ func (r *ReachableMatrix) Observe(ns string, pod string, ns2 string, pod2 string
 	}
 }
 
-func (r *ReachableMatrix) GetExpectedObserverd(ns string, pod string, ns2 string, pod2 string) (bool, bool) {
+func (r *ReachableMatrix) GetExpectedObserved(ns string, pod string, ns2 string, pod2 string) (bool, bool) {
 	r.init()
 	return r.Expected[ns+"_"+pod][ns2+"_"+pod2], r.Observed[ns+"_"+pod][ns2+"_"+pod2]
 }
@@ -130,10 +130,18 @@ func (r *ReachableMatrix) Summary() (string, bool) {
 			}
 		}
 	}
-	for k, v := range r.Observed {
-		fmt.Println(k)
-		fmt.Println("-->", v)
+	for fromPod, dict := range r.Observed {
+		fmt.Println(fromPod)
+		line := []string{}
+		for toPod, v := range dict {
+			val := "F"
+			if v {
+				val = "T"
+			}
+			line = append(line, fmt.Sprintf("%s:%s", toPod, val))
+		}
+		fmt.Println("-->", line)
 	}
 	passed := falseObs == 0
-	return fmt.Sprintf("correct:%v, incorrect:%v, result=", trueObs, falseObs, passed), passed
+	return fmt.Sprintf("correct:%v, incorrect:%v, result=%t", trueObs, falseObs, passed), passed
 }

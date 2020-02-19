@@ -24,6 +24,18 @@ import (
 
 type Kubernetes struct {
 	podCache map[string][]v1.Pod
+	ClientSet *kubernetes.Clientset
+}
+
+func NewKubernetes() (*Kubernetes, error) {
+	clientSet, err := Client()
+	if err != nil {
+		return nil, errors.WithMessagef(err, "unable to instantiate client")
+	}
+	return &Kubernetes{
+		podCache:  map[string][]v1.Pod{},
+		ClientSet: clientSet,
+	}, nil
 }
 
 func (k *Kubernetes) GetPods(ns string, key, val string) ([]v1.Pod, error) {
@@ -34,11 +46,7 @@ func (k *Kubernetes) GetPods(ns string, key, val string) ([]v1.Pod, error) {
 		return p, nil
 	}
 
-	client, err := Client()
-	if err != nil {
-		return nil, errors.WithMessagef(err, "unable to get client")
-	}
-	v1PodList, err := client.CoreV1().Pods(ns).List(metav1.ListOptions{})
+	v1PodList, err := k.ClientSet.CoreV1().Pods(ns).List(metav1.ListOptions{})
 	if err != nil {
 		return nil, errors.WithMessage(err, "unable to list pods")
 	}
@@ -75,7 +83,7 @@ func (k *Kubernetes) Probe(ns1 string, pod1 string, ns2 string, pod2 string, por
 
 	exec := []string{"wget", "-s","-T", "1", "http://" + toIP + ":" + fmt.Sprintf("%v", port)}
 	log.Info("Running: kubectl exec -t -i " + fromPod.Name + " -n " + fromPod.Namespace + " -- " + strings.Join(exec, " "))
-	out, out2, err := ExecuteRemoteCommand(fromPod, exec)
+	out, out2, err := k.ExecuteRemoteCommand(fromPod, exec)
 	log.Info(".... Done")
 	if err != nil {
 		log.Errorf("failed connect.... %v %v %v %v %v %v", out, out2, ns1, pod1, ns2, pod2)
@@ -86,7 +94,7 @@ func (k *Kubernetes) Probe(ns1 string, pod1 string, ns2 string, pod2 string, por
 
 // ExecuteRemoteCommand executes a remote shell command on the given pod
 // returns the output from stdout and stderr
-func ExecuteRemoteCommand(pod v1.Pod, command []string) (string, string, error) {
+func (k *Kubernetes)ExecuteRemoteCommand(pod v1.Pod, command []string) (string, string, error) {
 	kubeCfg := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(
 		clientcmd.NewDefaultClientConfigLoadingRules(),
 		&clientcmd.ConfigOverrides{},
@@ -102,11 +110,7 @@ func ExecuteRemoteCommand(pod v1.Pod, command []string) (string, string, error) 
 
 	buf := &bytes.Buffer{}
 	errBuf := &bytes.Buffer{}
-	client, err := Client()
-	if err != nil {
-		return "", "", errors.WithMessagef(err, "unable to get client")
-	}
-	request := client.CoreV1().RESTClient().Post().Namespace(pod.Namespace).Resource("pods").
+	request := k.ClientSet.CoreV1().RESTClient().Post().Namespace(pod.Namespace).Resource("pods").
 		Name(pod.Name).SubResource("exec").VersionedParams(&v1.PodExecOptions{
 		Command: command,
 		Stdin:   false,
@@ -151,11 +155,7 @@ func (k *Kubernetes) CreateNamespace(n string, labels map[string]string) (*v1.Na
 			Labels: labels,
 		},
 	}
-	client, err := Client()
-	if err != nil {
-		return nil, errors.WithMessagef(err, "unable to get client")
-	}
-	nsr, err := client.CoreV1().Namespaces().Create(ns)
+	nsr, err := k.ClientSet.CoreV1().Namespaces().Create(ns)
 	if err != nil {
 		log.Errorf("%s", err)
 	}
@@ -199,19 +199,11 @@ func (k *Kubernetes) CreateDeployment(ns, deploymentName string, replicas int32,
 		},
 	}
 
-	client, err := Client()
-	if err != nil {
-		return nil, errors.WithMessagef(err, "unable to get client")
-	}
-	return client.AppsV1().Deployments(ns).Create(d)
+	return k.ClientSet.AppsV1().Deployments(ns).Create(d)
 }
 
 func (k *Kubernetes) CreateNetworkPolicy(ns string, netpol *v1net.NetworkPolicy) (*v1net.NetworkPolicy, error) {
-	client, err := Client()
-	if err != nil {
-		return nil, errors.WithMessagef(err, "unable to get client")
-	}
-	np, err := client.NetworkingV1().NetworkPolicies(ns).Create(netpol)
+	np, err := k.ClientSet.NetworkingV1().NetworkPolicies(ns).Create(netpol)
 	if err != nil {
 		log.Errorf("error creating policy... %s", err)
 	}

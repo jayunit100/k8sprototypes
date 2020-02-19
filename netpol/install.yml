@@ -8,6 +8,7 @@ metadata:
 spec:
   template:
     spec:
+      restartPolicy: Never
       containers:
         - name: jay-netpol
           image: jayunit100/netpol:0.1

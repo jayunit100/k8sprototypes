@@ -74,7 +74,7 @@ func main() {
 	fmt.Printf("reachability: correct:%v, incorrect:%v, result=%t\n\n", right, wrong, wrong == 0)
 	fmt.Printf("expected:\n\n%s\n\n\n", reachability.Expected.PrettyPrint())
 	fmt.Printf("observed:\n\n%s\n\n\n", reachability.Observed.PrettyPrint())
-	fmt.Printf("comparion:\n\n%s\n\n\n", comparison.PrettyPrint())
+	fmt.Printf("comparison:\n\n%s\n\n\n", comparison.PrettyPrint())
 }
 
 func TestPodLabelWhitelistingFromBToA(k8s *utils.Kubernetes) (*utils.ReachableMatrix, *utils.Reachability) {

@@ -190,6 +190,7 @@ func (k *Kubernetes) CreateDeployment(ns, deploymentName string, replicas int32,
 							Ports: []v1.ContainerPort{
 								v1.ContainerPort{
 									ContainerPort: 80,
+									Name: "serve-80",
 								},
 							},
 						},
@@ -202,9 +203,12 @@ func (k *Kubernetes) CreateDeployment(ns, deploymentName string, replicas int32,
 	return k.ClientSet.AppsV1().Deployments(ns).Create(d)
 }
 
-func (k *Kubernetes) CreateNetworkPolicy(ns string, netpol *v1net.NetworkPolicy) (*v1net.NetworkPolicy, error) {
+func (k *Kubernetes) CreateOrUpdateNetworkPolicy(ns string, netpol *v1net.NetworkPolicy) (*v1net.NetworkPolicy, error) {
 	netpol.ObjectMeta.Namespace=ns
-	np, err := k.ClientSet.NetworkingV1().NetworkPolicies(ns).Create(netpol)
+	np, err := k.ClientSet.NetworkingV1().NetworkPolicies(ns).Update(netpol)
+	if err != nil {
+		np, err = k.ClientSet.NetworkingV1().NetworkPolicies(ns).Create(netpol)
+	}
 	if err != nil {
 		log.Errorf("error creating policy... %s", err)
 	}

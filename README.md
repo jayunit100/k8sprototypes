@@ -1,5 +1,7 @@
 # Projects in this repository
 
+This project has a variety of prototypes for utilities, tools that are being developed as POCs of working K8s extensions and applications.
+
 ## Truth table driven network policy tests
 
 ![Alt text](https://github.com/jayunit100/k8sprototypes/raw/master/netpol.png)

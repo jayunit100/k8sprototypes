@@ -148,7 +148,7 @@ func Client() (*kubernetes.Clientset, error) {
 	return clientset, nil
 }
 
-func (k *Kubernetes) CreateNamespace(n string, labels map[string]string) (*v1.Namespace, error) {
+func (k *Kubernetes) CreateOrUpdateNamespace(n string, labels map[string]string) (*v1.Namespace, error) {
 	ns := &v1.Namespace{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:   n,
@@ -157,12 +157,16 @@ func (k *Kubernetes) CreateNamespace(n string, labels map[string]string) (*v1.Na
 	}
 	nsr, err := k.ClientSet.CoreV1().Namespaces().Create(ns)
 	if err != nil {
-		log.Errorf("%s", err)
+		nsr, err = k.ClientSet.CoreV1().Namespaces().Update(ns)
+		if err != nil {
+			log.Errorf("%s", err)
+		}
 	}
+
 	return nsr, err
 }
 
-func (k *Kubernetes) CreateDeployment(ns, deploymentName string, replicas int32, labels map[string]string, image string) (*appsv1.Deployment, error) {
+func (k *Kubernetes) CreateOrUpdateDeployment(ns, deploymentName string, replicas int32, labels map[string]string, image string) (*appsv1.Deployment, error) {
 	zero := int64(0)
 	log.Infof("ns %s", ns)
 	d := &appsv1.Deployment{
@@ -200,7 +204,11 @@ func (k *Kubernetes) CreateDeployment(ns, deploymentName string, replicas int32,
 		},
 	}
 
-	return k.ClientSet.AppsV1().Deployments(ns).Create(d)
+	d, err := k.ClientSet.AppsV1().Deployments(ns).Create(d)
+	if err != nil {
+		return k.ClientSet.AppsV1().Deployments(ns).Update(d)
+	}
+
 }
 
 func (k *Kubernetes) CreateOrUpdateNetworkPolicy(ns string, netpol *v1net.NetworkPolicy) (*v1net.NetworkPolicy, error) {

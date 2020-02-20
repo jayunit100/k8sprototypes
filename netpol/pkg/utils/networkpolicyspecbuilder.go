@@ -80,14 +80,14 @@ func (n *NetworkPolicySpecBuilder) WithEgressDNS() *NetworkPolicySpecBuilder {
 	return n
 }
 
-func (n *NetworkPolicySpecBuilder) AddEgress(protoc *v1.Protocol, port *int, portName *string, cidr *string, podSelector *map[string]string, nsSelector *map[string]string, podSelectorMatchExp *[]metav1.LabelSelectorRequirement, nsSelectorMatchExp *[]metav1.LabelSelectorRequirement) *NetworkPolicySpecBuilder {
+func (n *NetworkPolicySpecBuilder) AddEgress(protoc *v1.Protocol, port *int, portName *string, cidr *string, podSelector map[string]string, nsSelector map[string]string, podSelectorMatchExp *[]metav1.LabelSelectorRequirement, nsSelectorMatchExp *[]metav1.LabelSelectorRequirement) *NetworkPolicySpecBuilder {
 	r := networkingv1.NetworkPolicyEgressRule{
 		To: []networkingv1.NetworkPolicyPeer{{
 			PodSelector: &metav1.LabelSelector{
-				MatchLabels: *podSelector,
+				MatchLabels: podSelector,
 			},
 			NamespaceSelector: &metav1.LabelSelector{
-				MatchLabels: *nsSelector,
+				MatchLabels: nsSelector,
 			},
 		}},
 	}

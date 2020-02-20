@@ -206,9 +206,9 @@ func (k *Kubernetes) CreateOrUpdateDeployment(ns, deploymentName string, replica
 
 	d, err := k.ClientSet.AppsV1().Deployments(ns).Create(d)
 	if err != nil {
-		return k.ClientSet.AppsV1().Deployments(ns).Update(d)
+		d, err = k.ClientSet.AppsV1().Deployments(ns).Update(d)
 	}
-
+	return d, err
 }
 
 func (k *Kubernetes) CreateOrUpdateNetworkPolicy(ns string, netpol *v1net.NetworkPolicy) (*v1net.NetworkPolicy, error) {

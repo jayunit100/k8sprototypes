@@ -78,6 +78,7 @@ func main(){
 	testWrapperPort80(testEnforcePodOrNSSelector)
 	testWrapperPort8081(testPortsPolicies)
 	testWrapperStacked(testPortsPoliciesStacked)
+	testWrapperPort80(testAllowAll)
 	*/
 	testWrapperPort80(TestPodLabelWhitelistingFromBToA)
 }

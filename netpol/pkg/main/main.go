@@ -193,12 +193,61 @@ ginkgo.It("should deny ingress access to updated pod [Feature:NetworkPolicy]", f
 ginkgo.It("should stop enforcing policies after they are deleted [Feature:NetworkPolicy]", func() {
 
 TODO: These tests should be easy to add later.
-ginkgo.It("should enforce egress policy allowing traffic to a server in a different namespace based on PodSelector and NamespaceSelector [Feature:NetworkPolicy]", func() {
-ginkgo.It("should enforce multiple ingress policies with ingress allow-all policy taking precedence [Feature:NetworkPolicy]", func() {
 ginkgo.It("should enforce multiple egress policies with egress allow-all policy taking precedence [Feature:NetworkPolicy]", func() {
-ginkgo.It("should allow egress access to server in CIDR block [Feature:NetworkPolicy]", func() {
 ginkgo.It("should enforce policies to check ingress and egress policies can be controlled independently based on PodSelector [Feature:NetworkPolicy]", func() {
+
+
+TODO: Egress tests
+ginkgo.It("should allow egress access to server in CIDR block [Feature:NetworkPolicy]", func() {
+ginkgo.It("should enforce egress policy allowing traffic to a server in a different namespace based on PodSelector and NamespaceSelector [Feature:NetworkPolicy]", func() {
+
 */
+
+
+// should enforce multiple ingress policies with ingress allow-all policy taking precedence [Feature:NetworkPolicy]"
+func TestAllowAllPrecedence(k8s *utils.Kubernetes, stacked bool) []*Stack {
+		builder := &utils.NetworkPolicySpecBuilder{}
+		builder = builder.SetName("deny-all").SetPodSelector(map[string]string{"pod": "a"})
+		builder.SetTypeIngress()
+		builder.AddIngress(nil, &p80, nil, nil, map[string]string{}, nil, nil, nil)
+
+		policy1 := builder.Get()
+		m1 := &utils.ReachableMatrix{
+			DefaultExpect: false,
+			Pods:          pods,
+			Namespaces:    namespaces,
+		}
+		reachability1 := utils.NewReachability(listAllPods())
+
+		builder2 := &utils.NetworkPolicySpecBuilder{}
+		// by preserving the same name, this policy will also serve to test the 'updated policy' scenario.
+		builder2 = builder2.SetName("allow-all").SetPodSelector(map[string]string{"pod": "a"})
+		builder2.SetTypeIngress()
+		builder2.AddIngress(nil, &p80, nil, nil, nil, nil, nil, nil)
+
+		policy2 := builder2.Get()
+		m2 := &utils.ReachableMatrix{
+			DefaultExpect: true,
+			Pods:          pods,
+			Namespaces:    namespaces,
+		}
+		reachability2 := utils.NewReachability(listAllPods())
+
+		return []*Stack{
+		&Stack{
+			m1,
+			reachability1,
+			policy1,
+			p81,
+		},
+		&Stack{
+			m2,
+			reachability2,
+			policy2,
+			p80,
+		},
+	}
+}
 
 // should allow egress access on one named port [Feature:NetworkPolicy]
 func testEgressOnNamedPort(k8s *utils.Kubernetes) (*utils.ReachableMatrix, *utils.Reachability ) {

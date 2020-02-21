@@ -81,7 +81,8 @@ func (k *Kubernetes) Probe(ns1 string, pod1 string, ns2 string, pod2 string, por
 
 	toIP = toPod.Status.PodIP
 
-	exec := []string{"wget", "-s", "-T", "1", "http://" + toIP + ":" + fmt.Sprintf("%v", port)}
+	// note some versions of wget want -s for spider mode, others, -S
+	exec := []string{"wget", "--spider", "--tries","1", "--timeout", "1", "http://" + toIP + ":" + fmt.Sprintf("%v", port)}
 	// HACK: inferring container name as c80, c81, etc, for simplicity.
 	containerName := fmt.Sprintf("c%v",port)
 	log.Info("Running: kubectl exec -t -i " + fromPod.Name + " -c " + containerName +" -n " + fromPod.Namespace + " -- " + strings.Join(exec, " "))
@@ -191,7 +192,8 @@ func (k *Kubernetes) CreateOrUpdateDeployment(ns, deploymentName string, replica
 					Containers: []v1.Container{
 						{
 							Name:            "c80",
-							Image:           image,
+							Image:           "python:latest",
+							Command: []string{"python", "-m", "http.server", "80"},
 							SecurityContext: &v1.SecurityContext{},
 							Ports: []v1.ContainerPort{
 								v1.ContainerPort{
@@ -202,7 +204,8 @@ func (k *Kubernetes) CreateOrUpdateDeployment(ns, deploymentName string, replica
 						},
 						{
 							Name:            "c81",
-							Image:           image,
+							Image:           "python:latest",
+							Command: []string{"python", "-m", "http.server", "81"},
 							SecurityContext: &v1.SecurityContext{},
 							Ports: []v1.ContainerPort{
 								v1.ContainerPort{

@@ -198,7 +198,7 @@ func (k *Kubernetes) CreateOrUpdateDeployment(ns, deploymentName string, replica
 							},
 						},
 						{
-							Name:            "prober",
+							Name:            "prober2",
 							Image:           image,
 							SecurityContext: &v1.SecurityContext{},
 							Ports: []v1.ContainerPort{

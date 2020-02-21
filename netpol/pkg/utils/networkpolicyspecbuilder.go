@@ -11,12 +11,14 @@ import (
 type NetworkPolicySpecBuilder struct {
 	Spec networkingv1.NetworkPolicySpec
 	Name string
+	Namespace string
 }
 
 func (n *NetworkPolicySpecBuilder) Get() *networkingv1.NetworkPolicy {
 	return &networkingv1.NetworkPolicy{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: n.Name,
+			Namespace: n.Namespace,
 		},
 		Spec: n.Spec,
 	}
@@ -30,7 +32,8 @@ func (n *NetworkPolicySpecBuilder) SetPodSelector(labels map[string]string) *Net
 	return n
 }
 
-func (n *NetworkPolicySpecBuilder) SetName(name string) *NetworkPolicySpecBuilder {
+func (n *NetworkPolicySpecBuilder) SetName(namespace string, name string) *NetworkPolicySpecBuilder {
+	n.Namespace = namespace
 	n.Name = name
 	return n
 }

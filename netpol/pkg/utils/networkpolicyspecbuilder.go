@@ -39,6 +39,9 @@ func (n *NetworkPolicySpecBuilder) AddIngress(protoc *v1.Protocol, port *int, po
 
 	var ps *metav1.LabelSelector
 	var ns *metav1.LabelSelector
+	if n.Spec.Ingress == nil {
+		n.Spec.Ingress = []networkingv1.NetworkPolicyIngressRule{}
+	}
 
 	if podSelector != nil {
 		ps = &metav1.LabelSelector{
@@ -51,18 +54,27 @@ func (n *NetworkPolicySpecBuilder) AddIngress(protoc *v1.Protocol, port *int, po
 		}
 	}
 
-	r := networkingv1.NetworkPolicyIngressRule{
-		From: []networkingv1.NetworkPolicyPeer{{
-			PodSelector:       ps,
-			NamespaceSelector: ns,
-			IPBlock:           nil,
-		}},
+	if ps != nil && ns != nil {
+		r := networkingv1.NetworkPolicyIngressRule{
+			From: []networkingv1.NetworkPolicyPeer{{
+				PodSelector:       ps,
+				NamespaceSelector: ns,
+				IPBlock:           nil,
+			}},
+		}
+		n.Spec.Ingress = append(n.Spec.Ingress, r)
 	}
-	if n.Spec.Ingress == nil {
-		n.Spec.Ingress = []networkingv1.NetworkPolicyIngressRule{}
-	}
-	n.Spec.Ingress = append(n.Spec.Ingress, r)
 
+	portRule := networkingv1.NetworkPolicyIngressRule{
+		Ports: []networkingv1.NetworkPolicyPort{{
+			Port: &intstr.IntOrString{IntVal: int32(*port)},
+		},
+		},
+	}
+
+	if port != nil {
+		n.Spec.Ingress = append(n.Spec.Ingress, portRule)
+	}
 	return n
 }
 

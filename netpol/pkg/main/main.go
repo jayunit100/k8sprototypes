@@ -58,7 +58,9 @@ func validate(k8s *utils.Kubernetes, m *utils.ReachableMatrix, reachability *uti
 						log.Errorf("unable to make main observation on %s-%s -> %s-%s: %s", n1, p1, n2, p2, err)
 					}
 					m.Observe(n1, p1, n2, p2, connected)
-					reachability.Observe(utils.NewPod(n1, p1), utils.NewPod(n2, p2), connected)
+					if reachability != nil {
+						reachability.Observe(utils.NewPod(n1, p1), utils.NewPod(n2, p2), connected)
+					}
 					if !connected {
 						if m.Expected[n1+"_"+p1][n2+"_"+p2] {
 							log.Warnf("FAILED CONNECTION FOR WHITELISTED PODS %v %v -> %v %v !!!! ", n1, p1, n2, p2)
@@ -80,11 +82,12 @@ func main() {
 	// testWrapperPort80(TestPodLabelWhitelistingFromBToA)
 
 	// testWrapperPort80(testInnerNamespaceTraffic)
-	testWrapperPort80(testEnforcePodAndNSSelector)
-	/*
+	// testWrapperPort80(testEnforcePodAndNSSelector)
 
-		testWrapperPort80(testEnforcePodOrNSSelector)
-		testWrapperPort8081(testPortsPolicies)
+	// testWrapperPort80(testEnforcePodOrNSSelector)
+
+	testPortsPolicies(k8s)
+	/**
 		// This is a stacked test b/c of the true arg.
 		testWrapperStacked(testPortsPoliciesStacked, true)
 		testWrapperPort80(testAllowAll)
@@ -617,30 +620,41 @@ func testPortsPoliciesStacked(k8s *utils.Kubernetes, stacked bool) []*Stack {
 }
 
 // "should enforce policy based on Ports [Feature:NetworkPolicy] (disallow 80)
-func testPortsPolicies(k8s *utils.Kubernetes) (*utils.ReachableMatrix, *utils.Reachability, *utils.ReachableMatrix, *utils.Reachability) {
+func testPortsPolicies(k8s *utils.Kubernetes)  {
+	bootstrap(k8s)
 	builder := &utils.NetworkPolicySpecBuilder{}
-	builder = builder.SetName("allow-x-via-pod-and-ns-selector").SetPodSelector(map[string]string{"pod": "a"})
+	builder = builder.SetName("allow-port-81-not-port-80").SetPodSelector(map[string]string{"pod": "a"})
 	builder.SetTypeIngress()
+	// anyone on port 81 is ok...
 	builder.AddIngress(nil, &p81, nil, nil, nil, nil, nil, nil)
 
 	k8s.CreateOrUpdateNetworkPolicy("x", builder.Get())
 
 	m80 := &utils.ReachableMatrix{
-		DefaultExpect: false,
+		DefaultExpect: true,
 		Pods:          pods,
 		Namespaces:    namespaces,
 	}
-	reachability80 := utils.NewReachability(listAllPods())
+	m80.ExpectAllIngress("x", "a", false)
+	m80.Expect("x","a","x","a", true)
+	validate(k8s, m80,nil,80)
+ 	s,p := m80.Summary()
+	fmt.Println(s, p)
 
+
+ 	fmt.Println("***** port 81 *****")
 	m81 := &utils.ReachableMatrix{
 		DefaultExpect: true,
 		Pods:          pods,
 		Namespaces:    namespaces,
 	}
-	reachability81 := utils.NewReachability(listAllPods())
+	m81.ExpectAllIngress("x", "a", true)
+	validate(k8s, m81,nil,81)
+ 	s,p  = m81.Summary()
+	fmt.Println(s, p)
 
-	return m80, reachability80, m81, reachability81
 }
+
 
 // should enforce policy to allow traffic only from a pod in a different namespace based on PodSelector and NamespaceSelector [Feature:NetworkPolicy]
 // should enforce policy based on PodSelector and NamespaceSelector [Feature:NetworkPolicy]
@@ -685,7 +699,7 @@ func testEnforcePodOrNSSelector(k8s *utils.Kubernetes) (*utils.ReachableMatrix, 
 	m.Expect("y", "c", "x", "a", true)
 	m.Expect("x", "b", "x", "a", true)
 	m.Expect("y", "b", "x", "a", true)
-	m.Expect("z", "b", "x", "a", true)
+	//m.Expect("z", "b", "x", "a", true)
 	m.Expect("x", "a", "x", "a", true)
 
 	return m, reachability

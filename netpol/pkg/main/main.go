@@ -78,7 +78,7 @@ func main() {
 
 
 
-	// testWrapperPort80(TestDefaultDeny)
+	 testWrapperPort80(TestDefaultDeny)
 	// testWrapperPort80(TestPodLabelWhitelistingFromBToA)
 
 	// testWrapperPort80(testInnerNamespaceTraffic)
@@ -86,7 +86,7 @@ func main() {
 
 	// testWrapperPort80(testEnforcePodOrNSSelector)
 
-	testPortsPolicies(k8s)
+	// testPortsPolicies(k8s)
 	/**
 		// This is a stacked test b/c of the true arg.
 		testWrapperStacked(testPortsPoliciesStacked, true)

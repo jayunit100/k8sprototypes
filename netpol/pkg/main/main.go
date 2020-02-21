@@ -71,10 +71,18 @@ func validate(k8s *utils.Kubernetes, m *utils.ReachableMatrix, reachability *uti
 }
 
 func main() {
-	testWrapperPort80(TestDefaultDeny)
+	k8s, _ := utils.NewKubernetes()
+	k8s.CleanNetworkPolicies([]string{"x","y","z"})
+
+
+
+	// testWrapperPort80(TestDefaultDeny)
+	// testWrapperPort80(TestPodLabelWhitelistingFromBToA)
+
+	// testWrapperPort80(testInnerNamespaceTraffic)
+	testWrapperPort80(testEnforcePodAndNSSelector)
 	/*
-		testWrapperPort80(testInnerNamespaceTraffic)
-		testWrapperPort80(testEnforcePodAndNSSelector)
+
 		testWrapperPort80(testEnforcePodOrNSSelector)
 		testWrapperPort8081(testPortsPolicies)
 		// This is a stacked test b/c of the true arg.
@@ -84,7 +92,6 @@ func main() {
 		// This is an update test b/c of the  false arg.
 		testWrapperStacked(testPortsPoliciesStacked, false)
 
-		testWrapperPort80(TestPodLabelWhitelistingFromBToA)
 		TestMultipleUpdates()
 	**/
 }
@@ -652,6 +659,7 @@ func testEnforcePodAndNSSelector(k8s *utils.Kubernetes) (*utils.ReachableMatrix,
 	reachability := utils.NewReachability(listAllPods())
 	m.ExpectAllIngress("x", "a", false)
 	m.Expect("y", "b", "x", "a", true)
+	m.Expect("x", "a", "x", "a", true)
 
 	return m, reachability
 }
@@ -755,7 +763,9 @@ func testIntraNamespaceTrafficOnly(k8s *utils.Kubernetes) (*utils.ReachableMatri
 	return m, reachability
 }
 
-// testInnerNamespaceTraffic should enforce policy to allow traffic from pods within server namespace based on PodSelector [Feature:NetworkPolicy]
+// testInnerNamespaceTraffic should enforce policy to allow traffic from pods within server namespace, based on PodSelector [Feature:NetworkPolicy]
+// note : network policies are applied to a namespace by default, meaning that you need a specific policy to select pods in external namespaces.
+// thus in this case, we don't expect y/b -> x/a, because even though it is labelled 'b', it is in a different namespace.
 func testInnerNamespaceTraffic(k8s *utils.Kubernetes) (*utils.ReachableMatrix, *utils.Reachability) {
 	builder := &utils.NetworkPolicySpecBuilder{}
 	builder = builder.SetName("allow-client-b-via-pod-selector").SetPodSelector(map[string]string{"pod": "a"})
@@ -769,6 +779,8 @@ func testInnerNamespaceTraffic(k8s *utils.Kubernetes) (*utils.ReachableMatrix, *
 	reachability := utils.NewReachability(listAllPods())
 	m.ExpectAllIngress("x", "a", false)
 	m.Expect("x", "b", "x", "a", true)
+	m.Expect("x", "a", "x", "a", true)
+
 	return m, reachability
 }
 

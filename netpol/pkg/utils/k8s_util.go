@@ -211,6 +211,19 @@ func (k *Kubernetes) CreateOrUpdateDeployment(ns, deploymentName string, replica
 	return d, err
 }
 
+
+
+func (k *Kubernetes) CleanNetworkPolicies(ns []string) {
+	for _,n := range ns {
+		l,_ := k.ClientSet.NetworkingV1().NetworkPolicies(n).List(metav1.ListOptions{})
+		for _, np := range l.Items{
+			log.Infof("deleting %v",np)
+			k.ClientSet.NetworkingV1().NetworkPolicies(np.Namespace).Delete(np.Name,nil)
+		}
+	}
+}
+
+
 func (k *Kubernetes) CreateOrUpdateNetworkPolicy(ns string, netpol *v1net.NetworkPolicy) (*v1net.NetworkPolicy, error) {
 	netpol.ObjectMeta.Namespace=ns
 	np, err := k.ClientSet.NetworkingV1().NetworkPolicies(ns).Update(netpol)

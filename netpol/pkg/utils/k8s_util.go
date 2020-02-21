@@ -82,8 +82,10 @@ func (k *Kubernetes) Probe(ns1 string, pod1 string, ns2 string, pod2 string, por
 	toIP = toPod.Status.PodIP
 
 	exec := []string{"wget", "-s", "-T", "1", "http://" + toIP + ":" + fmt.Sprintf("%v", port)}
-	log.Info("Running: kubectl exec -t -i " + fromPod.Name + " -n " + fromPod.Namespace + " -- " + strings.Join(exec, " "))
-	out, out2, err := k.ExecuteRemoteCommand(fromPod, exec)
+	// HACK: inferring container name as c80, c81, etc, for simplicity.
+	containerName := fmt.Sprintf("c%v",port)
+	log.Info("Running: kubectl exec -t -i " + fromPod.Name + " -c " + containerName +" -n " + fromPod.Namespace + " -- " + strings.Join(exec, " "))
+	out, out2, err := k.ExecuteRemoteCommand(fromPod, containerName, exec)
 	log.Info(".... Done")
 	if err != nil {
 		log.Errorf("failed connect.... %v %v %v %v %v %v", out, out2, ns1, pod1, ns2, pod2)
@@ -94,7 +96,7 @@ func (k *Kubernetes) Probe(ns1 string, pod1 string, ns2 string, pod2 string, por
 
 // ExecuteRemoteCommand executes a remote shell command on the given pod
 // returns the output from stdout and stderr
-func (k *Kubernetes) ExecuteRemoteCommand(pod v1.Pod, command []string) (string, string, error) {
+func (k *Kubernetes) ExecuteRemoteCommand(pod v1.Pod, cname string, command []string) (string, string, error) {
 	kubeCfg := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(
 		clientcmd.NewDefaultClientConfigLoadingRules(),
 		&clientcmd.ConfigOverrides{},
@@ -112,6 +114,7 @@ func (k *Kubernetes) ExecuteRemoteCommand(pod v1.Pod, command []string) (string,
 	errBuf := &bytes.Buffer{}
 	request := k.ClientSet.CoreV1().RESTClient().Post().Namespace(pod.Namespace).Resource("pods").
 		Name(pod.Name).SubResource("exec").VersionedParams(&v1.PodExecOptions{
+		Container: cname,
 		Command: command,
 		Stdin:   false,
 		Stdout:  true,
@@ -187,7 +190,7 @@ func (k *Kubernetes) CreateOrUpdateDeployment(ns, deploymentName string, replica
 					TerminationGracePeriodSeconds: &zero,
 					Containers: []v1.Container{
 						{
-							Name:            "prober",
+							Name:            "c80",
 							Image:           image,
 							SecurityContext: &v1.SecurityContext{},
 							Ports: []v1.ContainerPort{
@@ -198,7 +201,7 @@ func (k *Kubernetes) CreateOrUpdateDeployment(ns, deploymentName string, replica
 							},
 						},
 						{
-							Name:            "prober2",
+							Name:            "c81",
 							Image:           image,
 							SecurityContext: &v1.SecurityContext{},
 							Ports: []v1.ContainerPort{

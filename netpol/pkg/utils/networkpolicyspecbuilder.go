@@ -9,15 +9,15 @@ import (
 )
 
 type NetworkPolicySpecBuilder struct {
-	Spec networkingv1.NetworkPolicySpec
-	Name string
+	Spec      networkingv1.NetworkPolicySpec
+	Name      string
 	Namespace string
 }
 
 func (n *NetworkPolicySpecBuilder) Get() *networkingv1.NetworkPolicy {
 	return &networkingv1.NetworkPolicy{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: n.Name,
+			Name:      n.Name,
 			Namespace: n.Namespace,
 		},
 		Spec: n.Spec,
@@ -72,21 +72,21 @@ func (n *NetworkPolicySpecBuilder) AddIngress(protoc *v1.Protocol, port *int, po
 	}
 	if port != nil {
 		ports = []networkingv1.NetworkPolicyPort{
-				{
-					Port: &intstr.IntOrString{IntVal: int32(*port)},
-				},
+			{
+				Port: &intstr.IntOrString{IntVal: int32(*port)},
+			},
 		}
 	}
 	if portName != nil {
 		ports = []networkingv1.NetworkPolicyPort{
-				{
-					Port: &intstr.IntOrString{Type: intstr.String, StrVal: *portName},
-				},
+			{
+				Port: &intstr.IntOrString{Type: intstr.String, StrVal: *portName},
+			},
 		}
 	}
 	newRule := networkingv1.NetworkPolicyIngressRule{
-		From: policyPeer,
-		Ports:   ports,
+		From:  policyPeer,
+		Ports: ports,
 	}
 	n.Spec.Ingress = append(n.Spec.Ingress, newRule)
 	return n
@@ -110,12 +110,12 @@ func (n *NetworkPolicySpecBuilder) AddEgress(protoc *v1.Protocol, port *int, por
 	// For simplicity, we just reuse the Ingress code here.  The underlying data model for ingress/egress is identical
 	// With the exception of calling the rule `To` vs. `From`.
 	i := &NetworkPolicySpecBuilder{}
-	i.AddIngress(protoc,port, portName,cidr,podSelector,nsSelector, podSelectorMatchExp, nsSelectorMatchExp )
+	i.AddIngress(protoc, port, portName, cidr, podSelector, nsSelector, podSelectorMatchExp, nsSelectorMatchExp)
 	theRule := i.Get().Spec.Ingress[0]
 
 	n.Spec.Egress = append(n.Spec.Egress, networkingv1.NetworkPolicyEgressRule{
-		To: theRule.From,
-		Ports:   theRule.Ports,
+		To:    theRule.From,
+		Ports: theRule.Ports,
 	})
 
 	return n

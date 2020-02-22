@@ -182,7 +182,7 @@ func (r *Reachability) ExpectAllIngress(pod Pod, connected bool) {
 }
 
 // ExpectAllEgress defines that any traffic going out of the pod will be allowed/denied (true/false)
-func (r *Reachability)ExpectAllEgress(pod Pod, connected bool) {
+func (r *Reachability) ExpectAllEgress(pod Pod, connected bool) {
 	r.Expected.SetAllFrom(string(pod), connected)
 	if !connected {
 		log.Infof("Blacklisting all traffic *from* %s", pod)

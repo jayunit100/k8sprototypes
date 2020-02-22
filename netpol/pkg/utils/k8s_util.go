@@ -82,10 +82,10 @@ func (k *Kubernetes) Probe(ns1 string, pod1 string, ns2 string, pod2 string, por
 	toIP = toPod.Status.PodIP
 
 	// note some versions of wget want -s for spider mode, others, -S
-	exec := []string{"wget", "--spider", "--tries","1", "--timeout", "1", "http://" + toIP + ":" + fmt.Sprintf("%v", port)}
+	exec := []string{"wget", "--spider", "--tries", "1", "--timeout", "1", "http://" + toIP + ":" + fmt.Sprintf("%v", port)}
 	// HACK: inferring container name as c80, c81, etc, for simplicity.
-	containerName := fmt.Sprintf("c%v",port)
-	log.Info("Running: kubectl exec -t -i " + fromPod.Name + " -c " + containerName +" -n " + fromPod.Namespace + " -- " + strings.Join(exec, " "))
+	containerName := fmt.Sprintf("c%v", port)
+	log.Info("Running: kubectl exec -t -i " + fromPod.Name + " -c " + containerName + " -n " + fromPod.Namespace + " -- " + strings.Join(exec, " "))
 	out, out2, err := k.ExecuteRemoteCommand(fromPod, containerName, exec)
 	log.Info(".... Done")
 	if err != nil {
@@ -116,11 +116,11 @@ func (k *Kubernetes) ExecuteRemoteCommand(pod v1.Pod, cname string, command []st
 	request := k.ClientSet.CoreV1().RESTClient().Post().Namespace(pod.Namespace).Resource("pods").
 		Name(pod.Name).SubResource("exec").VersionedParams(&v1.PodExecOptions{
 		Container: cname,
-		Command: command,
-		Stdin:   false,
-		Stdout:  true,
-		Stderr:  true,
-		TTY:     true},
+		Command:   command,
+		Stdin:     false,
+		Stdout:    true,
+		Stderr:    true,
+		TTY:       true},
 		scheme.ParameterCodec)
 
 	exec, err := remotecommand.NewSPDYExecutor(restCfg, "POST", request.URL())
@@ -193,24 +193,24 @@ func (k *Kubernetes) CreateOrUpdateDeployment(ns, deploymentName string, replica
 						{
 							Name:            "c80",
 							Image:           "python:latest",
-							Command: []string{"python", "-m", "http.server", "80"},
+							Command:         []string{"python", "-m", "http.server", "80"},
 							SecurityContext: &v1.SecurityContext{},
 							Ports: []v1.ContainerPort{
 								v1.ContainerPort{
 									ContainerPort: 80,
-									Name: "serve-80",
+									Name:          "serve-80",
 								},
 							},
 						},
 						{
 							Name:            "c81",
 							Image:           "python:latest",
-							Command: []string{"python", "-m", "http.server", "81"},
+							Command:         []string{"python", "-m", "http.server", "81"},
 							SecurityContext: &v1.SecurityContext{},
 							Ports: []v1.ContainerPort{
 								v1.ContainerPort{
 									ContainerPort: 81,
-									Name: "serve-81",
+									Name:          "serve-81",
 								},
 							},
 						},
@@ -227,21 +227,18 @@ func (k *Kubernetes) CreateOrUpdateDeployment(ns, deploymentName string, replica
 	return d, err
 }
 
-
-
 func (k *Kubernetes) CleanNetworkPolicies(ns []string) {
-	for _,n := range ns {
-		l,_ := k.ClientSet.NetworkingV1().NetworkPolicies(n).List(metav1.ListOptions{})
-		for _, np := range l.Items{
-			log.Infof("deleting %v",np)
-			k.ClientSet.NetworkingV1().NetworkPolicies(np.Namespace).Delete(np.Name,nil)
+	for _, n := range ns {
+		l, _ := k.ClientSet.NetworkingV1().NetworkPolicies(n).List(metav1.ListOptions{})
+		for _, np := range l.Items {
+			log.Infof("deleting %v", np)
+			k.ClientSet.NetworkingV1().NetworkPolicies(np.Namespace).Delete(np.Name, nil)
 		}
 	}
 }
 
-
 func (k *Kubernetes) CreateOrUpdateNetworkPolicy(ns string, netpol *v1net.NetworkPolicy) (*v1net.NetworkPolicy, error) {
-	netpol.ObjectMeta.Namespace=ns
+	netpol.ObjectMeta.Namespace = ns
 	np, err := k.ClientSet.NetworkingV1().NetworkPolicies(ns).Update(netpol)
 	if err != nil {
 		np, err = k.ClientSet.NetworkingV1().NetworkPolicies(ns).Create(netpol)

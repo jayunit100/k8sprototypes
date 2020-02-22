@@ -52,22 +52,18 @@ func bootstrap(k8s *Kubernetes) {
 
 func validate(k8s *Kubernetes, reachability *Reachability, port int) {
 	// better as metrics, obviously, this is only for POC.
-	for _, n1 := range namespaces {
-		for _, p1 := range pods {
-			for _, n2 := range namespaces {
-				for _, p2 := range pods {
-					log.Infof("Probing: %s-%s, %s-%s", n1, p1, n2, p2)
-					connected, err := k8s.Probe(n1, p1, n2, p2, port)
-					log.Infof("... expected %v , got %v", reachability.Expected.Get(string(NewPod(n1, p1)), string(NewPod(n2, p2))), connected)
-					if err != nil {
-						log.Errorf("unable to make main observation on %s-%s -> %s-%s: %s", n1, p1, n2, p2, err)
-					}
-					reachability.Observe(NewPod(n1, p1), NewPod(n2, p2), connected)
-					if !connected {
-						if reachability.Expected.Get(string(NewPod(n1, p1)), string(NewPod(n2, p2))) {
-							log.Warnf("FAILED CONNECTION FOR WHITELISTED PODS %v %v -> %v %v !!!! ", n1, p1, n2, p2)
-						}
-					}
+	for _, pod1 := range allPods {
+		for _, pod2 := range allPods {
+			log.Infof("Probing: %s, %s", string(pod1), string(pod2))
+			connected, err := k8s.Probe(pod1.Namespace(), pod1.PodName(), pod2.Namespace(), pod2.PodName(), port)
+			log.Infof("... expected %v , got %v", reachability.Expected.Get(string(pod1), string(pod2)), connected)
+			if err != nil {
+				log.Errorf("unable to make main observation on %s -> %s: %s", string(pod1), string(pod2), err)
+			}
+			reachability.Observe(pod1, pod2, connected)
+			if !connected {
+				if reachability.Expected.Get(string(pod1), string(pod2)) {
+					log.Warnf("FAILED CONNECTION FOR WHITELISTED PODS %s -> %s !!!! ", string(pod1), string(pod2))
 				}
 			}
 		}

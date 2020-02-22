@@ -737,12 +737,6 @@ func TestPodLabelWhitelistingFromBToA(k8s *utils.Kubernetes) (*utils.ReachableMa
 	m.Expect("z", "b", "x", "a", true)
 	m.Expect("x", "a", "x", "a", true)
 
-	allPods := []utils.Pod{}
-	for _, podName := range pods {
-		for _, ns := range namespaces {
-			allPods = append(allPods, utils.NewPod(ns, podName))
-		}
-	}
 	reachability := utils.NewReachability(allPods)
 	reachability.ExpectAllIngress(utils.NewPod("x", "a"), false)
 	reachability.Expect(utils.NewPod("x", "b"), utils.NewPod("x", "a"), true)

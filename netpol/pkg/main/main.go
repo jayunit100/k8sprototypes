@@ -87,27 +87,27 @@ func main() {
 	//testWrapperPort80(k8s, TestDefaultDeny)
 	//testWrapperPort80(k8s, TestPodLabelWhitelistingFromBToA)
 
-	testWrapperPort80(k8s, testInnerNamespaceTraffic)
-	// testWrapperPort80(k8s, testEnforcePodAndNSSelector)
+	//testWrapperPort80(k8s, testInnerNamespaceTraffic)
+	//testWrapperPort80(k8s, testEnforcePodAndNSSelector)
 
-	// testWrapperPort80(k8s, testEnforcePodOrNSSelector)
+	//testWrapperPort80(k8s, testEnforcePodOrNSSelector)
 
-	// testPortsPolicies(k8s)
+	//testPortsPolicies(k8s)
 
 	// stacked port policies
-	// testWrapperStacked(k8s, testPortsPoliciesStackedOrUpdated, true)
+	//testWrapperStacked(k8s, testPortsPoliciesStackedOrUpdated, true)
 	// updated port policies
-	// testWrapperStacked(k8s, testPortsPoliciesStackedOrUpdated, false)
+	//testWrapperStacked(k8s, testPortsPoliciesStackedOrUpdated, false)
 
-	// testWrapperPort80(k8s, testAllowAll)
+	//testWrapperPort80(k8s, testAllowAll)
 
-	// testWrapperPort80(k8s, testNamedPort)
+	//testWrapperPort80(k8s, testNamedPort)
 
-	// testWrapperPort80(k8s, testNamedPortWNamespace)
+	//testWrapperPort80(k8s, testNamedPortWNamespace)
 
-	// testWrapperPort80(k8s, testEgressOnNamedPort)
+	//testWrapperPort80(k8s, testEgressOnNamedPort)
 
-	// testWrapperStacked(k8s, TestAllowAllPrecedenceIngress,true )
+	testWrapperStacked(k8s, TestAllowAllPrecedenceIngress,true )
 
 	/**
 		TestEgressAndIngressIntegration
@@ -376,6 +376,8 @@ func TestAllowAllPrecedenceIngress(k8s *Kubernetes, stackedOrUpdated bool) []*St
 	m1.ExpectAllIngress("x", "a", false)
 	m1.Expect("x", "a", "x", "a", true)
 	reachability1 := NewReachability(allPods)
+	reachability1.ExpectAllIngress(Pod("x/a"), false)
+	reachability1.Expect(Pod("x/a"), Pod("x/a"), true)
 
 	builder2 := &NetworkPolicySpecBuilder{}
 	// by preserving the same name, this policy will also serve to test the 'updated policy' scenario.
@@ -429,11 +431,15 @@ func testNamedPortWNamespace(k8s *Kubernetes) (*ReachableMatrix, *Reachability) 
 
 	k8s.CreateOrUpdateNetworkPolicy("x", builder.Get())
 	m := NewReachableMatrix(true, pods, namespaces)
-	reachability := NewReachability(allPods)
 	m.ExpectAllIngress("x", "a", false)
 	m.Expect("x", "a", "x", "a", true)
 	m.Expect("x", "b", "x", "a", true)
 	m.Expect("x", "c", "x", "a", true)
+	reachability := NewReachability(allPods)
+	reachability.ExpectAllIngress(Pod("x/a"), false)
+	reachability.Expect(Pod("x/a"), Pod("x/a"), true)
+	reachability.Expect(Pod("x/b"), Pod("x/a"), true)
+	reachability.Expect(Pod("x/c"), Pod("x/a"), true)
 
 	// TODO, add validation that 81 doesn't work.
 	return m, reachability
@@ -471,11 +477,14 @@ func testAllowAll(k8s *Kubernetes) (*ReachableMatrix, *Reachability) {
 // 1) should enforce policy based on Ports [Feature:NetworkPolicy] (disallow 80) (stacked == false)
 // 2) should enforce updated policy (stacked == true)
 func testPortsPoliciesStackedOrUpdated(k8s *Kubernetes, stackInsteadOfUpdate bool) []*Stack {
-	blocked := func() *ReachableMatrix {
+	blocked := func() (*ReachableMatrix, *Reachability) {
 		x := NewReachableMatrix(true, pods, namespaces)
 		x.ExpectAllIngress("x", "a", false)
 		x.Expect("x", "a", "x", "a", true)
-		return x
+		r := NewReachability(allPods)
+		r.ExpectAllIngress(Pod("x/a"), false)
+		r.Expect(Pod("x/a"), Pod("x/a"), true)
+		return x, r
 	}
 	unblocked := func() *ReachableMatrix {
 		x := NewReachableMatrix(true, pods, namespaces)
@@ -510,19 +519,22 @@ func testPortsPoliciesStackedOrUpdated(k8s *Kubernetes, stackInsteadOfUpdate boo
 	// The second policy was on port 81, which was whitelisted.
 	// At this point, if we stacked, make sure 80 is still unblocked
 	// Whereas if we DIDNT stack, make sure 80 is blocked.
+	m1, r1 := blocked()
+	m3, r3 := blocked()
 	s3 := &Stack{
-		blocked(),
-		NewReachability(allPods),
+		m3,
+		r3,
 		nil, // nil policy wont be created, this is just a 2nd validation, this time, of port 81.
 		80,
 	}
 	if stackInsteadOfUpdate {
 		s3.ReachableMatrix = unblocked()
+		s3.Reachability = NewReachability(allPods)
 	}
 	return []*Stack{
 		&Stack{
-			blocked(), // 81 blocked
-			NewReachability(allPods),
+			m1, // 81 blocked
+			r1,
 			policy1,
 			81,
 		},
@@ -550,17 +562,23 @@ func testPortsPolicies(k8s *Kubernetes) {
 	m80 := NewReachableMatrix(true, pods, namespaces)
 	m80.ExpectAllIngress("x", "a", false)
 	m80.Expect("x", "a", "x", "a", true)
-	validate(k8s, m80, nil, 80)
+	r80 := NewReachability(allPods)
+	r80.ExpectAllIngress(Pod("x/a"), false)
+	r80.Expect(Pod("x/a"), Pod("x/a"), true)
+	validate(k8s, m80, r80, 80)
 	s, p := m80.Summary()
 	fmt.Println(s, p)
+	r80.PrintSummary(true, true, true)
 
 	fmt.Println("***** port 81 *****")
 	m81 := NewReachableMatrix(true, pods, namespaces)
 	m81.ExpectAllIngress("x", "a", true)
-	validate(k8s, m81, nil, 81)
+	r81 := NewReachability(allPods)
+	r81.ExpectAllIngress(Pod("x/a"), true)
+	validate(k8s, m81, r81, 81)
 	s, p = m81.Summary()
 	fmt.Println(s, p)
-
+	r81.PrintSummary(true, true, true)
 }
 
 // should enforce policy to allow traffic only from a pod in a different namespace based on PodSelector and NamespaceSelector [Feature:NetworkPolicy]
@@ -573,10 +591,13 @@ func testEnforcePodAndNSSelector(k8s *Kubernetes) (*ReachableMatrix, *Reachabili
 
 	k8s.CreateOrUpdateNetworkPolicy("x", builder.Get())
 	m := NewReachableMatrix(true, pods, namespaces)
-	reachability := NewReachability(allPods)
 	m.ExpectAllIngress("x", "a", false)
 	m.Expect("y", "b", "x", "a", true)
 	m.Expect("x", "a", "x", "a", true)
+	reachability := NewReachability(allPods)
+	reachability.ExpectAllIngress(NewPod("x", "a"), false)
+	reachability.Expect(NewPod("y", "b"), NewPod("x", "a"), true)
+	reachability.Expect(NewPod("x", "a"), NewPod("x", "a"), true)
 
 	return m, reachability
 }
@@ -591,7 +612,6 @@ func testEnforcePodOrNSSelector(k8s *Kubernetes) (*ReachableMatrix, *Reachabilit
 
 	k8s.CreateOrUpdateNetworkPolicy("x", builder.Get())
 	m := NewReachableMatrix(true, pods, namespaces)
-	reachability := NewReachability(allPods)
 	m.ExpectAllIngress("x", "a", false)
 	m.Expect("y", "a", "x", "a", true)
 	m.Expect("y", "b", "x", "a", true)
@@ -600,6 +620,14 @@ func testEnforcePodOrNSSelector(k8s *Kubernetes) (*ReachableMatrix, *Reachabilit
 	m.Expect("y", "b", "x", "a", true)
 	//m.Expect("z", "b", "x", "a", true)
 	m.Expect("x", "a", "x", "a", true)
+	reachability := NewReachability(allPods)
+	reachability.ExpectAllIngress(Pod("x/a"), false)
+	reachability.Expect(Pod("y/a"), Pod("x/a"), true)
+	reachability.Expect(Pod("y/b"), Pod("x/a"), true)
+	reachability.Expect(Pod("y/c"), Pod("x/a"), true)
+	reachability.Expect(Pod("x/b"), Pod("x/a"), true)
+	reachability.Expect(Pod("y/b"), Pod("x/a"), true)
+	reachability.Expect(Pod("x/a"), Pod("x/a"), true)
 
 	return m, reachability
 }

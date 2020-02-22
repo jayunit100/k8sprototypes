@@ -86,16 +86,24 @@ func main() {
 	// testWrapperPort80(testEnforcePodOrNSSelector)
 
 	// testPortsPolicies(k8s)
-		// This is a stacked test b/c of the true arg.
-		testWrapperStacked(testPortsPoliciesStacked, true)
+
+	// stacked port policies
+	// testWrapperStacked(testPortsPoliciesStackedOrUpdated, true)
+	// updated port policies
+	// testWrapperStacked(testPortsPoliciesStackedOrUpdated, false)
+
+	// testWrapperPort80(testAllowAll)
+
+	testWrapperPort80(testNamedPort)
+	/**
+	testWrapperPort80(testNamedPortWNamespace)
+	testWrapperPort80(testEgressOnNamedPort)
+	testWrapperPort80(TestAllowAllPrecedenceIngress)
+	**/
 
 	/**
-		testWrapperPort80(testAllowAll)
-		testWrapperPort80(testNamedPort)
-		// This is an update test b/c of the  false arg.
-		testWrapperStacked(testPortsPoliciesStacked, false)
-	 */
-	/**
+		// Work on these monday...
+		TestEgressAndIngressIntegration
 		TestMultipleUpdates()
 	**/
 }
@@ -431,7 +439,7 @@ func TestEgressAndIngressIntegration(k8s *utils.Kubernetes, stacked bool) []*Sta
 }
 
 // should enforce multiple ingress policies with ingress allow-all policy taking precedence [Feature:NetworkPolicy]"
-func TestAllowAllPrecedenceIngress(k8s *utils.Kubernetes, stacked bool) []*Stack {
+func TestAllowAllPrecedenceIngress(k8s *utils.Kubernetes ) []*Stack {
 	builder := &utils.NetworkPolicySpecBuilder{}
 	builder = builder.SetName("x", "deny-all").SetPodSelector(map[string]string{"pod": "a"})
 	builder.SetTypeIngress()
@@ -531,7 +539,7 @@ func testNamedPort(k8s *utils.Kubernetes) (*utils.ReachableMatrix, *utils.Reacha
 	namedPorts := "serve-80"
 	builder := &utils.NetworkPolicySpecBuilder{}
 	builder = builder.SetName("x", "allow-client-a-via-named-port-ingress-rule").SetPodSelector(map[string]string{"pod": "a"})
-	builder.SetTypeIngress().AddIngress(nil, nil, &namedPorts, nil, nil, nil, nil, nil)
+	builder.SetTypeIngress().AddIngress(nil, &p80, &namedPorts, nil, nil, nil, nil, nil)
 
 	k8s.CreateOrUpdateNetworkPolicy("x", builder.Get())
 	m := &utils.ReachableMatrix{
@@ -565,7 +573,7 @@ func testAllowAll(k8s *utils.Kubernetes) (*utils.ReachableMatrix, *utils.Reachab
 // This covers two test cases: stacked policy's and updated policies.
 // 1) should enforce policy based on Ports [Feature:NetworkPolicy] (disallow 80) (stacked == false)
 // 2) should enforce updated policy (stacked == true)
-func testPortsPoliciesStacked(k8s *utils.Kubernetes, stackInsteadOfUpdate bool) []*Stack {
+func testPortsPoliciesStackedOrUpdated(k8s *utils.Kubernetes, stackInsteadOfUpdate bool) []*Stack {
 	blocked := func() *utils.ReachableMatrix {
 		x := &utils.ReachableMatrix{
 			DefaultExpect: true,
@@ -593,10 +601,7 @@ func testPortsPoliciesStacked(k8s *utils.Kubernetes, stackInsteadOfUpdate bool) 
 	builder = builder.SetName("x", policyName).SetPodSelector(map[string]string{"pod": "a"})
 	builder.SetTypeIngress()
 	builder.AddIngress(nil, &p80, nil, nil, nil, nil, nil, nil)
-
 	policy1 := builder.Get()
-
-	reachability1 := utils.NewReachability(listAllPods())
 
 	/***
 	    Now, whitelist port 81, and verify 81 it is open.
@@ -610,10 +615,7 @@ func testPortsPoliciesStacked(k8s *utils.Kubernetes, stackInsteadOfUpdate bool) 
 	builder2 = builder2.SetName("x", policyName).SetPodSelector(map[string]string{"pod": "a"})
 	builder2.SetTypeIngress()
 	builder2.AddIngress(nil, &p81, nil, nil, nil, nil, nil, nil)
-
-
 	policy2 := builder2.Get()
-	reachability2 := utils.NewReachability(listAllPods())
 
 	// The first policy was on port 80, which was whitelisted, while 81 wasn't.
 	// The second policy was on port 81, which was whitelisted.
@@ -626,23 +628,18 @@ func testPortsPoliciesStacked(k8s *utils.Kubernetes, stackInsteadOfUpdate bool) 
 		80,
 	}
 	if stackInsteadOfUpdate {
-		s3 = &Stack{
-			unblocked(),
-			utils.NewReachability(listAllPods()),
-			nil, // nil policy wont be created, this is just a 2nd validation, this time, of port 81.
-			80,
-		}
+		s3.ReachableMatrix = unblocked()
 	}
 	return []*Stack{
 		&Stack{
 			blocked(), // 81 blocked
-			reachability1,
+			utils.NewReachability(listAllPods()),
 			policy1,
 			81,
 		},
 		&Stack{
 			unblocked(), // 81 open now
-			reachability2,
+			utils.NewReachability(listAllPods()),
 			policy2,
 			81,
 		},

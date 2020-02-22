@@ -78,7 +78,7 @@ func main() {
 	k8s.CleanNetworkPolicies([]string{"x","y","z"})
 
 	// testWrapperPort80(TestDefaultDeny)
-	// testWrapperPort80(TestPodLabelWhitelistingFromBToA)
+	  testWrapperPort80(TestPodLabelWhitelistingFromBToA)
 
 	// testWrapperPort80(testInnerNamespaceTraffic)
 	// testWrapperPort80(testEnforcePodAndNSSelector)
@@ -101,7 +101,7 @@ func main() {
 
 	// testWrapperPort80(testEgressOnNamedPort)
 
-	testWrapperStacked(TestAllowAllPrecedenceIngress,true )
+	//testWrapperStacked(TestAllowAllPrecedenceIngress,true )
 
 	/**
 		TestEgressAndIngressIntegration

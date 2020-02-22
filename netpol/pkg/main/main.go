@@ -150,11 +150,7 @@ func testWrapperStacked(theTest func(k8s *utils.Kubernetes, isStacked bool) (sta
 		summary1, pass1 := matrix.Summary()
 		fmt.Println(summary1, pass1)
 
-		right, wrong, comparison := reachability.Summary()
-		fmt.Printf("reachability: correct:%v, incorrect:%v, result=%t\n\n", right, wrong, wrong == 0)
-		fmt.Printf("expected:\n\n%s\n\n\n", reachability.Expected.PrettyPrint())
-		fmt.Printf("observed:\n\n%s\n\n\n", reachability.Observed.PrettyPrint())
-		fmt.Printf("comparison:\n\n%s\n\n\n", comparison.PrettyPrint())
+		reachability.PrintSummary(true, true, true)
 	}
 }
 
@@ -176,11 +172,7 @@ func testWrapperPort8081(theTest func(k8s *utils.Kubernetes) (*utils.ReachableMa
 	fmt.Println(summary2, pass2)
 
 	for _, reachability := range []*utils.Reachability{reachability80, reachability81} {
-		right, wrong, comparison := reachability.Summary()
-		fmt.Printf("reachability: correct:%v, incorrect:%v, result=%t\n\n", right, wrong, wrong == 0)
-		fmt.Printf("expected:\n\n%s\n\n\n", reachability.Expected.PrettyPrint())
-		fmt.Printf("observed:\n\n%s\n\n\n", reachability.Observed.PrettyPrint())
-		fmt.Printf("comparison:\n\n%s\n\n\n", comparison.PrettyPrint())
+		reachability.PrintSummary(true, true, true)
 	}
 }
 
@@ -197,11 +189,7 @@ func testWrapperPort80(theTest func(k8s *utils.Kubernetes) (*utils.ReachableMatr
 	summary, pass := matrix.Summary()
 	fmt.Println(summary, pass)
 
-	right, wrong, comparison := reachability.Summary()
-	fmt.Printf("reachability: correct:%v, incorrect:%v, result=%t\n\n", right, wrong, wrong == 0)
-	fmt.Printf("expected:\n\n%s\n\n\n", reachability.Expected.PrettyPrint())
-	fmt.Printf("observed:\n\n%s\n\n\n", reachability.Observed.PrettyPrint())
-	fmt.Printf("comparison:\n\n%s\n\n\n", comparison.PrettyPrint())
+	reachability.PrintSummary(true, true, true)
 }
 
 /**
@@ -238,11 +226,8 @@ func TestMultipleUpdates() {
 		validate(k8s, m1, reachability1, 80)
 		summary1, pass1 := m1.Summary()
 		fmt.Println(summary1, pass1)
-		right, wrong, comparison := reachability1.Summary()
-		fmt.Printf("reachability: correct:%v, incorrect:%v, result=%t\n\n", right, wrong, wrong == 0)
-		fmt.Printf("expected:\n\n%s\n\n\n", reachability1.Expected.PrettyPrint())
-		fmt.Printf("observed:\n\n%s\n\n\n", reachability1.Observed.PrettyPrint())
-		fmt.Printf("comparison:\n\n%s\n\n\n", comparison.PrettyPrint())
+
+		reachability1.PrintSummary(true, true, true)
 	}()
 
 	func() {
@@ -256,11 +241,8 @@ func TestMultipleUpdates() {
 		validate(k8s, m1, reachability1, 80)
 		summary1, pass1 := m1.Summary()
 		fmt.Println(summary1, pass1)
-		right, wrong, comparison := reachability1.Summary()
-		fmt.Printf("reachability: correct:%v, incorrect:%v, result=%t\n\n", right, wrong, wrong == 0)
-		fmt.Printf("expected:\n\n%s\n\n\n", reachability1.Expected.PrettyPrint())
-		fmt.Printf("observed:\n\n%s\n\n\n", reachability1.Observed.PrettyPrint())
-		fmt.Printf("comparison:\n\n%s\n\n\n", comparison.PrettyPrint())
+
+		reachability1.PrintSummary(true, true, true)
 	}()
 
 	func() {
@@ -274,11 +256,8 @@ func TestMultipleUpdates() {
 		validate(k8s, m1, reachability1, 80)
 		summary1, pass1 := m1.Summary()
 		fmt.Println(summary1, pass1)
-		right, wrong, comparison := reachability1.Summary()
-		fmt.Printf("reachability: correct:%v, incorrect:%v, result=%t\n\n", right, wrong, wrong == 0)
-		fmt.Printf("expected:\n\n%s\n\n\n", reachability1.Expected.PrettyPrint())
-		fmt.Printf("observed:\n\n%s\n\n\n", reachability1.Observed.PrettyPrint())
-		fmt.Printf("comparison:\n\n%s\n\n\n", comparison.PrettyPrint())
+
+		reachability1.PrintSummary(true, true, true)
 	}()
 
 	func() {
@@ -301,11 +280,8 @@ func TestMultipleUpdates() {
 		validate(k8s, m1, reachability1, 80)
 		summary1, pass1 := m1.Summary()
 		fmt.Println(summary1, pass1)
-		right, wrong, comparison := reachability1.Summary()
-		fmt.Printf("reachability: correct:%v, incorrect:%v, result=%t\n\n", right, wrong, wrong == 0)
-		fmt.Printf("expected:\n\n%s\n\n\n", reachability1.Expected.PrettyPrint())
-		fmt.Printf("observed:\n\n%s\n\n\n", reachability1.Observed.PrettyPrint())
-		fmt.Printf("comparison:\n\n%s\n\n\n", comparison.PrettyPrint())
+
+		reachability1.PrintSummary(true, true, true)
 	}()
 
 	// NOTE THIS TEST IS COPIED FROM THE ABOVE TEST, only delta being that we
@@ -328,11 +304,8 @@ func TestMultipleUpdates() {
 		validate(k8s, m1, reachability1, 80)
 		summary1, pass1 := m1.Summary()
 		fmt.Println(summary1, pass1)
-		right, wrong, comparison := reachability1.Summary()
-		fmt.Printf("reachability: correct:%v, incorrect:%v, result=%t\n\n", right, wrong, wrong == 0)
-		fmt.Printf("expected:\n\n%s\n\n\n", reachability1.Expected.PrettyPrint())
-		fmt.Printf("observed:\n\n%s\n\n\n", reachability1.Observed.PrettyPrint())
-		fmt.Printf("comparison:\n\n%s\n\n\n", comparison.PrettyPrint())
+
+		reachability1.PrintSummary(true, true, true)
 	}()
 
 }

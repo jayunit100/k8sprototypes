@@ -154,14 +154,13 @@ type Reachability struct {
 	podSet   map[Pod]bool
 }
 
-func NewReachability(pods []Pod) *Reachability {
+func NewReachability(pods []Pod, defaultExpectation bool) *Reachability {
 	items := []string{}
 	for _, pod := range pods {
 		items = append(items, string(pod))
 	}
-	trueVar := true
 	r := &Reachability{
-		Expected: NewTruthTable(items, &trueVar),
+		Expected: NewTruthTable(items, &defaultExpectation),
 		Observed: NewTruthTable(items, nil),
 		Pods:     pods,
 		podSet:   nil, // TODO remove ?

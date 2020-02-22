@@ -84,34 +84,34 @@ func main() {
 	}
 	k8s.CleanNetworkPolicies(namespaces)
 
-	// testWrapperPort80(TestDefaultDeny)
-	testWrapperPort80(TestPodLabelWhitelistingFromBToA)
+	// testWrapperPort80(k8s, TestDefaultDeny)
+	testWrapperPort80(k8s, TestPodLabelWhitelistingFromBToA)
 
-	// testWrapperPort80(testInnerNamespaceTraffic)
-	// testWrapperPort80(testEnforcePodAndNSSelector)
+	// testWrapperPort80(k8s, testInnerNamespaceTraffic)
+	// testWrapperPort80(k8s, testEnforcePodAndNSSelector)
 
-	// testWrapperPort80(testEnforcePodOrNSSelector)
+	// testWrapperPort80(k8s, testEnforcePodOrNSSelector)
 
 	// testPortsPolicies(k8s)
 
 	// stacked port policies
-	// testWrapperStacked(testPortsPoliciesStackedOrUpdated, true)
+	// testWrapperStacked(k8s, testPortsPoliciesStackedOrUpdated, true)
 	// updated port policies
-	// testWrapperStacked(testPortsPoliciesStackedOrUpdated, false)
+	// testWrapperStacked(k8s, testPortsPoliciesStackedOrUpdated, false)
 
-	// testWrapperPort80(testAllowAll)
+	// testWrapperPort80(k8s, testAllowAll)
 
-	// testWrapperPort80(testNamedPort)
+	// testWrapperPort80(k8s, testNamedPort)
 
-	// testWrapperPort80(testNamedPortWNamespace)
+	// testWrapperPort80(k8s, testNamedPortWNamespace)
 
-	// testWrapperPort80(testEgressOnNamedPort)
+	// testWrapperPort80(k8s, testEgressOnNamedPort)
 
-	//testWrapperStacked(TestAllowAllPrecedenceIngress,true )
+	// testWrapperStacked(k8s, TestAllowAllPrecedenceIngress,true )
 
 	/**
 		TestEgressAndIngressIntegration
-		TestMultipleUpdates()
+		TestMultipleUpdates(k8s)
 	**/
 }
 
@@ -125,11 +125,7 @@ type Stack struct {
 
 // catch all for any type of test, where we use stacks.  these are validated one at a time.
 // probably use this for *all* tests when we port to upstream.
-func testWrapperStacked(theTest func(k8s *utils.Kubernetes, isStacked bool) (stack []*Stack), stacked bool) {
-	k8s, err := utils.NewKubernetes()
-	if err != nil {
-		panic(err)
-	}
+func testWrapperStacked(k8s *utils.Kubernetes, theTest func(k8s *utils.Kubernetes, isStacked bool) (stack []*Stack), stacked bool) {
 	bootstrap(k8s)
 
 	stack := theTest(k8s, stacked)
@@ -152,11 +148,7 @@ func testWrapperStacked(theTest func(k8s *utils.Kubernetes, isStacked bool) (sta
 }
 
 // For dual port tests... confirms both ports 80 and 81
-func testWrapperPort8081(theTest func(k8s *utils.Kubernetes) (*utils.ReachableMatrix, *utils.Reachability, *utils.ReachableMatrix, *utils.Reachability)) {
-	k8s, err := utils.NewKubernetes()
-	if err != nil {
-		panic(err)
-	}
+func testWrapperPort8081(k8s *utils.Kubernetes, theTest func(k8s *utils.Kubernetes) (*utils.ReachableMatrix, *utils.Reachability, *utils.ReachableMatrix, *utils.Reachability)) {
 	bootstrap(k8s)
 	matrix80, reachability80, matrix81, reachability81 := theTest(k8s)
 	validate(k8s, matrix80, reachability80, 80)
@@ -174,11 +166,7 @@ func testWrapperPort8081(theTest func(k8s *utils.Kubernetes) (*utils.ReachableMa
 }
 
 // simple type of test, majority of tests use this, just port 80
-func testWrapperPort80(theTest func(k8s *utils.Kubernetes) (*utils.ReachableMatrix, *utils.Reachability)) {
-	k8s, err := utils.NewKubernetes()
-	if err != nil {
-		panic(err)
-	}
+func testWrapperPort80(k8s *utils.Kubernetes, theTest func(k8s *utils.Kubernetes) (*utils.ReachableMatrix, *utils.Reachability)) {
 	bootstrap(k8s)
 	matrix, reachability := theTest(k8s)
 	validate(k8s, matrix, reachability, 80)
@@ -202,11 +190,7 @@ CIDR tests.... todo
 	ginkgo.It("should deny ingress access to updated pod [Feature:NetworkPolicy]", func() {
 	ginkgo.It("should stop enforcing policies after they are deleted [Feature:NetworkPolicy]", func() {
 **/
-func TestMultipleUpdates() {
-	k8s, err := utils.NewKubernetes()
-	if err != nil {
-		panic(err)
-	}
+func TestMultipleUpdates(k8s *utils.Kubernetes) {
 	bootstrap(k8s)
 
 	func() {

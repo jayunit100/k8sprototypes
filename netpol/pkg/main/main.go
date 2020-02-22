@@ -92,9 +92,9 @@ func main() {
 	//testPortsPolicies(k8s)
 
 	// stacked port policies
-	//testWrapperStacked(k8s, testPortsPoliciesStackedOrUpdated, true)
+	testWrapperStacked(k8s, testPortsPoliciesStackedOrUpdated, true)
 	// updated port policies
-	testWrapperStacked(k8s, testPortsPoliciesStackedOrUpdated, false)
+	//testWrapperStacked(k8s, testPortsPoliciesStackedOrUpdated, false)
 
 	//testWrapperPort80(k8s, testAllowAll)
 
@@ -121,7 +121,7 @@ type Stack struct {
 
 // catch all for any type of test, where we use stacks.  these are validated one at a time.
 // probably use this for *all* tests when we port to upstream.
-func testWrapperStacked(k8s *Kubernetes, theTest func(k8s *Kubernetes, isStacked bool) (stack []*Stack), stacked bool) {
+func testWrapperStacked(k8s *Kubernetes, theTest func(*Kubernetes, bool) (stack []*Stack), stacked bool) {
 	bootstrap(k8s)
 
 	stack := theTest(k8s, stacked)
@@ -463,19 +463,13 @@ func testPortsPoliciesStackedOrUpdated(k8s *Kubernetes, stackInsteadOfUpdate boo
 	// The second policy was on port 81, which was whitelisted.
 	// At this point, if we stacked, make sure 80 is still unblocked
 	// Whereas if we DIDNT stack, make sure 80 is blocked.
-	r1 := blocked()
 	r3 := blocked()
-	s3 := &Stack{
-		r3,
-		nil, // nil policy wont be created, this is just a 2nd validation, this time, of port 81.
-		80,
-	}
 	if stackInsteadOfUpdate {
-		s3.Reachability = NewReachability(allPods, true)
+		r3 = NewReachability(allPods, true)
 	}
 	return []*Stack{
 		&Stack{
-			r1, // 81 blocked
+			blocked(), // 81 blocked
 			policy1,
 			81,
 		},
@@ -484,7 +478,11 @@ func testPortsPoliciesStackedOrUpdated(k8s *Kubernetes, stackInsteadOfUpdate boo
 			policy2,
 			81,
 		},
-		s3,
+		&Stack{
+			r3,
+			nil, // nil policy wont be created, this is just a 2nd validation, this time, of port 81.
+			80,
+		},
 	}
 }
 

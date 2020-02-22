@@ -84,10 +84,10 @@ func main() {
 	}
 	k8s.CleanNetworkPolicies(namespaces)
 
-	// testWrapperPort80(k8s, TestDefaultDeny)
-	testWrapperPort80(k8s, TestPodLabelWhitelistingFromBToA)
+	//testWrapperPort80(k8s, TestDefaultDeny)
+	//testWrapperPort80(k8s, TestPodLabelWhitelistingFromBToA)
 
-	// testWrapperPort80(k8s, testInnerNamespaceTraffic)
+	testWrapperPort80(k8s, testInnerNamespaceTraffic)
 	// testWrapperPort80(k8s, testEnforcePodAndNSSelector)
 
 	// testWrapperPort80(k8s, testEnforcePodOrNSSelector)
@@ -673,10 +673,13 @@ func testInnerNamespaceTraffic(k8s *utils.Kubernetes) (*utils.ReachableMatrix, *
 	builder.SetTypeIngress().AddIngress(nil, &p80, nil, nil, map[string]string{"pod": "b"}, nil, nil, nil)
 	k8s.CreateOrUpdateNetworkPolicy("x", builder.Get())
 	m := utils.NewReachableMatrix(true, pods, namespaces)
-	reachability := utils.NewReachability(allPods)
 	m.ExpectAllIngress("x", "a", false)
 	m.Expect("x", "b", "x", "a", true)
 	m.Expect("x", "a", "x", "a", true)
+	reachability := utils.NewReachability(allPods)
+	reachability.ExpectAllIngress(utils.NewPod("x", "a"), false)
+	reachability.Expect(utils.NewPod("x", "b"), utils.NewPod("x", "a"), true)
+	reachability.Expect(utils.NewPod("x", "a"), utils.NewPod("x", "a"), true)
 
 	return m, reachability
 }
@@ -697,6 +700,12 @@ func TestDefaultDeny(k8s *utils.Kubernetes) (*utils.ReachableMatrix, *utils.Reac
 
 	// No egress rules because we're deny all !
 	reachability := utils.NewReachability(allPods)
+	reachability.ExpectAllIngress(utils.NewPod("x", "a"), false)
+	reachability.ExpectAllIngress(utils.NewPod("x", "b"), false)
+	reachability.ExpectAllIngress(utils.NewPod("x", "c"), false)
+	reachability.Expect(utils.NewPod("x", "a"), utils.NewPod("x", "a"), true)
+	reachability.Expect(utils.NewPod("x", "b"), utils.NewPod("x", "b"), true)
+	reachability.Expect(utils.NewPod("x", "c"), utils.NewPod("x", "c"), true)
 
 	return m, reachability
 }

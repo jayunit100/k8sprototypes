@@ -107,20 +107,17 @@ func (n *NetworkPolicySpecBuilder) WithEgressDNS() *NetworkPolicySpecBuilder {
 }
 
 func (n *NetworkPolicySpecBuilder) AddEgress(protoc *v1.Protocol, port *int, portName *string, cidr *string, podSelector map[string]string, nsSelector map[string]string, podSelectorMatchExp *[]metav1.LabelSelectorRequirement, nsSelectorMatchExp *[]metav1.LabelSelectorRequirement) *NetworkPolicySpecBuilder {
-	r := networkingv1.NetworkPolicyEgressRule{
-		To: []networkingv1.NetworkPolicyPeer{{
-			PodSelector: &metav1.LabelSelector{
-				MatchLabels: podSelector,
-			},
-			NamespaceSelector: &metav1.LabelSelector{
-				MatchLabels: nsSelector,
-			},
-		}},
-	}
-	if n.Spec.Egress == nil {
-		n.Spec.Egress = []networkingv1.NetworkPolicyEgressRule{}
-	}
-	n.Spec.Egress = append(n.Spec.Egress, r)
+	// For simplicity, we just reuse the Ingress code here.  The underlying data model for ingress/egress is identical
+	// With the exception of calling the rule `To` vs. `From`.
+	i := &NetworkPolicySpecBuilder{}
+	i.AddIngress(protoc,port, portName,cidr,podSelector,nsSelector, podSelectorMatchExp, nsSelectorMatchExp )
+	theRule := i.Get().Spec.Ingress[0]
+
+	n.Spec.Egress = append(n.Spec.Egress, networkingv1.NetworkPolicyEgressRule{
+		To: theRule.From,
+		Ports:   theRule.Ports,
+	})
+
 	return n
 }
 

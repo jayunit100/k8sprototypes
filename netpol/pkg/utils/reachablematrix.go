@@ -25,7 +25,7 @@ func addToMap(m map[string]map[string]bool, ns string, pod string, ns2 string, p
 	m[ns+"_"+pod][ns2+"_"+pod2] = connectionTime
 }
 
-func (r *ReachableMatrix) init() {
+func (r *ReachableMatrix) Init() {
 	if r.Expected != nil {
 		return
 	}
@@ -61,7 +61,7 @@ func (r *ReachableMatrix) HasNS(n, pod string) bool {
 }
 
 func (r *ReachableMatrix) Expect(ns string, pod string, ns2 string, pod2 string, conn bool) {
-	r.init()
+	r.Init()
 	if r.HasNS(ns, pod) && r.HasNS(ns2, pod2) {
 		addToMap(r.Expected, ns, pod, ns2, pod2, conn)
 	} else {
@@ -71,7 +71,7 @@ func (r *ReachableMatrix) Expect(ns string, pod string, ns2 string, pod2 string,
 
 // ExpectAllIngress defines that any traffic going into the pod in 'ns' will be allowed/denied (true/false)
 func (r *ReachableMatrix) ExpectAllIngress(ns, pod string, connected bool) {
-	r.init()
+	r.Init()
 
 	for _, nsFrom := range r.Namespaces {
 		for _, podFrom := range r.Pods {
@@ -84,7 +84,7 @@ func (r *ReachableMatrix) ExpectAllIngress(ns, pod string, connected bool) {
 }
 
 func (r *ReachableMatrix) Observe(ns string, pod string, ns2 string, pod2 string, conn bool) {
-	r.init()
+	r.Init()
 	if r.HasNS(ns, pod) && r.HasNS(ns2, pod2) {
 		addToMap(r.Observed, ns, pod, ns2, pod2, conn)
 	} else {
@@ -93,12 +93,12 @@ func (r *ReachableMatrix) Observe(ns string, pod string, ns2 string, pod2 string
 }
 
 func (r *ReachableMatrix) GetExpectedObserved(ns string, pod string, ns2 string, pod2 string) (bool, bool) {
-	r.init()
+	r.Init()
 	return r.Expected[ns+"_"+pod][ns2+"_"+pod2], r.Observed[ns+"_"+pod][ns2+"_"+pod2]
 }
 
 func (r *ReachableMatrix) LengthExpectedObserved() (int, int) {
-	r.init()
+	r.Init()
 	return len(r.Expected), len(r.Observed)
 }
 

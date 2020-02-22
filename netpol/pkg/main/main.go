@@ -74,7 +74,10 @@ func validate(k8s *utils.Kubernetes, m *utils.ReachableMatrix, reachability *uti
 }
 
 func main() {
-	k8s, _ := utils.NewKubernetes()
+	k8s, err := utils.NewKubernetes()
+	if err != nil {
+		panic(err)
+	}
 	k8s.CleanNetworkPolicies([]string{"x","y","z"})
 
 	// testWrapperPort80(TestDefaultDeny)
@@ -233,11 +236,7 @@ func TestMultipleUpdates() {
 		builder.AddIngress(nil, &p80, nil, nil, map[string]string{"pod-updated": "true", "pod": "b"}, nil, nil, nil)
 
 		k8s.CreateOrUpdateNetworkPolicy("deny-all-to-x", builder.Get())
-		m1 := &utils.ReachableMatrix{
-			DefaultExpect: true,
-			Pods:          pods,
-			Namespaces:    namespaces,
-		}
+		m1 := utils.NewReachableMatrix(true, pods, namespaces)
 		reachability1 := utils.NewReachability(listAllPods())
 		m1.ExpectAllIngress("x", "a", false)
 		validate(k8s, m1, reachability1, 80)
@@ -252,11 +251,7 @@ func TestMultipleUpdates() {
 
 	func() {
 		k8s.CreateOrUpdateNamespace("y", map[string]string{"ns-updated": "true", "ns": "y"})
-		m1 := &utils.ReachableMatrix{
-			DefaultExpect: true,
-			Pods:          pods,
-			Namespaces:    namespaces,
-		}
+		m1 := utils.NewReachableMatrix(true, pods, namespaces)
 		reachability1 := utils.NewReachability(listAllPods())
 		m1.ExpectAllIngress("x", "a", false)
 		m1.Expect("y", "a", "x", "a", true)
@@ -274,11 +269,7 @@ func TestMultipleUpdates() {
 
 	func() {
 		k8s.CreateOrUpdateNamespace("y", map[string]string{"ns-updated": "true", "ns": "y"})
-		m1 := &utils.ReachableMatrix{
-			DefaultExpect: true,
-			Pods:          pods,
-			Namespaces:    namespaces,
-		}
+		m1 := utils.NewReachableMatrix(true, pods, namespaces)
 		reachability1 := utils.NewReachability(listAllPods())
 		m1.ExpectAllIngress("x", "a", false)
 		m1.Expect("y", "a", "x", "a", true)
@@ -300,11 +291,7 @@ func TestMultipleUpdates() {
 				"pod":     "b",
 				"updated": "true",
 			}, "nginx:1.8-alpine") // old nginx cause it was before people deleted everything useful from containers
-		m1 := &utils.ReachableMatrix{
-			DefaultExpect: true,
-			Pods:          pods,
-			Namespaces:    namespaces,
-		}
+		m1 := utils.NewReachableMatrix(true, pods, namespaces)
 		// copied from above
 		reachability1 := utils.NewReachability(listAllPods())
 		m1.ExpectAllIngress("x", "a", false)
@@ -333,11 +320,7 @@ func TestMultipleUpdates() {
 				"pod": "b",
 				// REMOVE UPDATED ANNOTATION, otherwise identical to above function.
 			}, "nginx:1.8-alpine") // old nginx cause it was before people deleted everything useful from containers
-		m1 := &utils.ReachableMatrix{
-			DefaultExpect: true,
-			Pods:          pods,
-			Namespaces:    namespaces,
-		}
+		m1 := utils.NewReachableMatrix(true, pods, namespaces)
 		// copied from above
 		reachability1 := utils.NewReachability(listAllPods())
 		m1.ExpectAllIngress("x", "a", false)
@@ -370,11 +353,7 @@ func TestEgressAndIngressIntegration(k8s *utils.Kubernetes, stacked bool) []*Sta
 	builder1.SetTypeIngress()
 	builder1.AddIngress(nil, &p80, nil, nil, map[string]string{"pod": "b"}, nil, nil, nil)
 	policy1 := builder1.Get()
-	m1 := &utils.ReachableMatrix{
-		DefaultExpect: false,
-		Pods:          pods,
-		Namespaces:    namespaces,
-	}
+	m1 := utils.NewReachableMatrix(false, pods, namespaces)
 	reachability1 := utils.NewReachability(listAllPods())
 	m1.ExpectAllIngress("x", "a", false)
 	m1.Expect("x", "b", "x", "a", true)
@@ -387,11 +366,7 @@ func TestEgressAndIngressIntegration(k8s *utils.Kubernetes, stacked bool) []*Sta
 	builder2 = builder2.SetName("x", "deny-all").SetPodSelector(map[string]string{"pod": "a"})
 	builder2.SetTypeEgress().AddEgress(nil, &p80, nil, nil, map[string]string{"pod": "b"}, map[string]string{"ns": "y"}, nil, nil)
 	policy2 := builder1.Get()
-	m2 := &utils.ReachableMatrix{
-		DefaultExpect: false,
-		Pods:          pods,
-		Namespaces:    namespaces,
-	}
+	m2 := utils.NewReachableMatrix(false, pods, namespaces)
 	reachability2 := utils.NewReachability(listAllPods())
 	// copied from m1
 	m2.ExpectAllIngress("x", "a", false)
@@ -410,11 +385,7 @@ func TestEgressAndIngressIntegration(k8s *utils.Kubernetes, stacked bool) []*Sta
 	builder3.AddEgress(nil, &p80, nil, nil, nil, nil, nil, nil)
 
 	policy3 := builder2.Get()
-	m3 := &utils.ReachableMatrix{
-		DefaultExpect: true,
-		Pods:          pods,
-		Namespaces:    namespaces,
-	}
+	m3 := utils.NewReachableMatrix(true, pods, namespaces)
 	reachability3 := utils.NewReachability(listAllPods())
 
 	return []*Stack{
@@ -451,11 +422,7 @@ func TestAllowAllPrecedenceIngress(k8s *utils.Kubernetes, stackedOrUpdated bool 
 	builder.AddIngress(nil, &p80, nil, nil, map[string]string{}, nil, nil, nil)
 
 	policy1 := builder.Get()
-	m1 := &utils.ReachableMatrix{
-		DefaultExpect: true,
-		Pods:          pods,
-		Namespaces:    namespaces,
-	}
+	m1 := utils.NewReachableMatrix(true, pods, namespaces)
 	m1.ExpectAllIngress("x", "a", false)
 	m1.Expect("x", "a", "x","a",true)
 	reachability1 := utils.NewReachability(listAllPods())
@@ -469,12 +436,7 @@ func TestAllowAllPrecedenceIngress(k8s *utils.Kubernetes, stackedOrUpdated bool 
 	builder2.AddIngress(nil, &p80, nil, nil, nil, nil, nil, nil)
 
 	policy2 := builder2.Get()
-	m2 := &utils.ReachableMatrix{
-		DefaultExpect: true,
-		Pods:          pods,
-		Namespaces:    namespaces,
-	}
-	m2.Init()
+	m2 := utils.NewReachableMatrix(true, pods, namespaces)
 	reachability2 := utils.NewReachability(listAllPods())
 
 	return []*Stack{
@@ -503,12 +465,7 @@ func testEgressOnNamedPort(k8s *utils.Kubernetes) (*utils.ReachableMatrix, *util
 	builder.SetTypeEgress().WithEgressDNS().AddEgress(nil, nil, &namedPorts, nil, nil, nil, nil, nil)
 
 	k8s.CreateOrUpdateNetworkPolicy("x", builder.Get())
-	m := &utils.ReachableMatrix{
-		DefaultExpect: true,
-		Pods:          pods,
-		Namespaces:    namespaces,
-	}
-	m.Init()
+	m := utils.NewReachableMatrix(true, pods, namespaces)
 	reachability := utils.NewReachability(listAllPods())
 
 	// TODO, maybe add validation that 81 doesn't work as well?
@@ -523,11 +480,7 @@ func testNamedPortWNamespace(k8s *utils.Kubernetes) (*utils.ReachableMatrix, *ut
 	builder.SetTypeIngress().AddIngress(nil, nil, &namedPorts, nil, nil, map[string]string{"ns": "x"}, nil, nil)
 
 	k8s.CreateOrUpdateNetworkPolicy("x", builder.Get())
-	m := &utils.ReachableMatrix{
-		DefaultExpect: true,
-		Pods:          pods,
-		Namespaces:    namespaces,
-	}
+	m := utils.NewReachableMatrix(true, pods, namespaces)
 	reachability := utils.NewReachability(listAllPods())
 	m.ExpectAllIngress( "x", "a", false)
 	m.Expect("x", "a", "x", "a", true)
@@ -546,11 +499,7 @@ func testNamedPort(k8s *utils.Kubernetes) (*utils.ReachableMatrix, *utils.Reacha
 	builder.SetTypeIngress().AddIngress(nil, &p80, &namedPorts, nil, nil, nil, nil, nil)
 
 	k8s.CreateOrUpdateNetworkPolicy("x", builder.Get())
-	m := &utils.ReachableMatrix{
-		DefaultExpect: true,
-		Pods:          pods,
-		Namespaces:    namespaces,
-	}
+	m := utils.NewReachableMatrix(true, pods, namespaces)
 	// No egress rules because we're deny all !
 	reachability := utils.NewReachability(listAllPods())
 
@@ -564,11 +513,7 @@ func testAllowAll(k8s *utils.Kubernetes) (*utils.ReachableMatrix, *utils.Reachab
 	builder = builder.SetName("x","default-deny").SetPodSelector(map[string]string{"pod": "a"})
 	builder.SetTypeIngress().AddIngress(nil, &p80, nil, nil, nil, nil, nil, nil)
 	k8s.CreateOrUpdateNetworkPolicy("x", builder.Get())
-	m := &utils.ReachableMatrix{
-		DefaultExpect: true,
-		Pods:          pods,
-		Namespaces:    namespaces,
-	}
+	m := utils.NewReachableMatrix(true, pods, namespaces)
 	// No egress rules because we're deny all !
 	reachability := utils.NewReachability(listAllPods())
 	return m, reachability
@@ -579,21 +524,13 @@ func testAllowAll(k8s *utils.Kubernetes) (*utils.ReachableMatrix, *utils.Reachab
 // 2) should enforce updated policy (stacked == true)
 func testPortsPoliciesStackedOrUpdated(k8s *utils.Kubernetes, stackInsteadOfUpdate bool) []*Stack {
 	blocked := func() *utils.ReachableMatrix {
-		x := &utils.ReachableMatrix{
-			DefaultExpect: true,
-			Pods:          pods,
-			Namespaces:    namespaces,
-		}
+		x := utils.NewReachableMatrix(true, pods, namespaces)
 		x.ExpectAllIngress("x","a", false )
 		x.Expect("x","a","x","a",true )
 		return  x
 	}
 	unblocked := func() *utils.ReachableMatrix {
-		x := &utils.ReachableMatrix{
-			DefaultExpect: true,
-			Pods:          pods,
-			Namespaces:    namespaces,
-		}
+		x := utils.NewReachableMatrix(true, pods, namespaces)
 		return  x
 	}
 
@@ -662,11 +599,7 @@ func testPortsPolicies(k8s *utils.Kubernetes)  {
 
 	k8s.CreateOrUpdateNetworkPolicy("x", builder.Get())
 
-	m80 := &utils.ReachableMatrix{
-		DefaultExpect: true,
-		Pods:          pods,
-		Namespaces:    namespaces,
-	}
+	m80 := utils.NewReachableMatrix(true, pods, namespaces)
 	m80.ExpectAllIngress("x", "a", false)
 	m80.Expect("x","a","x","a", true)
 	validate(k8s, m80,nil,80)
@@ -675,11 +608,7 @@ func testPortsPolicies(k8s *utils.Kubernetes)  {
 
 
  	fmt.Println("***** port 81 *****")
-	m81 := &utils.ReachableMatrix{
-		DefaultExpect: true,
-		Pods:          pods,
-		Namespaces:    namespaces,
-	}
+	m81 := utils.NewReachableMatrix(true, pods, namespaces)
 	m81.ExpectAllIngress("x", "a", true)
 	validate(k8s, m81,nil,81)
  	s,p  = m81.Summary()
@@ -697,11 +626,7 @@ func testEnforcePodAndNSSelector(k8s *utils.Kubernetes) (*utils.ReachableMatrix,
 	builder.AddIngress(nil, &p80, nil, nil, map[string]string{"pod": "b"}, map[string]string{"ns": "y"}, nil, nil)
 
 	k8s.CreateOrUpdateNetworkPolicy("x", builder.Get())
-	m := &utils.ReachableMatrix{
-		DefaultExpect: true,
-		Pods:          pods,
-		Namespaces:    namespaces,
-	}
+	m := utils.NewReachableMatrix(true, pods, namespaces)
 	reachability := utils.NewReachability(listAllPods())
 	m.ExpectAllIngress("x", "a", false)
 	m.Expect("y", "b", "x", "a", true)
@@ -719,11 +644,7 @@ func testEnforcePodOrNSSelector(k8s *utils.Kubernetes) (*utils.ReachableMatrix, 
 	builder.AddIngress(nil, &p80, nil, nil, nil, map[string]string{"ns": "y"}, nil, nil)
 
 	k8s.CreateOrUpdateNetworkPolicy("x", builder.Get())
-	m := &utils.ReachableMatrix{
-		DefaultExpect: true,
-		Pods:          pods,
-		Namespaces:    namespaces,
-	}
+	m := utils.NewReachableMatrix(true, pods, namespaces)
 	reachability := utils.NewReachability(listAllPods())
 	m.ExpectAllIngress("x", "a", false)
 	m.Expect("y", "a", "x", "a", true)
@@ -748,11 +669,7 @@ func testNamespaceSelectorMatchExpressions(k8s *utils.Kubernetes) (*utils.Reacha
 	builder = builder.SetName("x","allow-a-via-ns-selector").SetPodSelector(map[string]string{"pod": "a"})
 	builder.SetTypeIngress().AddIngress(nil, &p80, nil, nil, nil, nil, &selector, nil)
 	k8s.CreateOrUpdateNetworkPolicy("x", builder.Get())
-	m := &utils.ReachableMatrix{
-		DefaultExpect: true,
-		Pods:          pods,
-		Namespaces:    namespaces,
-	}
+	m := utils.NewReachableMatrix(true, pods, namespaces)
 	reachability := utils.NewReachability(listAllPods())
 	m.ExpectAllIngress("x", "a", false)
 	m.Expect("y", "a", "x", "a", true)
@@ -774,11 +691,7 @@ func testPodSelectorMatchExpressions(k8s *utils.Kubernetes) (*utils.ReachableMat
 	builder = builder.SetName("x","allow-client-b-via-pod-selector").SetPodSelector(map[string]string{"pod": "a"})
 	builder.SetTypeIngress().AddIngress(nil, &p80, nil, nil, nil, nil, &selector, nil)
 	k8s.CreateOrUpdateNetworkPolicy("x", builder.Get())
-	m := &utils.ReachableMatrix{
-		DefaultExpect: true,
-		Pods:          pods,
-		Namespaces:    namespaces,
-	}
+	m := utils.NewReachableMatrix(true, pods, namespaces)
 	reachability := utils.NewReachability(listAllPods())
 	m.ExpectAllIngress("x", "a", false)
 	m.Expect("x", "b", "x", "a", true)
@@ -795,11 +708,7 @@ func testIntraNamespaceTrafficOnly(k8s *utils.Kubernetes) (*utils.ReachableMatri
 	builder = builder.SetName("x","allow-client-b-via-pod-selector").SetPodSelector(map[string]string{"pod": "a"})
 	builder.SetTypeIngress().AddIngress(nil, &p80, nil, nil, nil, map[string]string{"ns": "y"}, nil, nil)
 	k8s.CreateOrUpdateNetworkPolicy("x", builder.Get())
-	m := &utils.ReachableMatrix{
-		DefaultExpect: true,
-		Pods:          pods,
-		Namespaces:    namespaces,
-	}
+	m := utils.NewReachableMatrix(true, pods, namespaces)
 	reachability := utils.NewReachability(listAllPods())
 	m.ExpectAllIngress("x", "a", false)
 	m.Expect("y", "a", "x", "a", true)
@@ -817,11 +726,7 @@ func testInnerNamespaceTraffic(k8s *utils.Kubernetes) (*utils.ReachableMatrix, *
 	builder = builder.SetName("x", "allow-client-b-via-pod-selector").SetPodSelector(map[string]string{"pod": "a"})
 	builder.SetTypeIngress().AddIngress(nil, &p80, nil, nil, map[string]string{"pod": "b"}, nil, nil, nil)
 	k8s.CreateOrUpdateNetworkPolicy("x", builder.Get())
-	m := &utils.ReachableMatrix{
-		DefaultExpect: true,
-		Pods:          pods,
-		Namespaces:    namespaces,
-	}
+	m := utils.NewReachableMatrix(true, pods, namespaces)
 	reachability := utils.NewReachability(listAllPods())
 	m.ExpectAllIngress("x", "a", false)
 	m.Expect("x", "b", "x", "a", true)
@@ -835,11 +740,7 @@ func TestDefaultDeny(k8s *utils.Kubernetes) (*utils.ReachableMatrix, *utils.Reac
 	builder = builder.SetName("x","default-deny")
 	builder.SetTypeIngress() //	.AddIngress(nil, &p80, nil, nil, nil, nil, nil, nil)
 	k8s.CreateOrUpdateNetworkPolicy("x", builder.Get())
-	m := &utils.ReachableMatrix{
-		DefaultExpect: true,
-		Pods:          pods,
-		Namespaces:    namespaces,
-	}
+	m := utils.NewReachableMatrix(true, pods, namespaces)
 	m.ExpectAllIngress("x", "a", false)
 	m.ExpectAllIngress("x", "b", false)
 	m.ExpectAllIngress("x", "c", false)
@@ -864,11 +765,7 @@ func TestPodLabelWhitelistingFromBToA(k8s *utils.Kubernetes) (*utils.ReachableMa
 
 	k8s.CreateOrUpdateNetworkPolicy("x", builder.Get())
 
-	m := &utils.ReachableMatrix{
-		DefaultExpect: true,
-		Pods:          pods,
-		Namespaces:    namespaces,
-	}
+	m := utils.NewReachableMatrix(true, pods, namespaces)
 	m.ExpectAllIngress("x", "a", false)
 	m.Expect("x", "b", "x", "a", true)
 	m.Expect("y", "b", "x", "a", true)

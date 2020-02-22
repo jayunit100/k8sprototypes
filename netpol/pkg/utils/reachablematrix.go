@@ -14,23 +14,26 @@ type ReachableMatrix struct {
 	Observed      map[string]map[string]bool
 }
 
-func addToMap(m map[string]map[string]bool, ns string, pod string, ns2 string, pod2 string, connectionTime bool) {
-	if m == nil {
-		fmt.Println("init")
-		m = map[string]map[string]bool{}
+func NewReachableMatrix(defaultExpect bool, pods []string, namespaces []string) *ReachableMatrix {
+	r := &ReachableMatrix{
+		DefaultExpect: defaultExpect,
+		Pods:          pods,
+		Namespaces:    namespaces,
+		Expected:      nil,
+		Observed:      nil,
 	}
+	r.init()
+	return r
+}
+
+func addToMap(m map[string]map[string]bool, ns string, pod string, ns2 string, pod2 string, connectionTime bool) {
 	if m[ns+"_"+pod] == nil {
 		m[ns+"_"+pod] = map[string]bool{}
 	}
 	m[ns+"_"+pod][ns2+"_"+pod2] = connectionTime
 }
 
-func (r *ReachableMatrix) Init() {
-	if r.Expected != nil {
-		return
-	}
-
-	// create datastructures if not created yet.
+func (r *ReachableMatrix) init() {
 	r.Expected = map[string]map[string]bool{}
 	r.Observed = map[string]map[string]bool{}
 
@@ -61,7 +64,6 @@ func (r *ReachableMatrix) HasNS(n, pod string) bool {
 }
 
 func (r *ReachableMatrix) Expect(ns string, pod string, ns2 string, pod2 string, conn bool) {
-	r.Init()
 	if r.HasNS(ns, pod) && r.HasNS(ns2, pod2) {
 		addToMap(r.Expected, ns, pod, ns2, pod2, conn)
 	} else {
@@ -71,8 +73,6 @@ func (r *ReachableMatrix) Expect(ns string, pod string, ns2 string, pod2 string,
 
 // ExpectAllIngress defines that any traffic going into the pod in 'ns' will be allowed/denied (true/false)
 func (r *ReachableMatrix) ExpectAllIngress(ns, pod string, connected bool) {
-	r.Init()
-
 	for _, nsFrom := range r.Namespaces {
 		for _, podFrom := range r.Pods {
 			r.Expect(nsFrom, podFrom, ns, pod, connected)
@@ -84,7 +84,6 @@ func (r *ReachableMatrix) ExpectAllIngress(ns, pod string, connected bool) {
 }
 
 func (r *ReachableMatrix) Observe(ns string, pod string, ns2 string, pod2 string, conn bool) {
-	r.Init()
 	if r.HasNS(ns, pod) && r.HasNS(ns2, pod2) {
 		addToMap(r.Observed, ns, pod, ns2, pod2, conn)
 	} else {
@@ -93,12 +92,10 @@ func (r *ReachableMatrix) Observe(ns string, pod string, ns2 string, pod2 string
 }
 
 func (r *ReachableMatrix) GetExpectedObserved(ns string, pod string, ns2 string, pod2 string) (bool, bool) {
-	r.Init()
 	return r.Expected[ns+"_"+pod][ns2+"_"+pod2], r.Observed[ns+"_"+pod][ns2+"_"+pod2]
 }
 
 func (r *ReachableMatrix) LengthExpectedObserved() (int, int) {
-	r.Init()
 	return len(r.Expected), len(r.Observed)
 }
 

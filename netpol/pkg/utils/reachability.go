@@ -211,7 +211,7 @@ func (r *Reachability) summary() (int, int, *TruthTable) {
 	return trueObs, falseObs, comparison
 }
 
-func (r *Reachability)PrintSummary(printExpected bool, printObserved bool, printComparison bool) {
+func (r *Reachability) PrintSummary(printExpected bool, printObserved bool, printComparison bool) {
 	right, wrong, comparison := r.summary()
 	fmt.Printf("reachability: correct:%v, incorrect:%v, result=%t\n\n", right, wrong, wrong == 0)
 	if printExpected {

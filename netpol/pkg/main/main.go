@@ -110,9 +110,9 @@ func main() {
 
 // testWrapperStaged is for tests which involve steps of mutation.
 type Stack struct {
-	Reachability    *Reachability
-	NetworkPolicy   *networkingv1.NetworkPolicy
-	Port            int
+	Reachability  *Reachability
+	NetworkPolicy *networkingv1.NetworkPolicy
+	Port          int
 }
 
 // catch all for any type of test, where we use stacks.  these are validated one at a time.

@@ -37,7 +37,6 @@ func init() {
 }
 
 func bootstrap(k8s *utils.Kubernetes) {
-
 	//p81 := 81
 	for _, ns := range namespaces {
 		k8s.CreateOrUpdateNamespace(ns, map[string]string{"ns": ns})
@@ -52,8 +51,6 @@ func bootstrap(k8s *utils.Kubernetes) {
 }
 
 func validate(k8s *utils.Kubernetes, m *utils.ReachableMatrix, reachability *utils.Reachability, port int) {
-	pods := []string{"a", "b", "c"}
-	namespaces := []string{"x", "y", "z"}
 	// better as metrics, obviously, this is only for POC.
 	for _, n1 := range namespaces {
 		for _, p1 := range pods {
@@ -85,7 +82,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	k8s.CleanNetworkPolicies([]string{"x", "y", "z"})
+	k8s.CleanNetworkPolicies(namespaces)
 
 	// testWrapperPort80(TestDefaultDeny)
 	testWrapperPort80(TestPodLabelWhitelistingFromBToA)
@@ -381,7 +378,7 @@ func TestEgressAndIngressIntegration(k8s *utils.Kubernetes, stacked bool) []*Sta
 
 // should enforce multiple ingress policies with ingress allow-all policy taking precedence [Feature:NetworkPolicy]"
 func TestAllowAllPrecedenceIngress(k8s *utils.Kubernetes, stackedOrUpdated bool) []*Stack {
-	if stackedOrUpdated == false {
+	if !stackedOrUpdated {
 		panic("this test always true")
 	}
 
@@ -515,7 +512,7 @@ func testPortsPoliciesStackedOrUpdated(k8s *utils.Kubernetes, stackInsteadOfUpda
 	  Now, whitelist port 81, and verify 81 it is open.
 	*/
 	// using false makes this a test for 'updated' policies...
-	if stackInsteadOfUpdate == true {
+	if stackInsteadOfUpdate {
 		policyName = "policy-that-will-update-for-ports-2"
 	}
 	builder2 := &utils.NetworkPolicySpecBuilder{}
@@ -745,7 +742,7 @@ func TestPodLabelWhitelistingFromBToA(k8s *utils.Kubernetes) (*utils.ReachableMa
 	reachability.Expect(utils.NewPod("x", "a"), utils.NewPod("x", "a"), true)
 
 	// TODO move this to a unit test !
-	if m.Expected["z_c"]["x_a"] == true {
+	if m.Expected["z_c"]["x_a"] {
 		panic("expectations are wrong")
 	}
 	return m, reachability

@@ -57,27 +57,38 @@ func (n *NetworkPolicySpecBuilder) AddIngress(protoc *v1.Protocol, port *int, po
 		}
 	}
 
-	if ps != nil && ns != nil {
-		r := networkingv1.NetworkPolicyIngressRule{
-			From: []networkingv1.NetworkPolicyPeer{{
-				PodSelector:       ps,
-				NamespaceSelector: ns,
-				IPBlock:           nil,
-			}},
-		}
-		n.Spec.Ingress = append(n.Spec.Ingress, r)
+	var policyPeer []networkingv1.NetworkPolicyPeer
+	if ps != nil || ns != nil {
+		policyPeer = []networkingv1.NetworkPolicyPeer{{
+			PodSelector:       ps,
+			NamespaceSelector: ns,
+			IPBlock:           nil, // todo add in IPBlock support
+		}}
 	}
 
-	portRule := networkingv1.NetworkPolicyIngressRule{
-		Ports: []networkingv1.NetworkPolicyPort{{
-			Port: &intstr.IntOrString{IntVal: int32(*port)},
-		},
-		},
+	var ports []networkingv1.NetworkPolicyPort
+	if port != nil && portName != nil {
+		panic("specify portname or port, not both")
 	}
-
 	if port != nil {
-		n.Spec.Ingress = append(n.Spec.Ingress, portRule)
+		ports = []networkingv1.NetworkPolicyPort{
+				{
+					Port: &intstr.IntOrString{IntVal: int32(*port)},
+				},
+		}
 	}
+	if portName != nil {
+		ports = []networkingv1.NetworkPolicyPort{
+				{
+					Port: &intstr.IntOrString{Type: intstr.String, StrVal: *portName},
+				},
+		}
+	}
+	newRule := networkingv1.NetworkPolicyIngressRule{
+		From: policyPeer,
+		Ports:   ports,
+	}
+	n.Spec.Ingress = append(n.Spec.Ingress, newRule)
 	return n
 }
 

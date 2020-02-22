@@ -94,15 +94,17 @@ func main() {
 
 	// testWrapperPort80(testAllowAll)
 
-	testWrapperPort80(testNamedPort)
-	/**
-	testWrapperPort80(testNamedPortWNamespace)
+	// testWrapperPort80(testNamedPort)
+
+
+	// testWrapperPort80(testNamedPortWNamespace)
+
 	testWrapperPort80(testEgressOnNamedPort)
-	testWrapperPort80(TestAllowAllPrecedenceIngress)
-	**/
+
 
 	/**
 		// Work on these monday...
+		testWrapperPort80(TestAllowAllPrecedenceIngress)
 		TestEgressAndIngressIntegration
 		TestMultipleUpdates()
 	**/
@@ -519,16 +521,15 @@ func testNamedPortWNamespace(k8s *utils.Kubernetes) (*utils.ReachableMatrix, *ut
 
 	k8s.CreateOrUpdateNetworkPolicy("x", builder.Get())
 	m := &utils.ReachableMatrix{
-		DefaultExpect: false,
+		DefaultExpect: true,
 		Pods:          pods,
 		Namespaces:    namespaces,
 	}
-	// No egress rules because we're deny all !
 	reachability := utils.NewReachability(listAllPods())
+	m.ExpectAllIngress( "x", "a", false)
 	m.Expect("x", "a", "x", "a", true)
 	m.Expect("x", "b", "x", "a", true)
 	m.Expect("x", "c", "x", "a", true)
-	m.Expect("x", "a", "x", "a", true)
 
 	// TODO, add validation that 81 doesn't work.
 	return m, reachability

@@ -260,7 +260,7 @@ ginkgo.It("should enforce multiple egress policies with egress allow-all policy 
 ginkgo.It("should enforce policies to check ingress and egress policies can be controlled independently based on PodSelector [Feature:NetworkPolicy]", func() {
 ginkgo.It("should enforce egress policy allowing traffic to a server in a different namespace based on PodSelector and NamespaceSelector [Feature:NetworkPolicy]", func() {
 */
-func TestEgressAndIngressIntegration(k8s *Kubernetes, stacked bool) []*Stack {
+func testEgressAndIngressIntegration(k8s *Kubernetes, stacked bool) []*Stack {
 	// ingress policies stack
 	builder1 := &NetworkPolicySpecBuilder{}
 	builder1 = builder1.SetName("x", "deny-all").SetPodSelector(map[string]string{"pod": "a"})
@@ -318,8 +318,8 @@ func TestEgressAndIngressIntegration(k8s *Kubernetes, stacked bool) []*Stack {
 	}
 }
 
-// should enforce multiple ingress policies with ingress allow-all policy taking precedence [Feature:NetworkPolicy]"
-func TestAllowAllPrecedenceIngress(k8s *Kubernetes, stackedOrUpdated bool) []*Stack {
+// testAllowAllPrecedenceIngress should enforce multiple ingress policies with ingress allow-all policy taking precedence [Feature:NetworkPolicy]"
+func testAllowAllPrecedenceIngress(k8s *Kubernetes, stackedOrUpdated bool) []*Stack {
 	if !stackedOrUpdated {
 		panic("this test always true")
 	}
@@ -357,8 +357,8 @@ func TestAllowAllPrecedenceIngress(k8s *Kubernetes, stackedOrUpdated bool) []*St
 	}
 }
 
-// should allow egress access on one named port [Feature:NetworkPolicy]
-func testEgressOnNamedPort(k8s *Kubernetes) *Reachability {
+// testEgressOnNamedPort should allow egress access on one named port [Feature:NetworkPolicy]
+func testEgressOnNamedPort(k8s *Kubernetes) []*Stack {
 	namedPorts := "serve-80"
 	builder := &NetworkPolicySpecBuilder{}
 	builder = builder.SetName("x", "allow-client-a-via-named-port-egress-rule").SetPodSelector(map[string]string{"pod": "a"})
@@ -367,54 +367,117 @@ func testEgressOnNamedPort(k8s *Kubernetes) *Reachability {
 	builder.SetTypeEgress().WithEgressDNS().AddEgress(nil, nil, &namedPorts, nil, nil, nil, nil, nil)
 
 	k8s.CreateOrUpdateNetworkPolicy("x", builder.Get())
-	reachability := NewReachability(allPods, true)
+	reachability80 := NewReachability(allPods, true)
 
-	// TODO, maybe add validation that 81 doesn't work as well?
-	return reachability
+	// TODO: Sedef: test if this works for egress
+	// disallow port 81
+	reachability81 := func() *Reachability {
+		reachability := NewReachability(allPods, true)
+		reachability.ExpectAllIngress(NewPod("x", "a"), false)
+		reachability.Expect(NewPod("x", "a"), NewPod("x", "a"), true)
+		return reachability
+	}
+
+	return []*Stack{
+		&Stack{
+			reachability80,
+			builder.Get(),
+			80,
+		},
+		&Stack{
+			reachability81(),
+			builder.Get(),
+			81,
+		},
+	}
 }
 
-// should allow ingress access from namespace on one named port [Feature:NetworkPolicy]
-func testNamedPortWNamespace(k8s *Kubernetes) *Reachability {
+// testNamedPortWNamespace should allow ingress access from namespace on one named port [Feature:NetworkPolicy]
+// TODO: Sedef: This test should be an "and". Check if AddIngress() should be called twice for this!
+func testNamedPortWNamespace(k8s *Kubernetes) []*Stack {
 	namedPorts := "serve-80"
 	builder := &NetworkPolicySpecBuilder{}
 	builder = builder.SetName("x", "allow-client-a-via-named-port-ingress-rule").SetPodSelector(map[string]string{"pod": "a"})
 	builder.SetTypeIngress().AddIngress(nil, nil, &namedPorts, nil, nil, map[string]string{"ns": "x"}, nil, nil)
 
-	k8s.CreateOrUpdateNetworkPolicy("x", builder.Get())
-	reachability := NewReachability(allPods, true)
-	reachability.ExpectAllIngress(Pod("x/a"), false)
-	reachability.Expect(Pod("x/a"), Pod("x/a"), true)
-	reachability.Expect(Pod("x/b"), Pod("x/a"), true)
-	reachability.Expect(Pod("x/c"), Pod("x/a"), true)
+	reachability80 := func() *Reachability {
+		reachability := NewReachability(allPods, true)
+		reachability.ExpectAllIngress(NewPod("x", "b"), false)
+		reachability.Expect(NewPod("x", "a"), NewPod("x", "a"), true)
+		reachability.Expect(NewPod("x", "b"), NewPod("x", "b"), true)
+		reachability.Expect(NewPod("x", "c"), NewPod("x", "a"), true)
+		return reachability
+	}
 
-	// TODO, add validation that 81 doesn't work.
-	return reachability
+	// disallow port 81
+	reachability81 := func() *Reachability {
+		reachability := NewReachability(allPods, true)
+		reachability.ExpectAllIngress(NewPod("x", "a"), false)
+		reachability.Expect(NewPod("x", "a"), NewPod("x", "a"), true)
+		return reachability
+	}
+
+	return []*Stack{
+		&Stack{
+			reachability80(),
+			builder.Get(),
+			80,
+		},
+		&Stack{
+			reachability81(),
+			builder.Get(),
+			81,
+		},
+	}
 }
 
 // testNamedPort should allow ingress access on one named port [Feature:NetworkPolicy]
-func testNamedPort(k8s *Kubernetes) *Reachability {
+func testNamedPort(k8s *Kubernetes) []*Stack {
 	namedPorts := "serve-80"
 	builder := &NetworkPolicySpecBuilder{}
 	builder = builder.SetName("x", "allow-client-a-via-named-port-ingress-rule").SetPodSelector(map[string]string{"pod": "a"})
 	builder.SetTypeIngress().AddIngress(nil, &p80, &namedPorts, nil, nil, nil, nil, nil)
 
-	k8s.CreateOrUpdateNetworkPolicy("x", builder.Get())
-	// No egress rules because we're deny all !
-	reachability := NewReachability(allPods, true)
+	// allow port 80
+	reachability80 := NewReachability(allPods, true)
 
-	// TODO, add validation that 81 doesn't work.
-	return reachability
+	// disallow port 81
+	reachability81 := func() *Reachability {
+		reachability := NewReachability(allPods, true)
+		reachability.ExpectAllIngress(NewPod("x", "a"), false)
+		reachability.Expect(NewPod("x", "a"), NewPod("x", "a"), true)
+		return reachability
+	}
+
+	return []*Stack{
+		&Stack{
+			reachability80,
+			builder.Get(),
+			80,
+		},
+		&Stack{
+			reachability81(),
+			builder.Get(),
+			81,
+		},
+
+	}
 }
 
 // testAllowAll should support allow-all policy [Feature:NetworkPolicy]
-func testAllowAll(k8s *Kubernetes) *Reachability {
+func testAllowAll(k8s *Kubernetes) []*Stack{
 	builder := &NetworkPolicySpecBuilder{}
 	builder = builder.SetName("x", "default-deny").SetPodSelector(map[string]string{"pod": "a"})
 	builder.SetTypeIngress().AddIngress(nil, &p80, nil, nil, nil, nil, nil, nil)
-	k8s.CreateOrUpdateNetworkPolicy("x", builder.Get())
-	// No egress rules because we're deny all !
+
 	reachability := NewReachability(allPods, true)
-	return reachability
+	return []*Stack{
+		&Stack{
+			reachability,
+			builder.Get(),
+			80,
+		},
+	}
 }
 
 // This covers two test cases: stacked policy's and updated policies.
@@ -423,10 +486,11 @@ func testAllowAll(k8s *Kubernetes) *Reachability {
 func testPortsPoliciesStackedOrUpdated(k8s *Kubernetes, stackInsteadOfUpdate bool) []*Stack {
 	blocked := func() *Reachability {
 		r := NewReachability(allPods, true)
-		r.ExpectAllIngress(Pod("x/a"), false)
-		r.Expect(Pod("x/a"), Pod("x/a"), true)
+		r.ExpectAllIngress(NewPod("x", "a"), false)
+		r.Expect(NewPod("x", "a"), NewPod("x", "a"), true)
 		return r
 	}
+
 	unblocked := func() *Reachability {
 		return NewReachability(allPods, true)
 	}
@@ -482,8 +546,8 @@ func testPortsPoliciesStackedOrUpdated(k8s *Kubernetes, stackInsteadOfUpdate boo
 	}
 }
 
-// "should enforce policy based on Ports [Feature:NetworkPolicy] (disallow 80)
-func testPortsPolicies(k8s *Kubernetes) {
+// testPortsPolicies should enforce policy based on Ports [Feature:NetworkPolicy] (disallow 80)
+func testPortsPolicies(k8s *Kubernetes) []*Stack {
 	bootstrap(k8s)
 	builder := &NetworkPolicySpecBuilder{}
 	builder = builder.SetName("x", "allow-port-81-not-port-80").SetPodSelector(map[string]string{"pod": "a"})
@@ -491,62 +555,93 @@ func testPortsPolicies(k8s *Kubernetes) {
 	// anyone on port 81 is ok...
 	builder.AddIngress(nil, &p81, nil, nil, nil, nil, nil, nil)
 
-	k8s.CreateOrUpdateNetworkPolicy("x", builder.Get())
 
-	r80 := NewReachability(allPods, true)
-	r80.ExpectAllIngress(Pod("x/a"), false)
-	r80.Expect(Pod("x/a"), Pod("x/a"), true)
-	validate(k8s, r80, 80)
-	r80.PrintSummary(true, true, true)
+	// disallow port 80
+	reachability1 := func() *Reachability {
+		reachability := NewReachability(allPods, true)
+		reachability.ExpectAllIngress(NewPod("x", "a"), false)
+		reachability.Expect(NewPod("x", "a"), NewPod("x", "a"), true)
+		return reachability
+	}
 
-	fmt.Println("***** port 81 *****")
-	r81 := NewReachability(allPods, true)
-	r81.ExpectAllIngress(Pod("x/a"), true)
-	validate(k8s, r81, 81)
-	r81.PrintSummary(true, true, true)
+	// allow port 81
+	reachability2 := func() *Reachability {
+		reachability := NewReachability(allPods, true)
+		reachability.ExpectAllIngress(NewPod("x", "a"), true)
+		return reachability
+	}
+
+	return []*Stack{
+		&Stack{
+			reachability1(),
+			builder.Get(),
+			80,
+		},
+		&Stack{
+				// Applying the same nw policy to test a different port
+			reachability2(),
+			builder.Get(),
+			81,
+		},
+	}
 }
 
-// should enforce policy to allow traffic only from a pod in a different namespace based on PodSelector and NamespaceSelector [Feature:NetworkPolicy]
-// should enforce policy based on PodSelector and NamespaceSelector [Feature:NetworkPolicy]
-func testEnforcePodAndNSSelector(k8s *Kubernetes) *Reachability {
+// testEnforcePodAndNSSelector should enforce policy to allow traffic only from a pod in a different namespace based on PodSelector and NamespaceSelector [Feature:NetworkPolicy]
+// testEnforcePodAndNSSelector should enforce policy based on PodSelector and NamespaceSelector [Feature:NetworkPolicy]
+func testEnforcePodAndNSSelector(k8s *Kubernetes) []*Stack {
 	builder := &NetworkPolicySpecBuilder{}
 	builder = builder.SetName("x", "allow-x-via-pod-and-ns-selector").SetPodSelector(map[string]string{"pod": "a"})
 	builder.SetTypeIngress()
 	builder.AddIngress(nil, &p80, nil, nil, map[string]string{"pod": "b"}, map[string]string{"ns": "y"}, nil, nil)
 
-	k8s.CreateOrUpdateNetworkPolicy("x", builder.Get())
-	reachability := NewReachability(allPods, true)
-	reachability.ExpectAllIngress(NewPod("x", "a"), false)
-	reachability.Expect(NewPod("y", "b"), NewPod("x", "a"), true)
-	reachability.Expect(NewPod("x", "a"), NewPod("x", "a"), true)
+	reachability := func() *Reachability {
+		reachability := NewReachability(allPods, true)
+		reachability.ExpectAllIngress(NewPod("x", "a"), false)
+		reachability.Expect(NewPod("y", "b"), NewPod("x", "a"), true)
+		reachability.Expect(NewPod("x", "a"), NewPod("x", "a"), true)
+		return reachability
+	}
 
-	return reachability
+	return []*Stack{
+		&Stack{
+			reachability(),
+			builder.Get(),
+			80,
+		},
+	}
 }
 
-// should enforce policy based on PodSelector or NamespaceSelector [Feature:NetworkPolicy]
-func testEnforcePodOrNSSelector(k8s *Kubernetes) *Reachability {
+// testEnforcePodOrNSSelector should enforce policy based on PodSelector or NamespaceSelector [Feature:NetworkPolicy]
+func testEnforcePodOrNSSelector(k8s *Kubernetes) []*Stack {
 	builder := &NetworkPolicySpecBuilder{}
 	builder = builder.SetName("x", "allow-x-via-pod-or-ns-selector").SetPodSelector(map[string]string{"pod": "a"})
 	builder.SetTypeIngress()
 	builder.AddIngress(nil, &p80, nil, nil, map[string]string{"pod": "b"}, nil, nil, nil)
 	builder.AddIngress(nil, &p80, nil, nil, nil, map[string]string{"ns": "y"}, nil, nil)
 
-	k8s.CreateOrUpdateNetworkPolicy("x", builder.Get())
-	//m.Expect("z", "b", "x", "a", true)
-	reachability := NewReachability(allPods, true)
-	reachability.ExpectAllIngress(Pod("x/a"), false)
-	reachability.Expect(Pod("y/a"), Pod("x/a"), true)
-	reachability.Expect(Pod("y/b"), Pod("x/a"), true)
-	reachability.Expect(Pod("y/c"), Pod("x/a"), true)
-	reachability.Expect(Pod("x/b"), Pod("x/a"), true)
-	reachability.Expect(Pod("y/b"), Pod("x/a"), true)
-	reachability.Expect(Pod("x/a"), Pod("x/a"), true)
+	reachability := func() *Reachability {
+		reachability := NewReachability(allPods, true)
+		reachability.ExpectAllIngress(NewPod("x", "a"), false)
+		reachability.Expect(NewPod("y", "a"), NewPod("x", "a"), true)
+		reachability.Expect(NewPod("y", "b"), NewPod("x", "a"), true)
+		reachability.Expect(NewPod("y", "c"), NewPod("x", "a"), true)
+		reachability.Expect(NewPod("x", "b"), NewPod("x", "a"), true)
+		reachability.Expect(NewPod("z", "b"), NewPod("x", "a"), true)
+		reachability.Expect(NewPod("x", "a"), NewPod("x", "a"), true)
+		return reachability
+	}
 
-	return reachability
+	return []*Stack{
+		&Stack{
+			reachability(),
+			builder.Get(),
+			80,
+		},
+	}
 }
 
-// should enforce policy based on NamespaceSelector with MatchExpressions[Feature:NetworkPolicy]
-func testNamespaceSelectorMatchExpressions(k8s *Kubernetes) *Reachability {
+// testNamespaceSelectorMatchExpressions should enforce policy based on NamespaceSelector with MatchExpressions[Feature:NetworkPolicy]
+func testNamespaceSelectorMatchExpressions(k8s *Kubernetes) []*Stack {
 	builder := &NetworkPolicySpecBuilder{}
 	selector := []metav1.LabelSelectorRequirement{{
 		Key:      "ns",
@@ -555,19 +650,28 @@ func testNamespaceSelectorMatchExpressions(k8s *Kubernetes) *Reachability {
 	}}
 	builder = builder.SetName("x", "allow-a-via-ns-selector").SetPodSelector(map[string]string{"pod": "a"})
 	builder.SetTypeIngress().AddIngress(nil, &p80, nil, nil, nil, nil, &selector, nil)
-	k8s.CreateOrUpdateNetworkPolicy("x", builder.Get())
-	reachability := NewReachability(allPods, true)
-	reachability.ExpectAllIngress(Pod("x/a"), false)
-	reachability.Expect(Pod("y/a"), Pod("x/a"), true)
-	reachability.Expect(Pod("y/b"), Pod("x/a"), true)
-	reachability.Expect(Pod("y/c"), Pod("x/a"), true)
-	reachability.Expect(Pod("x/a"), Pod("x/a"), true)
 
-	return reachability
+	reachability := func() *Reachability {
+		reachability := NewReachability(allPods, true)
+		reachability.ExpectAllIngress(NewPod("x", "a"), false)
+		reachability.Expect(NewPod("y", "a"), NewPod("x", "a"), true)
+		reachability.Expect(NewPod("y", "b"), NewPod("x", "a"), true)
+		reachability.Expect(NewPod("y", "c"), NewPod("x", "a"), true)
+		reachability.Expect(NewPod("x", "a"), NewPod("x", "a"), true)
+		return reachability
+	}
+
+	return []*Stack{
+		&Stack{
+			reachability(),
+			builder.Get(),
+			80,
+		},
+	}
 }
 
 // testPodSelectorMatchExpressions should enforce policy based on PodSelector with MatchExpressions[Feature:NetworkPolicy]
-func testPodSelectorMatchExpressions(k8s *Kubernetes) *Reachability {
+func testPodSelectorMatchExpressions(k8s *Kubernetes) []*Stack {
 	builder := &NetworkPolicySpecBuilder{}
 	selector := []metav1.LabelSelectorRequirement{{
 		Key:      "pod",
@@ -576,67 +680,102 @@ func testPodSelectorMatchExpressions(k8s *Kubernetes) *Reachability {
 	}}
 	builder = builder.SetName("x", "allow-client-b-via-pod-selector").SetPodSelector(map[string]string{"pod": "a"})
 	builder.SetTypeIngress().AddIngress(nil, &p80, nil, nil, nil, nil, &selector, nil)
-	k8s.CreateOrUpdateNetworkPolicy("x", builder.Get())
-	reachability := NewReachability(allPods, true)
-	reachability.ExpectAllIngress(Pod("x/a"), false)
-	reachability.Expect(Pod("x/b"), Pod("x/a"), true)
-	reachability.Expect(Pod("y/b"), Pod("x/a"), true)
-	reachability.Expect(Pod("z/b"), Pod("x/a"), true)
-	reachability.Expect(Pod("x/a"), Pod("x/a"), true)
 
-	return reachability
+	reachability := func() *Reachability {
+		reachability := NewReachability(allPods, true)
+		reachability.ExpectAllIngress(NewPod("x", "a"), false)
+
+		reachability.Expect(NewPod("x", "b"), NewPod("x", "a"), true)
+		reachability.Expect(NewPod("x", "a"), NewPod("x", "a"), true)
+		return reachability
+	}
+
+	return []*Stack{
+		&Stack{
+			reachability(),
+			builder.Get(),
+			80,
+		},
+	}
 }
 
-// testInnerNamespaceTraffic should enforce policy to allow traffic from pods within server namespace based on PodSelector [Feature:NetworkPolicy]
-func testIntraNamespaceTrafficOnly(k8s *Kubernetes) *Reachability {
+// TODO: Sedef: Find the matching upstream test
+func testIntraNamespaceTrafficOnly(k8s *Kubernetes) []*Stack {
 	builder := &NetworkPolicySpecBuilder{}
 	builder = builder.SetName("x", "allow-client-b-via-pod-selector").SetPodSelector(map[string]string{"pod": "a"})
 	builder.SetTypeIngress().AddIngress(nil, &p80, nil, nil, nil, map[string]string{"ns": "y"}, nil, nil)
-	k8s.CreateOrUpdateNetworkPolicy("x", builder.Get())
-	reachability := NewReachability(allPods, true)
-	reachability.ExpectAllIngress(Pod("x/a"), false)
-	reachability.Expect(Pod("y/a"), Pod("x/a"), true)
-	reachability.Expect(Pod("y/b"), Pod("x/a"), true)
-	reachability.Expect(Pod("y/c"), Pod("x/a"), true)
 
-	return reachability
+	reachability := func() *Reachability {
+		reachability := NewReachability(allPods, true)
+		reachability.ExpectAllIngress(NewPod("x", "a"), false)
+		reachability.Expect(NewPod("y", "a"), NewPod("x", "a"), true)
+		reachability.Expect(NewPod("y", "b"), NewPod("x", "a"), true)
+		reachability.Expect(NewPod("y", "c"), NewPod("x", "a"), true)
+		return reachability
+	}
+
+	return []*Stack{
+		&Stack{
+			reachability(),
+			builder.Get(),
+			80,
+		},
+	}
 }
 
 // testInnerNamespaceTraffic should enforce policy to allow traffic from pods within server namespace, based on PodSelector [Feature:NetworkPolicy]
 // note : network policies are applied to a namespace by default, meaning that you need a specific policy to select pods in external namespaces.
 // thus in this case, we don't expect y/b -> x/a, because even though it is labelled 'b', it is in a different namespace.
-func testInnerNamespaceTraffic(k8s *Kubernetes) *Reachability {
+func testInnerNamespaceTraffic(k8s *Kubernetes) []*Stack {
 	builder := &NetworkPolicySpecBuilder{}
 	builder = builder.SetName("x", "allow-client-b-via-pod-selector").SetPodSelector(map[string]string{"pod": "a"})
 	builder.SetTypeIngress().AddIngress(nil, &p80, nil, nil, map[string]string{"pod": "b"}, nil, nil, nil)
-	k8s.CreateOrUpdateNetworkPolicy("x", builder.Get())
-	reachability := NewReachability(allPods, true)
-	reachability.ExpectAllIngress(NewPod("x", "a"), false)
-	reachability.Expect(NewPod("x", "b"), NewPod("x", "a"), true)
-	reachability.Expect(NewPod("x", "a"), NewPod("x", "a"), true)
 
-	return reachability
+	reachability := func() *Reachability {
+		reachability := NewReachability(allPods, true)
+		reachability.ExpectAllIngress(NewPod("x", "a"), false)
+		reachability.Expect(NewPod("x", "a"), NewPod("x", "a"), true)
+		reachability.Expect(NewPod("x", "b"), NewPod("x", "a"), true)
+		return reachability
+	}
+
+	return []*Stack{
+		&Stack{
+			reachability(),
+			builder.Get(),
+			80,
+		},
+	}
 }
 
-func TestDefaultDeny(k8s *Kubernetes) *Reachability {
+// testDefaultDeny should support a 'default-deny' policy
+func testDefaultDeny(k8s *Kubernetes) []*Stack {
 	builder := &NetworkPolicySpecBuilder{}
 	builder = builder.SetName("x", "default-deny")
-	builder.SetTypeIngress() //	.AddIngress(nil, &p80, nil, nil, nil, nil, nil, nil)
-	k8s.CreateOrUpdateNetworkPolicy("x", builder.Get())
+	builder.SetTypeIngress()
 
 	// No egress rules because we're deny all !
-	reachability := NewReachability(allPods, true)
-	reachability.ExpectAllIngress(NewPod("x", "a"), false)
-	reachability.ExpectAllIngress(NewPod("x", "b"), false)
-	reachability.ExpectAllIngress(NewPod("x", "c"), false)
-	reachability.Expect(NewPod("x", "a"), NewPod("x", "a"), true)
-	reachability.Expect(NewPod("x", "b"), NewPod("x", "b"), true)
-	reachability.Expect(NewPod("x", "c"), NewPod("x", "c"), true)
-
-	return reachability
+	reachability := func() *Reachability {
+		reachability := NewReachability(allPods, true)
+		reachability.ExpectAllIngress(NewPod("x", "a"), false)
+		reachability.ExpectAllIngress(NewPod("x", "b"), false)
+		reachability.ExpectAllIngress(NewPod("x", "c"), false)
+		reachability.Expect(NewPod("x", "a"), NewPod("x", "a"), true)
+		reachability.Expect(NewPod("x", "b"), NewPod("x", "b"), true)
+		reachability.Expect(NewPod("x", "c"), NewPod("x", "c"), true)
+		return reachability
+	}
+	return []*Stack{
+		&Stack{
+			reachability(),
+			builder.Get(),
+			80,
+		},
+	}
 }
 
-func TestPodLabelWhitelistingFromBToA(k8s *Kubernetes) *Reachability {
+// TODO: Sedef: Check if there is a similar upstream test
+func testPodLabelWhitelistingFromBToA(k8s *Kubernetes) []*Stack {
 	builder := &NetworkPolicySpecBuilder{}
 	builder = builder.SetName("x", "allow-client-a-via-pod-selector").SetPodSelector(map[string]string{"pod": "a"})
 	builder.SetTypeIngress()
@@ -646,16 +785,20 @@ func TestPodLabelWhitelistingFromBToA(k8s *Kubernetes) *Reachability {
 
 	k8s.CreateOrUpdateNetworkPolicy("x", builder.Get())
 
-	reachability := NewReachability(allPods, true)
-	reachability.ExpectAllIngress(NewPod("x", "a"), false)
-	reachability.Expect(NewPod("x", "b"), NewPod("x", "a"), true)
-	reachability.Expect(NewPod("y", "b"), NewPod("x", "a"), true)
-	reachability.Expect(NewPod("z", "b"), NewPod("x", "a"), true)
-	reachability.Expect(NewPod("x", "a"), NewPod("x", "a"), true)
-
-	// TODO move this to a unit test !
-	//if m.Expected["z_c"]["x_a"] {
-	//	panic("expectations are wrong")
-	//}
-	return reachability
+	reachability := func() *Reachability {
+		reachability := NewReachability(allPods, true)
+		reachability.ExpectAllIngress(NewPod("x", "a"), false)
+		reachability.Expect(NewPod("x", "b"), NewPod("x", "a"), true)
+		reachability.Expect(NewPod("y", "b"), NewPod("x", "a"), true)
+		reachability.Expect(NewPod("z", "b"), NewPod("x", "a"), true)
+		reachability.Expect(NewPod("x", "a"), NewPod("x", "a"), true)
+		return reachability
+	}
+	return []*Stack{
+		&Stack{
+			reachability(),
+			builder.Get(),
+			80,
+		},
+	}
 }

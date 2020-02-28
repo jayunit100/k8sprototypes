@@ -1,0 +1,264 @@
+diff --git a/netpol/pkg/main/main.go b/netpol/pkg/main/main.go
+index 32a1d3a..1116f0e 100644
+--- a/netpol/pkg/main/main.go
++++ b/netpol/pkg/main/main.go
+@@ -37,15 +37,11 @@ func init() {
+ }
+ 
+ func bootstrap(k8s *Kubernetes) {
+-	//p81 := 81
+ 	for _, ns := range namespaces {
+ 		k8s.CreateOrUpdateNamespace(ns, map[string]string{"ns": ns})
+ 		for _, pod := range pods {
+ 			fmt.Println(ns)
+-			k8s.CreateOrUpdateDeployment(ns, ns+pod, 1,
+-				map[string]string{
+-					"pod": pod,
+-				}, "nginx:1.8-alpine") // old nginx cause it was before people deleted everything useful from containers
++			k8s.CreateOrUpdateDeployment(ns, ns+pod, 1, map[string]string{"pod": pod,})
+ 		}
+ 	}
+ }
+@@ -77,85 +73,55 @@ func main() {
+ 	}
+ 	k8s.CleanNetworkPolicies(namespaces)
+ 
+-	//testWrapperPort80(k8s, TestDefaultDeny)
+-	//testWrapperPort80(k8s, TestPodLabelWhitelistingFromBToA)
+-
+-	//testWrapperPort80(k8s, testInnerNamespaceTraffic)
+-	//testWrapperPort80(k8s, testEnforcePodAndNSSelector)
+-
+-	//testWrapperPort80(k8s, testEnforcePodOrNSSelector)
+-
+-	//testPortsPolicies(k8s)
+-
+-	// stacked port policies
+-	testWrapperStacked(k8s, testPortsPoliciesStackedOrUpdated, true)
+-	// updated port policies
+-	//testWrapperStacked(k8s, testPortsPoliciesStackedOrUpdated, false)
+-
+-	//testWrapperPort80(k8s, testAllowAll)
+-
+-	//testWrapperPort80(k8s, testNamedPort)
+-
+-	//testWrapperPort80(k8s, testNamedPortWNamespace)
+-
+-	//testWrapperPort80(k8s, testEgressOnNamedPort)
+-
+-	//testWrapperStacked(k8s, TestAllowAllPrecedenceIngress,true )
+-
+-	/**
+-		TestEgressAndIngressIntegration
+-		TestMultipleUpdates(k8s)
+-	**/
++	testList := []func(*Kubernetes)[]*Stack{
++		testDefaultDeny,
++		testPodLabelWhitelistingFromBToA,
++		testInnerNamespaceTraffic,
++		testEnforcePodAndNSSelector,
++		testEnforcePodOrNSSelector,
++		testPortsPolicies,
++		testAllowAll,
++		testNamedPort,
++		testNamedPortWNamespace,
++		testEgressOnNamedPort,
++		testEgressAndIngressIntegration,
++
++		// TODO: tests below should be fixed
++		//testAllowAllPrecedenceIngress,
++		//testPortsPoliciesStackedOrUpdated,
++		//testMultipleUpdates,
++	}
++	executeTests(k8s, testList)
+ }
+ 
+-// testWrapperStaged is for tests which involve steps of mutation.
+ type Stack struct {
+ 	Reachability  *Reachability
+ 	NetworkPolicy *networkingv1.NetworkPolicy
+ 	Port          int
+ }
+ 
+-// catch all for any type of test, where we use stacks.  these are validated one at a time.
+-// probably use this for *all* tests when we port to upstream.
+-func testWrapperStacked(k8s *Kubernetes, theTest func(*Kubernetes, bool) (stack []*Stack), stacked bool) {
++// executeTests runs all the tests in testList and print results
++func executeTests(k8s *Kubernetes, testList []func(*Kubernetes) (stack []*Stack)) {
+ 	bootstrap(k8s)
+ 
+-	stack := theTest(k8s, stacked)
+-	for _, s := range stack {
+-		reachability := s.Reachability
+-		policy := s.NetworkPolicy
+-		if policy != nil {
+-			_, err := k8s.CreateOrUpdateNetworkPolicy(policy.Namespace, policy)
+-			if err != nil {
+-				panic(err)
++	for _, test := range testList {
++ 		k8s.CleanNetworkPolicies(namespaces)
++		stack := test(k8s)
++		for _, s := range stack {
++			reachability := s.Reachability
++			policy := s.NetworkPolicy
++			if policy != nil {
++				_, err := k8s.CreateOrUpdateNetworkPolicy(policy.Namespace, policy)
++				if err != nil {
++					panic(err)
++				}
+ 			}
++			validate(k8s, reachability, s.Port)
++			reachability.PrintSummary(true, true, true)
+ 		}
+-		validate(k8s, reachability, s.Port)
+-		reachability.PrintSummary(true, true, true)
+-	}
+-}
+-
+-// For dual port tests... confirms both ports 80 and 81
+-func testWrapperPort8081(k8s *Kubernetes, theTest func(k8s *Kubernetes) (*Reachability, *Reachability)) {
+-	bootstrap(k8s)
+-	reachability80, reachability81 := theTest(k8s)
+-	validate(k8s, reachability80, 80)
+-	validate(k8s, reachability81, 81)
+-
+-	for _, reachability := range []*Reachability{reachability80, reachability81} {
+-		reachability.PrintSummary(true, true, true)
+ 	}
+ }
+ 
+-// simple type of test, majority of tests use this, just port 80
+-func testWrapperPort80(k8s *Kubernetes, theTest func(k8s *Kubernetes) *Reachability) {
+-	bootstrap(k8s)
+-	reachability := theTest(k8s)
+-	validate(k8s, reachability, 80)
+-
+-	reachability.PrintSummary(true, true, true)
+-}
+-
+ /**
+ CIDR tests.... todo
+ */
+@@ -169,7 +135,7 @@ CIDR tests.... todo
+ 	ginkgo.It("should deny ingress access to updated pod [Feature:NetworkPolicy]", func() {
+ 	ginkgo.It("should stop enforcing policies after they are deleted [Feature:NetworkPolicy]", func() {
+ **/
+-func TestMultipleUpdates(k8s *Kubernetes) {
++func testMultipleUpdates(k8s *Kubernetes) {
+ 	bootstrap(k8s)
+ 
+ 	func() {
+@@ -216,7 +182,7 @@ func TestMultipleUpdates(k8s *Kubernetes) {
+ 			map[string]string{
+ 				"pod":     "b",
+ 				"updated": "true",
+-			}, "nginx:1.8-alpine") // old nginx cause it was before people deleted everything useful from containers
++			}) // old nginx cause it was before people deleted everything useful from containers
+ 		// copied from above
+ 		reachability1 := NewReachability(allPods, true)
+ 		reachability1.ExpectAllIngress(Pod("x/a"), false)
+@@ -239,7 +205,7 @@ func TestMultipleUpdates(k8s *Kubernetes) {
+ 			map[string]string{
+ 				"pod": "b",
+ 				// REMOVE UPDATED ANNOTATION, otherwise identical to above function.
+-			}, "nginx:1.8-alpine") // old nginx cause it was before people deleted everything useful from containers
++			}) // old nginx cause it was before people deleted everything useful from containers
+ 		// copied from above
+ 		reachability1 := NewReachability(allPods, true)
+ 		reachability1.ExpectAllIngress(Pod("x/a"), false)
+@@ -260,7 +226,7 @@ ginkgo.It("should enforce multiple egress policies with egress allow-all policy
+ ginkgo.It("should enforce policies to check ingress and egress policies can be controlled independently based on PodSelector [Feature:NetworkPolicy]", func() {
+ ginkgo.It("should enforce egress policy allowing traffic to a server in a different namespace based on PodSelector and NamespaceSelector [Feature:NetworkPolicy]", func() {
+ */
+-func testEgressAndIngressIntegration(k8s *Kubernetes, stacked bool) []*Stack {
++func testEgressAndIngressIntegration(k8s *Kubernetes) []*Stack {
+ 	// ingress policies stack
+ 	builder1 := &NetworkPolicySpecBuilder{}
+ 	builder1 = builder1.SetName("x", "deny-all").SetPodSelector(map[string]string{"pod": "a"})
+@@ -268,11 +234,11 @@ func testEgressAndIngressIntegration(k8s *Kubernetes, stacked bool) []*Stack {
+ 	builder1.AddIngress(nil, &p80, nil, nil, map[string]string{"pod": "b"}, nil, nil, nil)
+ 	policy1 := builder1.Get()
+ 	reachability1 := NewReachability(allPods, false)
+-	reachability1.ExpectAllIngress(Pod("x/a"), false)
+-	reachability1.Expect(Pod("x/b"), Pod("x/a"), true)
+-	reachability1.Expect(Pod("y/b"), Pod("x/a"), true)
+-	reachability1.Expect(Pod("z/b"), Pod("x/a"), true)
+-	reachability1.Expect(Pod("x/a"), Pod("x/a"), true)
++	reachability1.ExpectAllIngress(NewPod("x", "a"), false)
++	reachability1.Expect(NewPod("x", "b"), NewPod("x", "a"), true)
++	reachability1.Expect(NewPod("y", "b"), NewPod("x", "a"), true)
++	reachability1.Expect(NewPod("z", "b"), NewPod("x", "a"), true)
++	reachability1.Expect(NewPod("x", "a"), NewPod("x", "a"), true)
+ 
+ 	// egress policies stack w pod selector and ns selector
+ 	builder2 := &NetworkPolicySpecBuilder{}
+@@ -281,14 +247,14 @@ func testEgressAndIngressIntegration(k8s *Kubernetes, stacked bool) []*Stack {
+ 	policy2 := builder1.Get()
+ 	reachability2 := NewReachability(allPods, false)
+ 	// copied from m1
+-	reachability2.ExpectAllIngress(Pod("x/a"), false)
+-	reachability2.Expect(Pod("x/b"), Pod("x/a"), true)
+-	reachability2.Expect(Pod("y/b"), Pod("x/a"), true)
+-	reachability2.Expect(Pod("z/b"), Pod("x/a"), true)
+-	reachability2.Expect(Pod("x/a"), Pod("x/a"), true)
++	reachability2.ExpectAllIngress(NewPod("x", "a"), false)
++	reachability2.Expect(NewPod("x", "b"), NewPod("x", "a"), true)
++	reachability2.Expect(NewPod("y", "b"), NewPod("x", "a"), true)
++	reachability2.Expect(NewPod("z", "b"), NewPod("x", "a"), true)
++	reachability2.Expect(NewPod("x", "a"), NewPod("x", "a"), true)
+ 
+ 	// new egress rule.
+-	reachability2.Expect(Pod("x/a"), Pod("y/b"), true)
++	reachability2.Expect(NewPod("x", "a"), NewPod("y", "b"), true)
+ 
+ 	builder3 := &NetworkPolicySpecBuilder{}
+ 	// by preserving the same name, this policy will also serve to test the 'updated policy' scenario.
+@@ -331,8 +297,8 @@ func testAllowAllPrecedenceIngress(k8s *Kubernetes, stackedOrUpdated bool) []*St
+ 
+ 	policy1 := builder.Get()
+ 	reachability1 := NewReachability(allPods, true)
+-	reachability1.ExpectAllIngress(Pod("x/a"), false)
+-	reachability1.Expect(Pod("x/a"), Pod("x/a"), true)
++	reachability1.ExpectAllIngress(NewPod("x", "a"), false)
++	reachability1.Expect(NewPod("x", "a"), NewPod("x", "a"), true)
+ 
+ 	builder2 := &NetworkPolicySpecBuilder{}
+ 	// by preserving the same name, this policy will also serve to test the 'updated policy' scenario.
+@@ -436,7 +402,7 @@ func testNamedPort(k8s *Kubernetes) []*Stack {
+ 	namedPorts := "serve-80"
+ 	builder := &NetworkPolicySpecBuilder{}
+ 	builder = builder.SetName("x", "allow-client-a-via-named-port-ingress-rule").SetPodSelector(map[string]string{"pod": "a"})
+-	builder.SetTypeIngress().AddIngress(nil, &p80, &namedPorts, nil, nil, nil, nil, nil)
++	builder.SetTypeIngress().AddIngress(nil, nil, &namedPorts, nil, nil, nil, nil, nil)
+ 
+ 	// allow port 80
+ 	reachability80 := NewReachability(allPods, true)
+@@ -483,6 +449,7 @@ func testAllowAll(k8s *Kubernetes) []*Stack{
+ // This covers two test cases: stacked policy's and updated policies.
+ // 1) should enforce policy based on Ports [Feature:NetworkPolicy] (disallow 80) (stacked == false)
+ // 2) should enforce updated policy (stacked == true)
++// TODO: This test should get rid of stackInsteadOfUpdate field by dividing this to 2 seperate funcs.
+ func testPortsPoliciesStackedOrUpdated(k8s *Kubernetes, stackInsteadOfUpdate bool) []*Stack {
+ 	blocked := func() *Reachability {
+ 		r := NewReachability(allPods, true)
+@@ -626,7 +593,6 @@ func testEnforcePodOrNSSelector(k8s *Kubernetes) []*Stack {
+ 		reachability.Expect(NewPod("y", "b"), NewPod("x", "a"), true)
+ 		reachability.Expect(NewPod("y", "c"), NewPod("x", "a"), true)
+ 		reachability.Expect(NewPod("x", "b"), NewPod("x", "a"), true)
+-		reachability.Expect(NewPod("z", "b"), NewPod("x", "a"), true)
+ 		reachability.Expect(NewPod("x", "a"), NewPod("x", "a"), true)
+ 		return reachability
+ 	}
+diff --git a/netpol/pkg/utils/k8s_util.go b/netpol/pkg/utils/k8s_util.go
+index 68692ae..d329fbf 100644
+--- a/netpol/pkg/utils/k8s_util.go
++++ b/netpol/pkg/utils/k8s_util.go
+@@ -177,7 +177,7 @@ func (k *Kubernetes) CreateOrUpdateNamespace(n string, labels map[string]string)
+ 	return nsr, err
+ }
+ 
+-func (k *Kubernetes) CreateOrUpdateDeployment(ns, deploymentName string, replicas int32, labels map[string]string, image string) (*appsv1.Deployment, error) {
++func (k *Kubernetes) CreateOrUpdateDeployment(ns, deploymentName string, replicas int32, labels map[string]string) (*appsv1.Deployment, error) {
+ 	zero := int64(0)
+ 	log.Infof("creating/updating deployment %s in ns %s", deploymentName, ns)
+ 	deployment := &appsv1.Deployment{

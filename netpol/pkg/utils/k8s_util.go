@@ -177,7 +177,7 @@ func (k *Kubernetes) CreateOrUpdateNamespace(n string, labels map[string]string)
 	return nsr, err
 }
 
-func (k *Kubernetes) CreateOrUpdateDeployment(ns, deploymentName string, replicas int32, labels map[string]string, image string) (*appsv1.Deployment, error) {
+func (k *Kubernetes) CreateOrUpdateDeployment(ns, deploymentName string, replicas int32, labels map[string]string) (*appsv1.Deployment, error) {
 	zero := int64(0)
 	log.Infof("creating/updating deployment %s in ns %s", deploymentName, ns)
 	deployment := &appsv1.Deployment{

@@ -14,21 +14,15 @@ Using these 3 concepts policy's can be written the same way they are designed in
 
 # What a network policy API should express
 
-- Define groups of assets which we want to protect using regular expressions
-- Define connectivity between those assets as reasonable defaults
-- Have fully declarative definitions for allow/deny
-- Define default policies for new assets which don't have groups
-- Provide definitive (boolean) information about wether two assets can communicate
+- Declare groups of assets (IP, pod, ns) which we want to protect 
+- Declare connectivity between those assets 
+- Declare default policies for new assets which have low overall priority
+- Provide definitive (boolean) information about wether two specific containers can communicate
 
-# What we express now
-
-- Ways to select individual assets and block communication to them
-- Ways to layer allowed communication on to blocked assets
-
-# What users have to do due to our lack of declarative policies
+# What users have to do due to our lack of declarative policies in K8's networkPolicy API
 
 - Calculate effective policy from layers
-- Understand about nil vs empty policies and how that amounts to deny/allow
+- Understand datastructure properties (nil vs empty) how those amount to deny/allow
 - Use CNI provider logs or metrics to determine ultimate connectivity decisions
 - Manually inspect/verify that selectors match assets (pods) properly
 
@@ -40,7 +34,6 @@ A policy should be built in a sequence of steps which are independently verifiab
 - Define default policies on those assets, either in terms of allow or deny, depending on perspective.
 - Define specific connectivity between asset groups, with assurance the connectivity isnt conflicting.
 - Layer policies in a pinch i.e. 'deny all'  or 'allow all' based on perspective.
-
 
 ```
 type PolicyGroupSpec {

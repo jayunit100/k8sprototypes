@@ -29,6 +29,10 @@ function install_k8s() {
     done
 }
 
+function install_antrea() {
+   kubectl apply -f https://github.com/vmware-tanzu/antrea/releases/download/v0.4.0/antrea.yml -n kube-system  
+}
+
 function install_calico() {
     kubectl get pods
     kubectl apply -f ./calico.yaml
@@ -36,9 +40,11 @@ function install_calico() {
     
     kubectl -n kube-system set env daemonset/calico-node FELIX_IGNORELOOSERPF=true
     kubectl -n kube-system set env daemonset/calico-node FELIX_XDPENABLED=false
-	
-    sleep 5 ; kubectl -n kube-system get pods | grep calico-node
-    echo "will wait for calico to start running now... "
+}
+
+function wait() {
+    sleep 5 ; kubectl -n kube-system get pods 
+    echo "will wait for calico/antrea/... to start running now... "
     while true ; do
         kubectl -n kube-system get pods
         sleep 3
@@ -46,4 +52,5 @@ function install_calico() {
 }
 
 install_k8s
-install_calico
+install_antrea
+#install_calico

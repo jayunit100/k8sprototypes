@@ -19,6 +19,8 @@ Using these 3 concepts policy's can be written the same way they are designed in
 - Declare default policies for new assets which have low overall priority
 - Provide definitive (boolean) information about wether two specific containers can communicate
 
+Note that none of these IMO should require a CNI provider.
+
 # What users have to do due to our lack of declarative policies in K8's networkPolicy API
 
 - Calculate effective policy from layers

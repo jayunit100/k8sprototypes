@@ -1,3 +1,17 @@
+This markdown file describes an idea I've had recently to declaratively define policies, and then generate network policy implementations on the fly.
+
+IMO, the existing NetworkPolicy API in Kubernetes is very hard to understand.  The reason is b/c of the corner cases around nil, empty, missing policies, and what 'deny all' really means.  For example, a deny all policy is currently a policy that selects a pod, but has an emptyIngress rule on it.  If that empty ingress rule then has one `{}` entry in it, the policy now becomes 'allow all' since an empty ingress from rule is effectively a match to any pod.
+
+These subtle changes resulting in wildly different semantics make network policies counterintuitive to use and communicate across security channels without a higher level construct.
+
+This MD file explains one approach to such a construct: A NetworkPolicy Controller, which uses 
+
+- PolicyGroups
+- DAG's with +/- polarity (allow/deny) between those groups
+- Default allow / deny rules for pods *not* in a DAG
+
+Using these 3 concepts policy's can be written the same way they are designed intuitively: By a DAG over a graph of edges and nodes, where multiple edges can exist between nodes (pods).
+
 # What a network policy API should express
 
 - Define groups of assets which we want to protect using regular expressions

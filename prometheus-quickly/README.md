@@ -1,3 +1,5 @@
+Prometheus instructions get more and more complex every day, but if you just want to monitor ETCD, this is the easiest way, no load balancers or operators or anything else required.
+
 # run prometheus in docker
 `ce4f5d199102        prom/prometheus     "/bin/prometheus --c…"   About an hour ago   Up About an hour    0.0.0.0:9090->9090/tcp   elegant_cray`
 

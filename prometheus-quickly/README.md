@@ -7,18 +7,25 @@ Prometheus instructions get more and more complex every day, but if you just wan
 - SSH into a bastion node that can access the 3 nodes via IP address
 - Ability to run docker on the bastion
 
+
+Expectations: 
+
+# note that the slowest write is 1/4 of a second
+![Image description](prometheus.png)
+
+# The blue line is the write speed
+
+![Image description](graph.png)
+
+
 # run prometheus in docker
 ```
 docker run -p 9090:9090 -v prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus
 ```
 
+with the following `-v` scrape target (prometheus.yml)... 
 
-In general you should see most prometheus writes happening within .001 s or less, like so:
 
-# note that the slowest write is 1/4 of a second
-![Image description](prometheus.png)
-
-with the following `-v` scrape target (prometheus.yml)
 ```
 global:
   scrape_interval:     15s # By default, scrape targets every 15 seconds.
@@ -41,6 +48,8 @@ scrape_configs:
       - targets: ['10.0.0.141:2381']
 ```
 
+
+In general you should see most prometheus writes happening within .001 s or less, like so:
 # start etcd like this so you can scrape w/o credentials 
 
 Each individual etcd node needs to get modified to listen on an insecure port like this

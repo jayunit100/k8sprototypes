@@ -30,3 +30,13 @@ where etcd is started with
 ```
     - --listen-metrics-urls=http://127.0.0.1:2381
 ```
+
+Then ssh port forward into your bastion host (which has access to the 10.... addresses)
+
+```
+ssh -L 8080:127.0.0.1:9090 ubuntu@34.221.173.93
+```
+
+And browse metrics for all etcd hosts on 
+
+`localhost:8080`

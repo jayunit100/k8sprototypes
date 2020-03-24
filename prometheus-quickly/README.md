@@ -1,7 +1,16 @@
 Prometheus instructions get more and more complex every day, but if you just want to monitor ETCD, this is the easiest way, no load balancers or operators or anything else required.
 
+# Requirements
+
+- 3 node etcd cluster
+- ability to edit the kubelet manifests/etcd.yaml (i.e. if starting in CAPI this is the norm)
+- SSH into a bastion node that can access the 3 nodes via IP address
+- Ability to run docker on the bastion
+
 # run prometheus in docker
-`ce4f5d199102        prom/prometheus     "/bin/prometheus --c…"   About an hour ago   Up About an hour    0.0.0.0:9090->9090/tcp   elegant_cray`
+```
+docker run -p 9090:9090 -v prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus
+```
 
 
 In general you should see most prometheus writes happening within .001 s or less, like so:
@@ -9,7 +18,7 @@ In general you should see most prometheus writes happening within .001 s or less
 # note that the slowest write is 1/4 of a second
 ![Image description](prometheus.png)
 
-with the following `-v` scrape target
+with the following `-v` scrape target (prometheus.yml)
 ```
 global:
   scrape_interval:     15s # By default, scrape targets every 15 seconds.

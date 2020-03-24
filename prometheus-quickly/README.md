@@ -15,6 +15,9 @@ Expectations:
 
 # The blue line is the write speed
 
+Look at its value, if it flat lines, it means that the originally fast write speed you had is slowing down, and etcd is 
+not able to keep up.
+
 ![Image description](graph.png)
 
 

@@ -1,6 +1,7 @@
 run prometheus
 `ce4f5d199102        prom/prometheus     "/bin/prometheus --c…"   About an hour ago   Up About an hour    0.0.0.0:9090->9090/tcp   elegant_cray`
 
+![Image description](prometheus.png)
 
 with the following `-v` scrape target
 ```

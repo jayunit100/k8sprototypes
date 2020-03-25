@@ -1,5 +1,13 @@
 Prometheus instructions get more and more complex every day, but if you just want to monitor ETCD, this is the easiest way, no load balancers or operators or anything else required.
 
+# Monitoring ETCD comes down to one metric: FSync
+
+Look at its value, if it flat lines, it means that the originally fast write speed you had is slowing down, and etcd is 
+not able to keep up.
+
+![Image description](graph.png)
+
+
 # Requirements
 
 - 3 node etcd cluster
@@ -12,14 +20,6 @@ Expectations:
 
 # note that the slowest write is 1/4 of a second
 ![Image description](prometheus.png)
-
-# The blue line is the write speed
-
-Look at its value, if it flat lines, it means that the originally fast write speed you had is slowing down, and etcd is 
-not able to keep up.
-
-![Image description](graph.png)
-
 
 # run prometheus in docker
 ```

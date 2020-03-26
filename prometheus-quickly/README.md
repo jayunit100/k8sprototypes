@@ -20,12 +20,11 @@ instances where etcd is slower.  This tells you that there are many different ra
 - SSH into a bastion node that can access the 3 nodes via IP address
 - Ability to run docker on the bastion
 
-Expectations: 
+... Diving back into our faster cluster, note that the slowest write is 1/4 of a second
 
-# note that the slowest write is 1/4 of a second
 ![Image description](prometheus.png)
 
-# comparitively, in a slow cluster (without SSDs, or hypervirtualized, for example) you may very early on see something like this:
+...  comparitively, in a slow cluster (without SSDs, or hypervirtualized, for example) you may very early on see something like this:
 
 ```
 # TYPE etcd_disk_wal_fsync_duration_seconds histogram   

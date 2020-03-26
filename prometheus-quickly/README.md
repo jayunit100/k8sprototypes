@@ -15,12 +15,34 @@ not able to keep up.
 - SSH into a bastion node that can access the 3 nodes via IP address
 - Ability to run docker on the bastion
 
-
 Expectations: 
 
 # note that the slowest write is 1/4 of a second
 ![Image description](prometheus.png)
 
+# comparitively, in a slow cluster (without SSDs, or hypervirtualized, for example) you may very early on see something like this:
+
+```
+# TYPE etcd_disk_wal_fsync_duration_seconds histogram   
+etcd_disk_wal_fsync_duration_seconds_bucket{le="0.001"} 0
+etcd_disk_wal_fsync_duration_seconds_bucket{le="0.002"} 0
+etcd_disk_wal_fsync_duration_seconds_bucket{le="0.004"} 202
+etcd_disk_wal_fsync_duration_seconds_bucket{le="0.008"} 1601
+etcd_disk_wal_fsync_duration_seconds_bucket{le="0.016"} 2173
+etcd_disk_wal_fsync_duration_seconds_bucket{le="0.032"} 2552                                                                 
+etcd_disk_wal_fsync_duration_seconds_bucket{le="0.064"} 2635
+etcd_disk_wal_fsync_duration_seconds_bucket{le="0.128"} 2658
+etcd_disk_wal_fsync_duration_seconds_bucket{le="0.256"} 2669
+etcd_disk_wal_fsync_duration_seconds_bucket{le="0.512"} 2674 <-- 5 writes took a half second1
+etcd_disk_wal_fsync_duration_seconds_bucket{le="1.024"} 2676
+etcd_disk_wal_fsync_duration_seconds_bucket{le="2.048"} 2676
+etcd_disk_wal_fsync_duration_seconds_bucket{le="4.096"} 2676
+etcd_disk_wal_fsync_duration_seconds_bucket{le="8.192"} 2676
+etcd_disk_wal_fsync_duration_seconds_bucket{le="+Inf"} 2676
+etcd_disk_wal_fsync_duration_seconds_sum 33.182538455000035
+etcd_disk_wal_fsync_duration_seconds_count 2676      
+```
+If you start out a cluster this way, then there is a chance over time that performance will degrade even more, rapidly approaching > 1 second writes. 
 # run prometheus in docker
 ```
 docker run -p 9090:9090 -v prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus

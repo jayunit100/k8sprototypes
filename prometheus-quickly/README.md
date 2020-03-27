@@ -12,14 +12,6 @@ Meanwhile, in a cluster with slower performance of etcd, you'll see more lines, 
 instances where etcd is slower.  This tells you that there are many different ranges that write speeds will fall in, in terms of frequency, which can be an ominous sign of things to come... 
 ![Image description](variableetcd.png)
 
-
-# Requirements
-
-- 3 node etcd cluster
-- ability to edit the kubelet manifests/etcd.yaml (i.e. if starting in CAPI this is the norm)
-- SSH into a bastion node that can access the 3 nodes via IP address
-- Ability to run docker on the bastion
-
 ... Diving back into our faster cluster, note that the slowest write is 1/4 of a second
 
 ![Image description](prometheus.png)
@@ -46,8 +38,22 @@ etcd_disk_wal_fsync_duration_seconds_bucket{le="+Inf"} 2676
 etcd_disk_wal_fsync_duration_seconds_sum 33.182538455000035
 etcd_disk_wal_fsync_duration_seconds_count 2676      
 ```
+
+
+# How to produce this sort of data 
+
+
+
+
+## Requirements
+
+- 3 node etcd cluster
+- ability to edit the kubelet manifests/etcd.yaml (i.e. if starting in CAPI this is the norm)
+- SSH into a bastion node that can access the 3 nodes via IP address
+- Ability to run docker on the bastion
+
 If you start out a cluster this way, then there is a chance over time that performance will degrade even more, rapidly approaching > 1 second writes. 
-# run prometheus in docker
+## run prometheus in docker
 ```
 docker run -p 9090:9090 -v prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus
 ```
@@ -79,7 +85,7 @@ scrape_configs:
 
 
 In general you should see most prometheus writes happening within .001 s or less, like so:
-# start etcd like this so you can scrape w/o credentials 
+## start etcd like this so you can scrape w/o credentials 
 
 Each individual etcd node needs to get modified to listen on an insecure port like this
 ```

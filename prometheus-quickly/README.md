@@ -19,7 +19,7 @@ at the proportion of writes which happen in lower buckets.  For example, the slo
 below has no buckets in the .001 range, meaning that all writes happened in > .001 seconds for the
 fsync calls. 
 
-### Interpretting fsync buckets
+*Interpretting fsync buckets*
 
 In general, the higher the number of writes in a lower bucket, the faster your ETCD is. 
 
@@ -36,7 +36,6 @@ also had a very small percentage of writes (.0001%) happening in > .032 seconds,
 | .016 | 2552 | 8771 |      
 | .032 | 2635 | 8784 |      
 | .064 | 2658 | 8792 | 
-|------|------|------|
 
 ![Image description](prometheus.png)
 

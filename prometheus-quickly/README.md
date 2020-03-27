@@ -8,7 +8,7 @@ not able to keep up.
 In a fast etcd instance, youll likely see one many lines clustered together, all roughly moving up at the same slope.  This means that the write times are consistent.
 ![Image description](graph.png)
 
-Meanwhile, in a cluster with slower performance of etcd, you'll see more lines, and there will be
+In a cluster with slower performance of etcd, you'll see more lines, and there will be
 instances where etcd is slower.  This tells you that there are many different ranges that write speeds will fall in, in terms of frequency, which can be an ominous sign of things to come... 
 ![Image description](variableetcd.png)
 

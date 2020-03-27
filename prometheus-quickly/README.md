@@ -123,3 +123,7 @@ ssh -L 8080:127.0.0.1:9090 ubuntu@34.221.173.93
 And browse metrics for all etcd hosts on 
 
 `localhost:8080`
+
+## Testing disk spee
+
+Tools like `dd` and `fallocate -l 1G test.img` can be used to do a quick smoke of how fast your disks are.

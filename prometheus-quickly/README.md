@@ -26,7 +26,6 @@ In general, the higher the number of writes in a lower bucket, the faster your E
 Meanwhile, the 'fast' cluster (again, these are relative), which was running on higher quality hardware, had many writes happening in < .001 seconds (7618).  This is consitent with the fact that the faster cluster
 also had a very small percentage of writes (.0001%) happening in > .032 seconds, whereas the slower cluster 
 
-|------|------|------|
 |bucket| slow | fast | 
 |------|------|------|
 | .001 | 0    | 7618 |      

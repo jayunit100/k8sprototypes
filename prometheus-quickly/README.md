@@ -14,6 +14,30 @@ instances where etcd is slower.  This tells you that there are many different ra
 
 ... Diving back into our faster cluster, note that the slowest write is 1/4 of a second
 
+In general, you can compare the relative performance of etcd in different clusters by looking
+at the proportion of writes which happen in lower buckets.  For example, the slow cluster (left)
+below has no buckets in the .001 range, meaning that all writes happened in > .001 seconds for the
+fsync calls. 
+
+### Interpretting fsync buckets
+
+In general, the higher the number of writes in a lower bucket, the faster your ETCD is. 
+
+Meanwhile, the 'fast' cluster (again, these are relative), which was running on higher quality hardware, had many writes happening in < .001 seconds (7618).  This is consitent with the fact that the faster cluster
+also had a very small percentage of writes (.0001%) happening in > .032 seconds, whereas the slower cluster 
+
+|------|------|------|
+|bucket| slow | fast | 
+|------|------|------|
+| .001 | 0    | 7618 |      
+| .002 | 0    | 8695 |  `<-- note that the faster cluster has writes which happened in < .002 s`    
+| .004 | 202  | 8731 |      
+| .008 | 2173 | 8759 |  
+| .016 | 2552 | 8771 |      
+| .032 | 2635 | 8784 |      
+| .064 | 2658 | 8792 | 
+|------|------|------|
+
 ![Image description](prometheus.png)
 
 ...  comparitively, in a slow cluster (without SSDs, or hypervirtualized, for example) you may very early on see something like this:

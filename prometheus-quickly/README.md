@@ -10,7 +10,7 @@ In a fast etcd instance, youll likely see one many lines clustered together, all
 
 In a cluster with slower performance of etcd, you'll see more lines, and there will be
 instances where etcd is slower.  This tells you that there are many different ranges that write speeds will fall in, in terms of frequency, which can be an ominous sign of things to come... 
-![Image description](variableetcd.png)
+![Image description](slowdegrade.png)
 
 ... Diving back into our faster cluster, note that the slowest write is 1/4 of a second
 

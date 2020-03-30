@@ -77,7 +77,7 @@ etcd_disk_wal_fsync_duration_seconds_count 2676
 If you start out a cluster this way, then there is a chance over time that performance will degrade even more, rapidly approaching > 1 second writes. 
 ## run prometheus in docker
 ```
-docker run -p 9090:9090 -v prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus
+mkdir /var/datap ; chmod 775 /var/datap && docker run -t -i -p 9090:9090 -v /var/datap:/var/datap -v /home/ubuntu/p.yml:/etc/prometheus/prometheus.yml prom/prometheus --storage.tsdb.path=/var/datap --config.file=/etc/prometheus/prometheus.yml
 ```
 
 with the following `-v` scrape target (prometheus.yml)... 

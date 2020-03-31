@@ -12,6 +12,10 @@ In a cluster with slower performance of etcd, you'll see more lines, and there w
 instances where etcd is slower.  This tells you that there are many different ranges that write speeds will fall in, in terms of frequency, which can be an ominous sign of things to come... 
 ![Image description](slowdegrade2.png)
 
+You'll also potentially see lots of leader elections, in cases where heartbeats are missed:
+
+![Image description](frequent_leader_election.png)
+
 ... Diving back into our faster cluster, note that the slowest write is 1/4 of a second
 
 In general, you can compare the relative performance of etcd in different clusters by looking

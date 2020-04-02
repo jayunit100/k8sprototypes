@@ -128,6 +128,6 @@ And browse metrics for all etcd hosts on
 
 `localhost:8080`
 
-## Testing disk spee
+## Testing disk speed
 
 Tools like `dd` and `fallocate -l 1G test.img` can be used to do a quick smoke of how fast your disks are.

@@ -16,9 +16,16 @@ In this example, I'm demonstrating how nodes are reconciled to be "on" if they a
 Nodes which are *off* are going to be automatically turned on.  Nodes which are *deleted* will only be created if you have 
 created a machineHealthCheck (https://cluster-api.sigs.k8s.io/tasks/healthcheck.html#creating-a-machinehealthcheck).
 
+## Master cluster vs Workload cluster
+
+In this example we also need to differentiate master clusters, which cannot self heal in the same way from workload clusters.  Master clusters might go down because of etcd - in this case: 
+
 - if ceil(n/2) nodes are dead. Your cluster will be down until capv recreates more machines.
 - if < ceil(n/2) are dead, your cluster will self heal and leader elect
 - if etcd is down on a node, the apiserver will also be down even if the quorum is still up.
+
+In this example, we turn machines Off as a way to simulate ETCD failures and see how HAProxy responds when it comes
+to noticing that APISErvers are down, and redirecting traffic.
 
 # using HAproxys dashboard to watch apiservers coming back up 
 

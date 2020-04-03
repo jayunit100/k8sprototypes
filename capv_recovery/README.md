@@ -45,6 +45,11 @@ CAPI will trigger turning that node back on.  When this happens, you'll see this
 
 # Capv will eventually self heal 
 
+As long as one node in your master
+Capv clusters is running, others
+Can eventually self heal.
+
+
 In these examples for speed I manually turned off VMs, but CAPv 
 Did the hard work of noticing things were wrong and fixing them for
 Me under the hood.

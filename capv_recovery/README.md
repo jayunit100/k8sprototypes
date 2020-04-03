@@ -9,10 +9,14 @@ and see how the ClusterAPI responds...
 In a running 3 node CAPV cluster, deleting one etcd node wont cause writes to block.
 But, deleting 2 nodes will.
 
+## Powered off vs Deleted
+
+Nodes which are *off* are going to be automatically turned on.  Nodes which are *deleted* will only be created if you have 
+created a machineHealthCheck (https://cluster-api.sigs.k8s.io/tasks/healthcheck.html#creating-a-machinehealthcheck).
+
 - if ceil(n/2) nodes are dead. Your cluster will be down until capv recreates more machines.
 - if < ceil(n/2) are dead, your cluster will self heal and leader elect
 - if etcd is down on a node, the apiserver will also be down even if the quorum is still up.
-- 
 
 # using HAproxys dashboard to watch apiservers coming back up 
 
@@ -20,7 +24,7 @@ Since all CAPV clusters are accessed through HAProxy in VMware Tanzu production
 Clusters , we can use this dashboard to monitor api server health and measure
 Recovery times .
 
-In a running CAPV cluster, we can delete a few nodes:
+In a running CAPV cluster, we can TURN OFF a few nodes:
 
 ![Image description](etcd_starvation_after_killing_node.png)
 

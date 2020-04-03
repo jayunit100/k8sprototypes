@@ -11,6 +11,8 @@ But, deleting 2 nodes will.
 
 ## Powered off vs Deleted
 
+In this example, I'm demonstrating how nodes are reconciled to be "on" if they are off, as a way to look at how CAPI works when it comes to the generic problem of managing machine state in a cluster.  
+
 Nodes which are *off* are going to be automatically turned on.  Nodes which are *deleted* will only be created if you have 
 created a machineHealthCheck (https://cluster-api.sigs.k8s.io/tasks/healthcheck.html#creating-a-machinehealthcheck).
 

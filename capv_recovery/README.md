@@ -31,3 +31,4 @@ CAPI will trigger turning that node back on.  When this happens, you'll see this
 2020-04-03T02:34:23.205015654Z stderr F 2020-04-03 02:34:23.204934 I | rafthttp: established a TCP streaming connection with peer 79ceb8ebb7348937 (stream MsgApp v2 reader)
 ```
 
+Note that turning on and off a machine as well as deleting a machine both are recoverable in the same way for CAPI clusters.

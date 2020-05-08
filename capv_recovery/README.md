@@ -29,6 +29,8 @@ to noticing that APISErvers are down, and redirecting traffic.
 
 # using HAproxys dashboard to watch apiservers coming back up 
 
+HAProxy hosts a `stats` endpoint on localhost:8084/stats, which is enabled inside its /etc/ config, by default in CAPV installations.
+
 Since all CAPV clusters are accessed through HAProxy in VMware Tanzu production
 Clusters , we can use this dashboard to monitor api server health and measure
 Recovery times .

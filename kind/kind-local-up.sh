@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Thanks to https://alexbrand.dev/post/creating-a-kind-cluster-with-calico-networking/ for this snippet :)
-cat << EOF > calico-conf.yaml
+cat << EOF > kind-conf.yaml
 kind: Cluster
 apiVersion: kind.sigs.k8s.io/v1alpha3
 networking:
@@ -13,16 +13,16 @@ nodes:
 EOF
 
 function install_k8s() {
-    if kind delete cluster --name calico-test; then
+    if kind delete cluster --name antrea-test-conformance; then
     	echo "deleted old kind cluster, creating a new one..."
     fi	    
-    kind create cluster --name calico-test --config calico-conf.yaml
-    export KUBECONFIG="$(kind get kubeconfig-path --name=calico-test)"
+    kind create cluster --name antrea-test-conformance --config kind-conf.yaml
+    export KUBECONFIG="$(kind get kubeconfig-path --name=antrea-test-conformance)"
     for i in "cni-plugin" "node" "pod2daemon" "kube-controllers"; do 
         echo "...$i"
     done
     chmod 755 ~/.kube/kind-config-kind
-    export KUBECONFIG="$(kind get kubeconfig-path --name=calico-test)"
+    export KUBECONFIG="$(kind get kubeconfig-path --name=antrea-test-conformance)"
     until kubectl cluster-info;  do
         echo "`date`waiting for cluster..."
         sleep 2

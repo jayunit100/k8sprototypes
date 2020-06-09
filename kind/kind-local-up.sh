@@ -51,6 +51,11 @@ function wait() {
     done
 }
 
+func testStatefulSets() {
+   sonobuoy run --e2e-focus "Basic StatefulSet" --e2e-skip ""   
+}
+
 install_k8s
 install_antrea
+testStatefulSets
 #install_calico

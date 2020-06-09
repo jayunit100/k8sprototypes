@@ -30,7 +30,7 @@ function install_k8s() {
 }
 
 function install_antrea() {
-   kubectl apply -f https://github.com/vmware-tanzu/antrea/releases/download/v0.4.0/antrea.yml -n kube-system  
+   kubectl apply -f https://github.com/vmware-tanzu/antrea/releases/download/v0.7.1/antrea.yml -n kube-system  
 }
 
 function install_calico() {

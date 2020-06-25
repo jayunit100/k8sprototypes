@@ -12,17 +12,24 @@ nodes:
 - role: worker
 EOF
 
+cat << EOF > kind-conf-ipv6.yaml
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+networking:
+  disableDefaultCNI: true
+  ipFamily: ipv6
+EOF
+
+cluster=cipv6
+
 function install_k8s() {
-    if kind delete cluster --name antrea-test-conformance; then
+    if kind delete cluster --name ${cluster}; then
     	echo "deleted old kind cluster, creating a new one..."
     fi	    
-    kind create cluster --name antrea-test-conformance --config kind-conf.yaml
-    export KUBECONFIG="$(kind get kubeconfig-path --name=antrea-test-conformance)"
-    for i in "cni-plugin" "node" "pod2daemon" "kube-controllers"; do 
-        echo "...$i"
-    done
+    kind create cluster --name ${cluster} --config kind-conf-ipv6.yaml
+    export KUBECONFIG="$(kind get kubeconfig-path --name=kind-${cluster})"
     chmod 755 ~/.kube/kind-config-kind
-    export KUBECONFIG="$(kind get kubeconfig-path --name=antrea-test-conformance)"
+    export KUBECONFIG="$(kind get kubeconfig-path --name=kind-${cluster})"
     until kubectl cluster-info;  do
         echo "`date`waiting for cluster..."
         sleep 2
@@ -30,12 +37,12 @@ function install_k8s() {
 }
 
 function install_antrea() {
-   kubectl apply -f https://github.com/vmware-tanzu/antrea/releases/download/v0.7.1/antrea.yml -n kube-system  
+   kubectl apply -f calico312.yaml -n kube-system  
 }
 
 function install_calico() {
     kubectl get pods
-    kubectl apply -f ./calico.yaml
+    kubectl apply -f ./calico-sedef.yaml
     kubectl get pods -n kube-system
     
     kubectl -n kube-system set env daemonset/calico-node FELIX_IGNORELOOSERPF=true

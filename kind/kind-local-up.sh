@@ -20,13 +20,13 @@ networking:
   ipFamily: ipv6
 EOF
 
-cluster=cipv6
+cluster=akash
 
 function install_k8s() {
     if kind delete cluster --name ${cluster}; then
     	echo "deleted old kind cluster, creating a new one..."
     fi	    
-    kind create cluster --name ${cluster} --config kind-conf-ipv6.yaml
+    kind create cluster --name ${cluster} --config kind-conf.yaml
     export KUBECONFIG="$(kind get kubeconfig-path --name=kind-${cluster})"
     chmod 755 ~/.kube/kind-config-kind
     export KUBECONFIG="$(kind get kubeconfig-path --name=kind-${cluster})"
@@ -37,12 +37,13 @@ function install_k8s() {
 }
 
 function install_antrea() {
-   kubectl apply -f calico312.yaml -n kube-system  
+   kubectl apply -f kubectl apply -f https://github.com/vmware-tanzu/antrea/releases/download/v0.7.2/antrea.yml
+ -n kube-system  
 }
 
 function install_calico() {
     kubectl get pods
-    kubectl apply -f ./calico-sedef.yaml
+    kubectl apply -f ./calico312.yaml
     kubectl get pods -n kube-system
     
     kubectl -n kube-system set env daemonset/calico-node FELIX_IGNORELOOSERPF=true
@@ -63,6 +64,6 @@ function testStatefulSets() {
 }
 
 install_k8s
-#install_antrea
+install_antrea
 #testStatefulSets
-install_calico
+#install_calico

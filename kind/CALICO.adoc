@@ -1,0 +1,138 @@
+=== Setting up calico on Kind and exploring its networking model.
+
+To explore how CNI's work, we'll start off by installing Calioc, a popular Layer 3 based networking tool for Kuberentes.
+By Layer 3 here, we mean to say, that Pods running in a Calico CNI connect to one another by IP networking, rather
+then by any kind of fancy lower level constructs (such as bridging).
+
+The key to this IP level networking is the use of BGP, or the "Border Gateway Protocol", which broadcasts routing
+information about different containers to different nodes.  We'll explore how this works in this chapter.
+
+But first, lets set up a "multinode" calico cluster using Kind.
+
+The first step to doing this will be to create a 2 node kind cluster, like so:
+
+[source,bash]
+----
+cat << EOF > kind-calico-conf.yaml
+kind: Cluster
+apiVersion: kind.sigs.k8s.io/v1alpha3
+networking:
+  disableDefaultCNI: true <1> We don't use the standard kubenet CNI
+  podSubnet: 192.168.0.0/16 <2> Use the 192 subnet for our pods
+nodes:
+- role: control-plane
+- role: worker <3> This time we'll have a second node in our cluster
+EOF
+kind create cluster --name=calico --config=./kind-calico-conf.yaml
+----
+
+Setting a Kind cluster up with a real CNI plugin is not significantly different then what we've already done.
+Once this cluster comes up, its worth pausing for a moment to see what happens when a pod's CNI isn't yet available.
+
+This leads to pods which aren't defined in the kubelet/manifests directory to be "Unschedulable".  You'll see this
+by running the following commands:
+
+[source, bash]
+----
+jayunit100> kubectl get pods --all-namespaces
+NAMESPACE            NAME                                           READY   STATUS    RESTARTS   AGE
+kube-system          coredns-66bff467f8-86mgh                       0/1     Pending   0          7m47s
+kube-system          coredns-66bff467f8-nfzhz                       0/1     Pending   0          7m47s
+
+jayunit100> kubectl get nodes 
+NAME                   STATUS     ROLES    AGE    VERSION
+calico-control-plane   NotReady   master   2m4s   v1.18.2
+calico-worker          NotReady   <none>   85s    v1.18.2
+----
+
+At this point, our `core-dns` pod will not be able to come up, because the Kubernetes scheduler will see that all nodes are "NotReady".
+This state is determined based on the fact that the CNI provider hasn't been set yet.  CNIs are configured once a CNI container writes
+out a `/etc/cni/net.d` file ona Kubelet's local filesystem.  In order to get our cluster going, we'll now install calico.
+
+[source,bash]
+----
+kubectl create -f https://docs.projectcalico.org/manifests/calico.yaml 
+----
+
+This will now create 2 containers : A Calico-node Pod on each node, as well as a "calico-kube-controllers" pod which will run on an arbitrary node.
+Once these containers come up, your Nodes will be in the "Ready" state, and you'll also see that the coredns pod is now running.
+[source, bash]
+----
+jayunit100> kubectl get pods --all-namespaces
+NAMESPACE            NAME                                           READY   STATUS    RESTARTS   AGE
+kube-system          calico-kube-controllers-5fc5dbfc47-mktx5       1/1     Running   0          44s
+kube-system          calico-node-4mbc5                              1/1     Running   0          44s
+kube-system          calico-node-gpvxm                              1/1     Running   0          44s
+kube-system          coredns-66bff467f8-98t8j                       1/1     Running   0          61s
+kube-system          coredns-66bff467f8-m7lj5                       1/1     Running   0          61s
+kube-system          etcd-calico-control-plane                      1/1     Running   0          71s
+kube-system          kube-apiserver-calico-control-plane            1/1     Running   0          71s
+kube-system          kube-controller-manager-calico-control-plane   1/1     Running   0          71s
+kube-system          kube-proxy-8q5zq                               1/1     Running   0          47s
+kube-system          kube-proxy-zgrjf                               1/1     Running   0          62s
+kube-system          kube-scheduler-calico-control-plane            1/1     Running   0          71s
+local-path-storage   local-path-provisioner-bd4bb6b75-f2tsr         1/1     Running   0          61s
+----
+
+Great ! We now have a CNI.  Now, lets take a look at what has been created for us by calico by running or `docker exec` command
+to get into our nodes and poke around.  After running `docker exec -t -i ac /bin/bash` we can start looking at what routes have been created
+by calico.
+
+[source, bash]
+----
+jayunit100> root@calico-control-plane:/# ip route
+default via 172.18.0.1 dev eth0 
+172.18.0.0/16 dev eth0 proto kernel scope link src 172.18.0.3 
+192.168.9.128/26 via 172.18.0.2 dev tunl0 proto bird onlink 
+blackhole 192.168.71.0/26 proto bird 
+192.168.71.1 dev cali38312ba5f3c scope link 
+192.168.71.2 dev califcbd6ecdce5 scope link 
+----
+
+We can see that there are two IP addresses here, 192.168.71.1 and 71.2.  These IP addresses are
+associated with two devices, starting with the string `cali` which were created by our calico-node
+containers.  How do these devices work?  We can see how they're defined by running the `ip a` command:
+
+[source, bash]
+----
+root@calico-control-plane:/# ip a | grep califc
+5: califcbd6ecdce5@if4: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1440 qdisc noqueue state UP group default 
+----
+
+This command shows us that each pod itself really represents its own devices on our machine.  Now, lets see whats going on in these devices.
+
+[source, bash]
+----
+root@calico-control-plane:/# apt-get update -y; apt-get install tcpdump <1> 
+root@calico-control-plane:/# tcpdump -s 0 -i cali38312ba5f3c -v | grep 192 <2>
+tcpdump: listening on cali38312ba5f3c, link-type EN10MB (Ethernet), capture size 262144 bytes
+
+    10.96.0.1.443 > 192.168.71.1.59186: Flags [P.], cksum 0x14d2 (incorrect -> 0x7189), seq 520038628:520039301, ack 2015131286, win 502, options [nop,nop,TS val 1110809235 ecr 1170831911], length 673
+    192.168.71.1.59186 > 10.96.0.1.443: Flags [.], cksum 0x1231 (incorrect -> 0x9f10), ack 673, win 502, options [nop,nop,TS val 1170833141 ecr 1110809235], length 0
+    10.96.0.1.443 > 192.168.71.1.59186: Flags [P.], cksum 0x149c (incorrect -> 0xa745), seq 673:1292, ack 1, win 502, options [nop,nop,TS val 1110809914 ecr 1170833141], length 619
+    192.168.71.1.59186 > 10.96.0.1.443: Flags [.], cksum 0x1231 (incorrect -> 0x9757), ack 1292, win 502, options [nop,nop,TS val 1170833820 ecr 1110809914], length 0
+    192.168.71.1.59186 > 10.96.0.1.443: Flags [P.], cksum 0x1254 (incorrect -> 0x362c), seq 1:36, ack 1292, win 502, options [nop,nop,TS val 1170833820 ecr 1110809914], length 35
+    10.96.0.1.443 > 192.168.71.1.59186: Flags [.], cksum 0x1231 (incorrect -> 0x9734), ack 36, win 502, options [nop,nop,TS val 1110809914 ecr 1170833820], length 0
+----
+<1> First install tcpdump in the container
+<2> Now run it against the calico device.  We can see incoming traffic to the 71.1 IP Address from the 10.96 subnet.  This subnet is actually the subnet
+of our Kubernetes service for the coredns container, which of course is the point where our DNS continaers powered by our CNI is contacted from.
+
+The `cali3831` device, in other words, is something which is directly attached, like any other device, via an ethernet cable of sorts, to our node.    This is known as a `veth` pair, wherein our containers themselves have one end of a virtual "ethernet cable" named cali3831 directly plugged into them from our kubelet.  This means anyone attempting to reach this device from our Kubelet can easily do so.
+
+Now, lets go back and look at the ip route table we showed earlier.  The `dev` entries are now clear - these corresopnd to routes which plug into our containers directly.  But what about the "blackhole" and 192.168.9.128/26 route? These routes correspond to:
+
+- containers which belong to another node (the 192.168.9.128/26 route) 
+- containers which belong to no node at all (the blackhole route)
+
+This is BGP in action - every node in our cluster which runs a calico-node daemon has a range of IPs which are routed to it.  As new nodes come up, these routes will be added to our `ip route` table over time.  If you run the `kubectl scale deployment coredns -n kube-system --replicas=6`, you'll find that all IP addresses come up in one of 2 different subnets.
+
+- Some pods come up in the `192.168.9` subnet.  These correspond to *one* of our nodes.
+- Other pods come up in the `192.168.71` subnet.  These correspond to the *other* node.
+
+Thus we can see Calico is managing IP Address ranges for us by carving up IP pools for individual nodes, and then coordinating these pools with the route tables in the Kernel.
+
+
+
+
+

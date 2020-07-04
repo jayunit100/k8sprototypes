@@ -32,10 +32,7 @@ data:
                 "type": "calico-ipam",
                 "assign_ipv4": "false",
                 "assign_ipv6": "true",
-                "ipv6_pools": ["2001:db8::1/120", "default-ipv6-ippool"]
-          },
-          "container_settings":{
-                "allow_ip_forwarding": true
+                "ipv6_pools":["2001:db8::/120","default-ipv6-ippool"]
           },
           "policy": {
               "type": "k8s"
@@ -581,8 +578,6 @@ spec:
               name: cni-net-dir
           securityContext:
             privileged: true
-        # Adds a Flex Volume Driver that creates a per-pod Unix Domain Socket to allow Dikastes
-        # to communicate with Felix over the Policy Sync API.
         - name: flexvol-driver
           image: calico/pod2daemon-flexvol:v3.12.2
           volumeMounts:
@@ -642,12 +637,14 @@ spec:
               value: "ACCEPT"
             # Disable IPv6 on Kubernetes.
             - name: FELIX_IPV6SUPPORT
-              value: "false"
+              value: "true"
             # Set Felix logging to "info"
             - name: FELIX_LOGSEVERITYSCREEN
               value: "info"
             - name: FELIX_HEALTHENABLED
               value: "true"
+            - name: IP6
+              value: "autodetect"
           securityContext:
             privileged: true
           resources:

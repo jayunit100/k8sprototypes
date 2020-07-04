@@ -32,6 +32,7 @@ data:
                 "type": "calico-ipam",
                 "assign_ipv4": "false",
                 "assign_ipv6": "true",
+                "ipv6_pools":["2001:db8::/120","default-ipv6-ippool"]
           },
           "policy": {
               "type": "k8s"
@@ -44,6 +45,10 @@ data:
           "type": "portmap",
           "snat": true,
           "capabilities": {"portMappings": true}
+        },
+        {
+          "type": "bandwidth",
+          "capabilities": {"bandwidth": true}
         }
       ]
     }
@@ -497,7 +502,7 @@ spec:
         scheduler.alpha.kubernetes.io/critical-pod: ''
     spec:
       nodeSelector:
-        beta.kubernetes.io/os: linux
+        kubernetes.io/os: linux
       hostNetwork: true
       tolerations:
         # Make sure calico-node gets scheduled on all nodes.
@@ -518,8 +523,7 @@ spec:
         # It can be deleted if this is a fresh installation, or if you have already
         # upgraded to use calico-ipam.
         - name: upgrade-ipam
-          image: ssavas/cni-plugin:3.11
-          imagePullPolicy: Always
+          image: calico/cni:v3.12.2
           command: ["/opt/cni/bin/calico-ipam", "-upgrade"]
           env:
             - name: KUBERNETES_NODE_NAME
@@ -536,11 +540,12 @@ spec:
               name: host-local-net-dir
             - mountPath: /host/opt/cni/bin
               name: cni-bin-dir
+          securityContext:
+            privileged: true
         # This container installs the CNI binaries
         # and CNI network config file on each node.
         - name: install-cni
-          image: ssavas/cni-plugin:3.11
-          imagePullPolicy: Always
+          image: calico/cni:v3.12.2
           command: ["/install-cni.sh"]
           env:
             # Name of the CNI config file to create.
@@ -571,27 +576,21 @@ spec:
               name: cni-bin-dir
             - mountPath: /host/etc/cni/net.d
               name: cni-net-dir
-        # Adds a Flex Volume Driver that creates a per-pod Unix Domain Socket to allow Dikastes
-        # to communicate with Felix over the Policy Sync API.
+          securityContext:
+            privileged: true
         - name: flexvol-driver
-          image: ssavas/pod2daemon:3.11
-          imagePullPolicy: Always
+          image: calico/pod2daemon-flexvol:v3.12.2
           volumeMounts:
           - name: flexvol-driver-host
             mountPath: /host/driver
-        - name: CALICO_ROUTER_ID
-          value: hash
-        - name: IP
-          value: none
-        - name: IP6
-          value: "autodetect"
+          securityContext:
+            privileged: true
       containers:
         # Runs calico-node container on each Kubernetes node.  This
         # container programs network policy and routes on each
         # host.
         - name: calico-node
-          image: ssavas/node:3.11
-          imagePullPolicy: Always
+          image: calico/node:v3.12.2
           env:
             # Use Kubernetes API as the backing datastore.
             - name: DATASTORE_TYPE
@@ -616,6 +615,9 @@ spec:
             # Auto-detect the BGP IP address.
             - name: IP
               value: "autodetect"
+            # Enable IPIP
+            - name: CALICO_IPV4POOL_IPIP
+              value: "Always"
             # Set MTU for tunnel device used if ipip is enabled
             - name: FELIX_IPINIPMTU
               valueFrom:
@@ -625,8 +627,8 @@ spec:
             # The default IPv4 pool to create on startup if none exists. Pod IPs will be
             # chosen from this range. Changing this value after installation will have
             # no effect. This should fall within `--cluster-cidr`.
-            #- name: CALICO_IPV4POOL_CIDR
-            #  value: "100.96.0.0/11"
+            - name: CALICO_IPV4POOL_CIDR
+              value: "192.168.0.0/16"
             # Disable file logging so `kubectl logs` works.
             - name: CALICO_DISABLE_FILE_LOGGING
               value: "true"
@@ -641,6 +643,8 @@ spec:
               value: "info"
             - name: FELIX_HEALTHENABLED
               value: "true"
+            - name: IP6
+              value: "autodetect"
           securityContext:
             privileged: true
           resources:
@@ -651,6 +655,7 @@ spec:
               command:
               - /bin/calico-node
               - -felix-live
+              - -bird-live
             periodSeconds: 10
             initialDelaySeconds: 10
             failureThreshold: 6
@@ -751,7 +756,7 @@ spec:
         scheduler.alpha.kubernetes.io/critical-pod: ''
     spec:
       nodeSelector:
-        beta.kubernetes.io/os: linux
+        kubernetes.io/os: linux
       tolerations:
         # Mark the pod as a critical add-on for rescheduling.
         - key: CriticalAddonsOnly
@@ -762,8 +767,7 @@ spec:
       priorityClassName: system-cluster-critical
       containers:
         - name: calico-kube-controllers
-          image: ssavas/kube-controllers:3.11
-          imagePullPolicy: Always
+          image: calico/kube-controllers:v3.12.2
           env:
             # Choose which controllers to run.
             - name: ENABLED_CONTROLLERS

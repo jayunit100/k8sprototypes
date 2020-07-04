@@ -20,13 +20,20 @@ networking:
   ipFamily: ipv6
 EOF
 
-cluster=akash
+#cluster=cipv6
+#conf=kind-conf-ipv6.yaml
+
+#cluster=antrea
+#conf=kind-conf
+
+cluster=calico
+conf=kind-conf.yaml
 
 function install_k8s() {
-    if kind delete cluster --name ${cluster}; then
+    if kind delete cluster --name=${cluster}; then
     	echo "deleted old kind cluster, creating a new one..."
     fi	    
-    kind create cluster --name ${cluster} --config kind-conf.yaml
+    kind create cluster --name=${cluster} --config=${conf} 
     export KUBECONFIG="$(kind get kubeconfig-path --name=kind-${cluster})"
     chmod 755 ~/.kube/kind-config-kind
     export KUBECONFIG="$(kind get kubeconfig-path --name=kind-${cluster})"
@@ -37,17 +44,26 @@ function install_k8s() {
 }
 
 function install_antrea() {
-   kubectl apply -f kubectl apply -f https://github.com/vmware-tanzu/antrea/releases/download/v0.7.2/antrea.yml
- -n kube-system  
+   kubectl apply -f kubectl apply -f https://github.com/vmware-tanzu/antrea/releases/download/v0.8.0/antrea.yml -n kube-system  
 }
 
 function install_calico() {
     kubectl get pods
     kubectl apply -f ./calico312.yaml
+}
+
+function install_calico() {
+    kubectl get pods
+    kubectl apply -f ./calico.yaml
     kubectl get pods -n kube-system
     
     kubectl -n kube-system set env daemonset/calico-node FELIX_IGNORELOOSERPF=true
     kubectl -n kube-system set env daemonset/calico-node FELIX_XDPENABLED=false
+}
+
+function install_antrea() {
+	kubectl create ns tkg-system
+	kubectl create -f antrea.yml -n tkg-system
 }
 
 function wait() {
@@ -64,6 +80,12 @@ function testStatefulSets() {
 }
 
 install_k8s
-install_antrea
+
+if [[ $cluster == "calico" ]]; then
+	install_calico
+fi
+if [[ $cluster == "antrea" ]]; then
+	install_antrea
+fi
+
 #testStatefulSets
-#install_calico

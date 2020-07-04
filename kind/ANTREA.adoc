@@ -1,0 +1,95 @@
+== Setting up Antrea and exploring it
+
+OpenVSwitch is what antrea uses to power its CNI capabilities.  Unlike BGP, it wont create a virtual ethernet
+pair that is routed all over your cluster for you via a broadcast.  But rather, it will create a *bridge*, which
+runs locally on your Kubernetes node.  This bridge is created using *OpenVSwitch*.  OpenVSwitch is, literally,
+a software defined switch: like the ones you buy at the computer store.  OpenVSwitch will then be the interface
+between your Pods, and the rest of the world, when running Antrea.  The Pros and Cons between bridged (also known as layer 2) and
+IP (also known as layer 3) routing are beyond the scope of this book, and hotly debated amongst academics and software companies alike.
+
+In our case - we'll just say - these are different technologies which both work quite well and can scale to handle 1000s of Pods quite readily.
+
+So, lets try making our Kind cluster again, this time, using Antrea s our CNI provider.  First, delete your last cluster, 
+
+[source, bash]
+----
+kind delete cluster --name=calico
+----
+
+And now recreate it using the same steps as before
+[source,bash]
+----
+cat << EOF > kind-Antrea-conf.yaml
+kind: Cluster
+apiVersion: kind.sigs.k8s.io/v1alpha3
+networking:
+  disableDefaultCNI: true
+  podSubnet: 192.168.0.0/16
+nodes:
+- role: control-plane
+- role: worker
+EOF
+kind create cluster --name=calico --config=./kind-Antrea-conf.yaml
+----
+
+Now, once your cluster comes up, `kubectl apply -f https://github.com/vmware-tanzu/antrea/releases/download/v0.8.0/antrea.yml -n kube-system`.
+
+Now, run `docker exec` again and take a look at the ip situataion in our Kubelets.  This time, we see that there are a few different interfaces created for us.
+
+Note that we leave out the `tun0` interface which you'll see in both of the CNIs - this is the network interface where encapsulated traffic between nodes flows through.
+
+Interestingly, when we run `ip route` we don't see a new route for every pod we have running.  This is because OVS uses a bridge, and thus, the 'ethernet' cables still exist, but they are all plugged directly into our locally running OpenVswitch instance.
+
+[source, bash]
+----
+root@antrea-control-plane:/# ip route 
+172.18.0.0/16 dev eth0 proto kernel scope link src 172.18.0.3 
+192.168.0.0/24 dev antrea-gw0 proto kernel scope link src 192.168.0.1 
+192.168.1.0/24 via 192.168.1.1 dev antrea-gw0 onlink 
+----
+
+Now, to confirm this, lets run the `ip a` command, which will show us all the different IP addresses that our machine understands.
+ 
+[source, bash]
+----
+jayunit100> docker exec -t -i ba133 /bin/bash
+root@antrea-control-plane:/# ip a
+# ip a
+3: ovs-system: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN group default qlen 1000
+    link/ether 2e:24:a8:d8:a3:50 brd ff:ff:ff:ff:ff:ff
+4: genev_sys_6081: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 65000 qdisc noqueue master ovs-system state UNKNOWN group default qlen 1000
+    link/ether 76:82:e1:8b:d4:86 brd ff:ff:ff:ff:ff:ff
+5: antrea-gw0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1450 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/ether 02:09:36:d3:cf:a4 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.0.1/24 brd 192.168.0.255 scope global antrea-gw0
+       valid_lft forever preferred_lft forever
+6: coredns--ce7b25@if4: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1450 qdisc noqueue master ovs-system state UP group default 
+    link/ether d2:a2:38:92:71:d3 brd ff:ff:ff:ff:ff:ff link-netns cni-41e0e6f8-cde2-a2cf-d05c-e7e3e093061d
+7: local-pa-d4b59a@if4: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1450 qdisc noqueue master ovs-system state UP group default 
+    link/ether 36:84:52:4f:a9:3d brd ff:ff:ff:ff:ff:ff link-netns cni-a42aa91f-708f-ad9b-5c8b-5cc6025a07a8
+8: coredns--df4b78@if4: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1450 qdisc noqueue master ovs-system state UP group default 
+    link/ether 52:1c:c3:e3:29:84 brd ff:ff:ff:ff:ff:ff link-netns cni-bcc586ae-08de-715a-ef3c-4abda98f384a
+108: eth0@if109: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default 
+    link/ether 02:42:ac:12:00:03 brd ff:ff:ff:ff:ff:ff link-netnsid 0
+    inet 172.18.0.3/16 brd 172.18.255.255 scope global eth0
+       valid_lft forever preferred_lft forever
+    inet6 fc00:f853:ccd:e793::3/64 scope global nodad 
+       valid_lft forever preferred_lft forever
+    inet6 fe80::42:acff:fe12:3/64 scope link 
+       valid_lft forever preferred_lft forever
+----
+
+One of the interesting things to note when we run the `ip a` command is that we can see several unfamiliar devices floating around.  
+
+- genev_sys_6081: The interface for Genev, which is the tunneling protocol antrea uses
+- ovs-system: An open vswitch created interface
+- antrea-gw0: An interface antrea uses to send traffic to pods
+
+Thus we can see that, in the bridged model for networking, there are a few differences between what sorts of devices are created.
+
+- There is no blackhole route - this is handled by openvswitch for us.
+- The only routes which our kernel manages are for the antrea gateway (antrea-gw0) itself.
+- All of this pod's traffic go directly to the antrea-gw0 device.  There is no global routing to other devices, as is done in the BGP protocol which is used by our Calico CNI.
+
+
+

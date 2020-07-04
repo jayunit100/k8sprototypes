@@ -1,5 +1,11 @@
 === Setting up calico on Kind and exploring its networking model.
 
+
+=== A quick note on Tunnelling
+
+Note that in both calico and antrea, you will see a `tun0` interface when looking at traffic.  These CNIs use a tunnel to send traffic which is encapsulated, thus allowing an IP in the Kubernetes network to flow between nodes *outside* the Kubernetes network, because it is packaged inside of *another* packet.  The way tunneling is done (IPIP and Genev are the tunneling technologies used by Calico and Antrea, respectively).  We wont deeply cover the differences between these technologies from a CNI perspective, but we will underscore the importance of understanding that *tunneling* is *not* done in "Cloud native" networking models in all cases.  For example, in AWS and GKE, IP Addresses can natively be routed by the cloud itself, and hence, there may not be a need for such tunnels in clusters which are not built with an "on premises" mindset.
+
+=== Settung up a Calico Kind cluster
 To explore how CNI's work, we'll start off by installing Calioc, a popular Layer 3 based networking tool for Kuberentes.
 By Layer 3 here, we mean to say, that Pods running in a Calico CNI connect to one another by IP networking, rather
 then by any kind of fancy lower level constructs (such as bridging).
@@ -44,6 +50,8 @@ NAME                   STATUS     ROLES    AGE    VERSION
 calico-control-plane   NotReady   master   2m4s   v1.18.2
 calico-worker          NotReady   <none>   85s    v1.18.2
 ----
+
+=== Installing the Calico CNI provider
 
 At this point, our `core-dns` pod will not be able to come up, because the Kubernetes scheduler will see that all nodes are "NotReady".
 This state is determined based on the fact that the CNI provider hasn't been set yet.  CNIs are configured once a CNI container writes
@@ -131,8 +139,5 @@ This is BGP in action - every node in our cluster which runs a calico-node daemo
 - Other pods come up in the `192.168.71` subnet.  These correspond to the *other* node.
 
 Thus we can see Calico is managing IP Address ranges for us by carving up IP pools for individual nodes, and then coordinating these pools with the route tables in the Kernel.
-
-
-
 
 

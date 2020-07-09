@@ -44,17 +44,12 @@ function install_k8s() {
 }
 
 function install_antrea() {
-   kubectl apply -f kubectl apply -f https://github.com/vmware-tanzu/antrea/releases/download/v0.8.0/antrea.yml -n kube-system  
+   kubectl apply -f https://github.com/vmware-tanzu/antrea/releases/download/v0.8.0/antrea.yml -n kube-system  
 }
 
 function install_calico() {
     kubectl get pods
-    kubectl apply -f ./calico312.yaml
-}
-
-function install_calico() {
-    kubectl get pods
-    kubectl apply -f ./calico.yaml
+    kubectl apply -f ./calico3.12.3raw.yaml
     kubectl get pods -n kube-system
     
     kubectl -n kube-system set env daemonset/calico-node FELIX_IGNORELOOSERPF=true

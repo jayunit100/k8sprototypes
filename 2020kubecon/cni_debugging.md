@@ -214,22 +214,121 @@ This will give you a raw dump of anything with, for example, a 192 address, and 
 
 ## IPTables
 
-Once you've looked at wether individual pods are or are not receiving traffic from other pods in your cluster 
+We've looked at:
+
+- How the host maps routes Pod traffic
+- How, from the host, you can verify incoming pod traffic
+
+However, we havent yet looked at *services*.
+
+IPTables (or IPvS) ultimately give us the ability to see how traffic is being routed from services to pods.
+
+### Making sure service routing is working
+
+The simplest thing you can do to start is look for all service endpoints:
+
+`iptables-save`
+
+From here, you can look for the comment rules, which will tell you the services which are associated with a rule.
+
+```
+-A KUBE-SVC-TCOU7JCQXEZGVUNU -m comment --comment "kube-system/kube-dns:dns" -m statistic --mode random --probability 0.10000000009 -j KUBE-SEP-QIVPDYSUOLOYQCAA
+-A KUBE-SVC-TCOU7JCQXEZGVUNU -m comment --comment "kube-system/kube-dns:dns" -m statistic --mode random --probability 0.11111111101 -j KUBE-SEP-N76EJY3A4RTXTN2I
+-A KUBE-SVC-TCOU7JCQXEZGVUNU -m comment --comment "kube-system/kube-dns:dns" -m statistic --mode random --probability 0.12500000000 -j KUBE-SEP-LSGM2AJGRPG672RM
+```
+
+After looking at these services, you'll want to find the corresponding `SEP` rules for them:
+
+```
+root@calico-worker3:/# iptables-save | grep SEP-QI
+:KUBE-SEP-QIVPDYSUOLOYQCAA - [0:0]
+-A KUBE-SEP-QIVPDYSUOLOYQCAA -s 192.168.143.65/32 -m comment --comment "kube-system/kube-dns:dns" -j KUBE-MARK-MASQ
+-A KUBE-SEP-QIVPDYSUOLOYQCAA -p udp -m comment --comment "kube-system/kube-dns:dns" -m udp -j DNAT --to-destination 192.168.143.65:53
+-A KUBE-SVC-TCOU7JCQXEZGVUNU -m comment --comment "kube-system/kube-dns:dns" -m statistic --mode random --probability 0.10000000009 -j KUBE-SEP-QIVPDYSUOLOYQCAA
+```
+
+This step is *the exact same* in any CNI provider you use, so we dont provide an antrea/calico comparison.
+
+### Looking at network policies
+
+To start looking at how network policies might be affecting traffic, run a networkpolicy test:
+
+```
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: web-deny-all
+spec:
+  podSelector:
+    matchLabels:
+      app: web
+  ingress: []
+```
+
+A good way to uniformly test these policies is to create a daemonset running the same container in all nodes:
+
+```
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: nginx-ds
+spec:
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+```
 
 
+#### How are these policies implemented? 
 
+NetworkPolicies are often but not always implemented by your CNI providers as iptables rules.
 
+In calico, you'll see policies such as this.  This is where the 'drop' rule of a policy is implemented.
+If you were to enable a policy later, these rules would get superceded by those add rules, per the NetworkPolicy API specification.
 
+```
+> -A cali-tw-calic5cc839365a -m comment --comment "cali:Uv2zkaIvaVnFWYI9" -m comment --comment "Start of policies" -j MARK --set-xmark 0x0/0x20000
+> -A cali-tw-calic5cc839365a -m comment --comment "cali:7OLyCb9i6s_CPjbu" -m mark --mark 0x0/0x20000 -j cali-pi-_IDb4Gbl3P1MtRtVzfEP
+> -A cali-tw-calic5cc839365a -m comment --comment "cali:DBkU9PXyu2eCwkJC" -m comment --comment "Return if policy accepted" -m mark --mark 0x10000/0x10000 -j RETURN
+> -A cali-tw-calic5cc839365a -m comment --comment "cali:tioNk8N7f4P5Pzf4" -m comment --comment "Drop if no policies passed packet" -m mark --mark 0x0/0x20000 -j DROP
+> -A cali-tw-calic5cc839365a -m comment --comment "cali:wcGG1iiHvTXsj5lq" -j cali-pri-kns.default
+> -A cali-tw-calic5cc839365a -m comment --comment "cali:gaGDuGQkGckLPa4H" -m comment --comment "Return if profile accepted" -m mark --mark 0x10000/0x10000 -j RETURN
+> -A cali-tw-calic5cc839365a -m comment --comment "cali:B6l_lueEhRWiWwnn" -j cali-pri-ksa.default.default
+> -A cali-tw-calic5cc839365a -m comment --comment "cali:McPS2ZHiShhYyFnW" -m comment --comment "Return if profile accepted" -m mark --mark 0x10000/0x10000 -j RETURN
+> -A cali-tw-calic5cc839365a -m comment --comment "cali:lThI2kHuPODjvF4v" -m comment --comment "Drop if no profiles matched" -j DROP
+```
 
+Antrea also implements networkpolicies, but uses openvswitch flows, and writes these flows to table 90. 
 
+In antrea, running a similar workload, you'll see these policies created.  An easy way to do this is to call ovs-ofctl .  Typically
+this is done from inside a container since antrea-agents are fully configured with all openvswitch administrative binaries.
+This can also work from the host as well if needed, just install the ovs utilities as needed... 
 
+```
+/tmp » kubectl -n kube-system exec -it antrea-agent-2kksz ovs-ofctl dump-flows br-int | grep table=90                 
+```
 
-
-
-
-
-
-
+```
+kubectl exec [POD] [COMMAND] is DEPRECATED and will be removed in a future version. Use kubectl kubectl exec [POD] -- [COMMAND] instead.
+Defaulting container name to antrea-agent.
+Use 'kubectl describe pod/antrea-agent-2kksz -n kube-system' to see all of the containers in this pod.
+ cookie=0x2000000000000, duration=344936.777s, table=90, n_packets=0, n_bytes=0, priority=210,ct_state=-new+est,ip actions=resubmit(,105)
+ cookie=0x2000000000000, duration=344936.776s, table=90, n_packets=83160, n_bytes=6153840, priority=210,ip,nw_src=100.96.26.1 actions=resubmit(,105)
+ 
+ ### This line shows that you have some pods which are being allowed, via the ovs flow register, into the cluster.... 
+ cookie=0x2050000000000, duration=22.296s, table=90, n_packets=0, n_bytes=0, priority=200,ip,reg1=0x18 actions=conjunction(1,2/2)
+ 
+ cookie=0x2050000000000, duration=22.300s, table=90, n_packets=0, n_bytes=0, priority=190,conj_id=1,ip actions=load:0x1->NXM_NX_REG6[],resubmit(,105)
+ cookie=0x2000000000000, duration=344936.782s, table=90, n_packets=149662, n_bytes=11075281, priority=0 actions=resubmit(,100)
+```
 
 
 

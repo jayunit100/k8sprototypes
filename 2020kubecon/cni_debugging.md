@@ -2,8 +2,59 @@
 
 How can I debug the datapath of containers in my Kubernetes clusters using basic linux commands? 
 
-
+- Rough outline of pod -> service -> node -> policy flow, generalized for any CNI.
+```
++-----------------------------+    +----------------------------+
+|                             |    |                            |
+|               100..61       |    |                            |
+| +--------+      +-------+   |    |  +---------+     +------+  |
+| |   pod  +------+service|   |    |  |  policy +---->+ pod  |  |
+| +--------+      +-+-----+   |    |  +----^----+     +------+  |
+|  100.96           |         |    |       |              100.96|
+|               +---v------+  |    |       |                    |
+|               |  iptables+----+  | +-----+----------------+   |
+|               +----------+  | +---->node firewall: tcpdump|   |
+|                             |    | +----------------------+   |
+|                             |    |                            |
++-----------------------------+    +----------------------------+
+                 10...                          10...
+```
 The first step is to run `ip a`.  This will give you a birds eye view of what network interfaces your host is aware of.
+
+In terms of the IPTables routing, we have the following:
+```
+KUBE_MARK_MASQ -> KUBE-SVC -----> KUBE_MARK_DROP  
+			  |-----> KUBE_SEP -> KUBE_MARQ_MASK -> NODE -> route device) 
+```
+
+## Quick over view of eth pairs
+
+Any k8s cluster node will have a list of containers mapped to mac addresses ...  
+- Addresses of pods that the node can reach:
+```
+root [ /home/capv ]# arp -na | sort
+? (100.96.26.15) at 86:55:7a:e3:73:71 [ether] on antrea-gw0
+? (100.96.26.16) at 4a:ee:27:03:1d:c6 [ether] on antrea-gw0
+? (100.96.26.17) at <incomplete> on antrea-gw0
+? (100.96.26.18) at ba:fe:0f:3c:29:d9 [ether] on antrea-gw0
+? (100.96.26.19) at e2:99:63:53:a9:68 [ether] on antrea-gw0
+? (100.96.26.20) at ba:46:5e:de:d8:bc [ether] on antrea-gw0
+? (100.96.26.21) at ce:00:32:c0:ce:ec [ether] on antrea-gw0
+? (100.96.26.22) at e2:10:0b:60:ab:bb [ether] on antrea-gw0
+? (100.96.26.2) at 1a:37:67:98:d8:75 [ether] on antrea-gw0
+```
+- Addresses which are local to the node:
+```
+? (192.168.5.160) at 00:50:56:b0:ee:ff [ether] on eth0
+? (192.168.5.1) at 02:50:56:56:44:52 [ether] on eth0
+? (192.168.5.207) at 00:50:56:b0:80:64 [ether] on eth0
+? (192.168.5.245) at 00:50:56:b0:e2:13 [ether] on eth0
+? (192.168.5.43) at 00:50:56:b0:0f:52 [ether] on eth0
+? (192.168.5.54) at 00:50:56:b0:e4:6d [ether] on eth0
+? (192.168.5.93) at 00:50:56:b0:1b:5b [ether] on eth0
+```
+
+Thus `arp -n` gives you the simplest quick overview of the veth pairs associated with the pods on your local machine.
 
 ## First, look at interfaces with the IP command.
 

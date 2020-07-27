@@ -79,8 +79,7 @@ capv@antrea-vc-md-0-869559ff88-6mnd4 [ ~ ]$ ip a
     inet6 fe80::80aa:a9ff:fe6f:233/64 scope link
 ```
 
-In both clusters, run `kubectl scale deployment coredns --replicas=10 -n kube-system`.  Then re run these commands.
-You'll notices that you do not see any new ip.
+In both clusters, run `kubectl scale deployment coredns --replicas=10 -n kube-system`.  Then re run these commands.  You'll see new ip a entries for the containers.
 
 ### How many packets are flowing through the interfaces? 
 

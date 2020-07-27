@@ -117,6 +117,43 @@ This command works the same in antrea.  We can see that there are lots of packet
 
 The next level of debugging involves seeing how these devices are wired to IP addresses.  You might need to run `apt-get update; apt-get install net-tools` in your kind cluster
 if you dont have a full blown linux vm setup. 
+```
+ +-----------------------------------+
+ |                                   |    +--------+
+ +----------+                        |    |        |
+ |          |                    +------->+ 172...3|
+ |	192.168  |               +   |    +--------+
+ | .9.130   +-------->   tun0   ++   |
+ |          |        +----------+    |    +--------+
+ +----------+        |   tun0   |    |    | 172...5|
+ |                   +----------+    |    +--------+
+ |                   |   tun0   |    |
+ |                   +----------+    |
+ |                   |   tun0   |    |    +--------+
+ |                   +----------+    |    | 172...4|
+ |                                   |    |        |
+ +------------+                      |    +--------+
+ || 192.168   |       +-----------+  |
+ || .173.64   +------>+ locally   |  |    +--------+
+ ||           |       | connected |  |    | 172...2|
+ +------------+       | (0.0.0.0) |  |    |        |
+ |                    +-----------+  |    +--------+
+ |                                   |
+ |                                   |
+++-----------------------------------+
+
+ +-----------------------------------+
+ |              +-------------+      |    +--------+
+ |              |   antrea|gw0+---------> |  ovs   |
+ | 100.96.      +-------------+      |    |gateway |
+ | 0.2   +----->+   antrea|gw0|      |    |  0.1   |
+ |              +-------------+      |    +--------+
+ |                                   |
+ |                                   |
+ |                                   |
+ |                                   |
+ +-----------------------------------+
+```
 
 Running `route -n` in our calico cluster shows the following routing table in the kernel:
 

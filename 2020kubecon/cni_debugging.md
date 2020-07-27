@@ -94,7 +94,12 @@ The `ip` command actually has a `-s` option, which will show you if traffic is f
     839360     1919     0       0       0       0
 ```
 
-This command works the same in antrea, however, we run it against the gatweay bridge to see total amount of traffic.
+This command works the same in antrea.  We can see that there are lots of packets reaching the bridge, compared with the other containers: 
+- 2801928 received packets for the `antrea_gw0` device
+- 831670 received packets for the `geneve_sys` device
+- 383670 received packets for an 1 coredns container
+- 384203 received packets for the other coredns container
+
 ```
 5: antrea-gw0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1450 qdisc noqueue state UNKNOWN group default qlen 1000
     link/ether 82:aa:a9:6f:02:33 brd ff:ff:ff:ff:ff:ff

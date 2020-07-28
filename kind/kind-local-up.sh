@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Thanks to https://alexbrand.dev/post/creating-a-kind-cluster-with-calico-networking/ for this snippet :)
-cat << EOF > kind-conf.yaml
+cat << EOF > calico-conf.yaml
 kind: Cluster
 apiVersion: kind.sigs.k8s.io/v1alpha3
 networking:
@@ -9,6 +9,7 @@ networking:
   podSubnet: 192.168.0.0/16 # set to Calico's default subnet
 nodes:
 - role: control-plane
+- role: worker
 - role: worker
 EOF
 
@@ -27,7 +28,7 @@ EOF
 #conf=kind-conf
 
 cluster=calico
-conf=kind-conf.yaml
+conf=calico-conf.yaml
 
 function install_k8s() {
     if kind delete cluster --name=${cluster}; then
@@ -49,7 +50,7 @@ function install_antrea() {
 
 function install_calico() {
     kubectl get pods
-    kubectl apply -f ./calico3.12.3raw.yaml
+    kubectl apply -f ./calico3.12.3.yaml
     kubectl get pods -n kube-system
     
     kubectl -n kube-system set env daemonset/calico-node FELIX_IGNORELOOSERPF=true

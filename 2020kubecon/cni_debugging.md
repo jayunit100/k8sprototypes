@@ -95,7 +95,7 @@ The `ip` command actually has a `-s` option, which will show you if traffic is f
 ```
 
 This command works the same in antrea.  We can see that there are lots of packets reaching the bridge, compared with the other containers: 
-- 2801928 received packets for the `antrea_gw0` device
+- 2,801,928 received packets for the `antrea_gw0` device (everything goes through ovs)
 - 831670 received packets for the `geneve_sys` device
 - 383670 received packets for an 1 coredns container
 - 384203 received packets for the other coredns container
@@ -334,6 +334,7 @@ After looking at these services, you'll want to find the corresponding `SEP` rul
 ```
 root@calico-worker3:/# iptables-save | grep SEP-QI
 :KUBE-SEP-QIVPDYSUOLOYQCAA - [0:0]
+### Masquerading happens here for outgoing traffic...
 -A KUBE-SEP-QIVPDYSUOLOYQCAA -s 192.168.143.65/32 -m comment --comment "kube-system/kube-dns:dns" -j KUBE-MARK-MASQ
 -A KUBE-SEP-QIVPDYSUOLOYQCAA -p udp -m comment --comment "kube-system/kube-dns:dns" -m udp -j DNAT --to-destination 192.168.143.65:53
 -A KUBE-SVC-TCOU7JCQXEZGVUNU -m comment --comment "kube-system/kube-dns:dns" -m statistic --mode random --probability 0.10000000009 -j KUBE-SEP-QIVPDYSUOLOYQCAA
@@ -462,4 +463,8 @@ Use 'kubectl describe pod/antrea-agent-2kksz -n kube-system' to see all of the c
 
 
 
+# TODO
+
+- Calico Antrea cni swap overlay 
+- ip route trace 
 

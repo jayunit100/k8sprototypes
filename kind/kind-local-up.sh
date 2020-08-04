@@ -21,14 +21,17 @@ networking:
   ipFamily: ipv6
 EOF
 
+cluster=nocni
+conf="calico-conf.yaml"
+
 #cluster=cipv6
 #conf=kind-conf-ipv6.yaml
 
 #cluster=antrea
 #conf=kind-conf
 
-cluster=calico
-conf=calico-conf.yaml
+#cluster=calico
+#conf=calico-conf.yaml
 
 function install_k8s() {
     if kind delete cluster --name=${cluster}; then
@@ -77,6 +80,9 @@ function testStatefulSets() {
 
 install_k8s
 
+if [[ $cluster == "" ]]; then
+	echo "skipping cni"
+fi
 if [[ $cluster == "calico" ]]; then
 	install_calico
 fi

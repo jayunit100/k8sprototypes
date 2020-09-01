@@ -55,7 +55,7 @@ This container is straightforward.  It listens on port 8443, and creates a cert.
     - capi-system_manager
 
     Now, in the capi-system-manager logs , we see some informatino which actually is the  ROOT CAUSE of our failure in this example, related to a 1.19 kubernetes installation issue.
-        ```
+```
         2020-09-01T21:58:18.111047133Z stderr F E0901 21:58:18.110931       1 controller.go:248] controller-runtime/controller "msg"="Reconciler error" "error"="admission webhook \"validation.kubeadmcontrolplane.controlplane.cluster.x-k8s.io\" denied the request: KubeadmControlPlane.controlplane.cluster.x-k8s.io \"tkg-mgmt-azure-control-plane\" is invalid: spec.kubeadmConfigSpec.clusterConfiguration.dns.imageTag: Forbidden: cannot migrate CoreDNS up to '1.7.0' from '1.7.0'" "controller"="cluster" "name"="tkg-mgmt-azure" "namespace"="tkg-system"
 
         2020-09-01T21:58:30.541098179Z stderr F I0901 21:58:30.540871       1 machine_controller_noderef.go:52] controllers/Machine "msg"="Machine doesn't have a valid ProviderID yet" "cluster"="tkg-mgmt-azure" "machine"="tkg-mgmt-azure-md-0-59d6c89dc4-xvz7c" "namespace"="tkg-system"
@@ -66,11 +66,10 @@ This container is straightforward.  It listens on port 8443, and creates a cert.
         2020-09-01T22:01:00.607203511Z stderr F I0901 22:01:00.607003       1 machine_controller_noderef.go:52] controllers/Machine "msg"="Machine doesn't have a valid ProviderID yet" "cluster"="tkg-mgmt-azure" "machine"="tkg-mgmt-azure-md-0-59d6c89dc4-xvz7c" "namespace"="tkg-system"
         2020-09-01T22:01:00.607320883Z stderr F E0901 22:01:00.607139       1 machine_controller.go:249] controllers/Machine "msg"="Reconciliation for Machine asked to requeue" "error"="Bootstrap provider for Machine \"tkg-mgmt-azure-md-0-59d6c89dc4-xvz7c\" in namespace \"tkg-system\" is not ready, requeuing: requeue in 30s" "cluster"="tkg-mgmt-azure" "machine"="tkg-mgmt-azure-md-0-59d6c89dc4-xvz7c" "namespace"="tkg-system"
 ```
+
 - capi-kubeadm-bootstrap-controller-manager-
-  - kubeadm-bootstrap-system_kube-rbac-proxy
-    This is similar to kube-rbac-proxy above, just a 3 liner to serve 8443.
-  - capi-kubeadm-bootstrap-system_kube-rbac-proxy
-    Ditto
+  - kubeadm-bootstrap-system_kube-rbac-proxy (This is similar to kube-rbac-proxy above, just a 3 liner to serve 8443)
+  - capi-kubeadm-bootstrap-system_kube-rbac-proxy (Ditto)
   - capi-kubeadm-bootstrap-system_manager-
         ```
         2020-09-01T16:14:03.894049966Z stderr F I0901 16:14:03.893879       1 listener.go:44] controller-runtime/metrics "msg"="metrics server is starting to listen"  "addr"="127.0.0.1:8080"

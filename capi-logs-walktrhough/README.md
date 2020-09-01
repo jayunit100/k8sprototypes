@@ -1,36 +1,36 @@
 # What logs does CAP produce ? 
 
 During the bootstrapping of a CAP* cluster, you might get containers such as the following...
-    ```
-    capi-controller-manager-5f7cd97899-lcx64_capi-webhook-system_kube-rbac-proxy-d0dcbb52abc9ceabe19cd7e8bd328614354abe442de105f70821fd052db5d3ae.log
-    capi-controller-manager-5f7cd97899-lcx64_capi-webhook-system_manager-49ef807d3b1ece77b84c509df4d7884b2dfb92b39b71c4f176729a6522042211.log
-    capi-controller-manager-69c99b87fd-l9vgn_capi-system_kube-rbac-proxy-13fa8267c06ee226d514ac9b4d6aa21f72836d3c09ffcfc780652c16e6923478.log
-    capi-controller-manager-69c99b87fd-l9vgn_capi-system_manager-0b5b9d42745c79c2700b52890bc067e5c92e485c5a179aeb9aca65934ee790bb.log
-    capi-kubeadm-bootstrap-controller-manager-5f4656cd7c-5pstb_capi-kubeadm-bootstrap-system_kube-rbac-proxy-f44c8dc917a0851a7718a4ffccf158e501b1da38e77725d6a57483909aedeeec.log
-    capi-kubeadm-bootstrap-controller-manager-5f4656cd7c-5pstb_capi-kubeadm-bootstrap-system_manager-fd49d391e4451f54326f3b3b798ca8e954df62e398ba8b6041105ae4f7f33183.log
-    capi-kubeadm-bootstrap-controller-manager-85b4884469-4c6z9_capi-webhook-system_kube-rbac-proxy-10e19162a6cffecdb372afb4bfade5755f2e26e4c1e8082b0eff065b04726040.log
-    capi-kubeadm-bootstrap-controller-manager-85b4884469-4c6z9_capi-webhook-system_manager-98272c370d20d828ae4950132f81cc988cce2871ec428a6ff1e75117d30a4aec.log
-    capi-kubeadm-control-plane-controller-manager-5c5484d68d-mdfvm_capi-webhook-system_kube-rbac-proxy-7ef94213690ced0eb7e7ebbbd0c4ad5455315f586b0cf31c53c991dc5e4fab87.log
-    capi-kubeadm-control-plane-controller-manager-5c5484d68d-mdfvm_capi-webhook-system_manager-fd1b64c97a1271f3acc38a594a27724c8103bd6dbaebe075a3927f5e61cd6769.log
-    capi-kubeadm-control-plane-controller-manager-5f87b79f4f-phl77_capi-kubeadm-control-plane-system_kube-rbac-proxy-a457c32a7b97f247f61a8c48a3a6f7d44bd0f833323792bc1614f7ea1638ec3c.log
-    capi-kubeadm-control-plane-controller-manager-5f87b79f4f-phl77_capi-kubeadm-control-plane-system_manager-429070fc17a39f7c76321712945c8dba0fb046291d149d4f82ef3fbf44edb010.log
-    capz-controller-manager-558b498bf7-kng7m_capz-system_kube-rbac-proxy-6abe90a9ecc64c9eec1d187ec5074b1a396844ec8d7875e22c1a2a3cd2421717.log
-    capz-controller-manager-558b498bf7-kng7m_capz-system_manager-3d2152ce423f95b8fbc0966e59bc2034efe5d531e4314eac31285a3b3f676351.log
-    capz-controller-manager-596f66cccc-9fj76_capi-webhook-system_kube-rbac-proxy-a96d925863e0b392e05f4b0e6762b562b4590a45c0f0d969d060daba8ccd74af.log
-    capz-controller-manager-596f66cccc-9fj76_capi-webhook-system_manager-e30562f0d6ff412b076bbdb63ee931d73a97c330570c6480482d6068ce4e9810.log
-    cert-manager-5c7d4596b-4s7zn_cert-manager_cert-manager-596d9611df9d9d55924f4d6bec2ec633a46375cc715303c91424f443c3091d2e.log
-    cert-manager-cainjector-664f57c845-928rw_cert-manager_cainjector-b91b8cd8612c32b137ec92a30fbb26547dd682f36839b6658a6f235ccd2f4e07.log
-    cert-manager-webhook-66759c9f87-stz8p_cert-manager_cert-manager-55e2a33a9a98f9b0f2d5d7da85fc33ca897127e0dc4acea9b661a341aef74b38.log
-    coredns-774fbc4754-w9pqf_kube-system_coredns-03c2aed6a65afd243f5833e01546d4c229dd2254a1493e4db63bac58b0f107aa.log
-    coredns-774fbc4754-wm5b6_kube-system_coredns-45582a4882c1339b87f7ad99e3ff4beb51af5ae563581abe5f2ecc54c3659ef9.log
-    etcd-tkg-kind-bt775dc6n3gdf1rfcupg-control-plane_kube-system_etcd-4ffbe01cd538827a02aa22241c107894232cd7dd7bfd02282eff7ab9571ed9b9.log
-    kindnet-9ncml_kube-system_kindnet-cni-48c952d3ca153e1cdad50b32c05f40c351325a9004751fe175af853ccac7f6ed.log
-    kube-apiserver-tkg-kind-bt775dc6n3gdf1rfcupg-control-plane_kube-system_kube-apiserver-46148ac8dde1c7c614c636c721d6a7412129a95903de4308a1c6935056d207c7.log
-    kube-controller-manager-tkg-kind-bt775dc6n3gdf1rfcupg-control-plane_kube-system_kube-controller-manager-52e0a0c5efaa14c0f3f014d18043098a80bdd50c1d62d92244404cf4e13f6021.log
-    kube-proxy-9rb8h_kube-system_kube-proxy-f5d6f7118ec50bf1b6eaf1ea057286b50160246cca3eac6468bbcdfe1b661b9a.log
-    kube-scheduler-tkg-kind-bt775dc6n3gdf1rfcupg-control-plane_kube-system_kube-scheduler-baff068d5fb2271534d5a2ec25c257e573406784eb2768ab7e3e42e6df0fc5ff.log
-    local-path-provisioner-8b46957d4-ds69h_local-path-storage_local-path-provisioner-947e10680813178b7498dd4df0ab40579641998ad8c4401d869a7c02289eb634.log
-    ```
+   
+   
+- capi-controller-manager-5f7cd97899-lcx64_capi-webhook-system_kube-rbac-proxy-d0dcbb52abc9ceabe19cd7e8bd328614354abe442de105f70821fd052db5d3ae.log
+- capi-controller-manager-5f7cd97899-lcx64_capi-webhook-system_manager-49ef807d3b1ece77b84c509df4d7884b2dfb92b39b71c4f176729a6522042211.log
+- capi-controller-manager-69c99b87fd-l9vgn_capi-system_kube-rbac-proxy-13fa8267c06ee226d514ac9b4d6aa21f72836d3c09ffcfc780652c16e6923478.log
+- capi-controller-manager-69c99b87fd-l9vgn_capi-system_manager-0b5b9d42745c79c2700b52890bc067e5c92e485c5a179aeb9aca65934ee790bb.log
+- capi-kubeadm-bootstrap-controller-manager-5f4656cd7c-5pstb_capi-kubeadm-bootstrap-system_kube-rbac-proxy-f44c8dc917a0851a7718a4ffccf158e501b1da38e77725d6a57483909aedeeec.log
+- capi-kubeadm-bootstrap-controller-manager-5f4656cd7c-5pstb_capi-kubeadm-bootstrap-system_manager-fd49d391e4451f54326f3b3b798ca8e954df62e398ba8b6041105ae4f7f33183.log
+- capi-kubeadm-bootstrap-controller-manager-85b4884469-4c6z9_capi-webhook-system_kube-rbac-proxy-10e19162a6cffecdb372afb4bfade5755f2e26e4c1e8082b0eff065b04726040.log
+- capi-kubeadm-bootstrap-controller-manager-85b4884469-4c6z9_capi-webhook-system_manager-98272c370d20d828ae4950132f81cc988cce2871ec428a6ff1e75117d30a4aec.log
+- capi-kubeadm-control-plane-controller-manager-5c5484d68d-mdfvm_capi-webhook-system_kube-rbac-proxy-7ef94213690ced0eb7e7ebbbd0c4ad5455315f586b0cf31c53c991dc5e4fab87.log
+- capi-kubeadm-control-plane-controller-manager-5c5484d68d-mdfvm_capi-webhook-system_manager-fd1b64c97a1271f3acc38a594a27724c8103bd6dbaebe075a3927f5e61cd6769.log
+- capi-kubeadm-control-plane-controller-manager-5f87b79f4f-phl77_capi-kubeadm-control-plane-system_kube-rbac-proxy-a457c32a7b97f247f61a8c48a3a6f7d44bd0f833323792bc1614f7ea1638ec3c.log
+- capi-kubeadm-control-plane-controller-manager-5f87b79f4f-phl77_capi-kubeadm-control-plane-system_manager-429070fc17a39f7c76321712945c8dba0fb046291d149d4f82ef3fbf44edb010.log
+- capz-controller-manager-558b498bf7-kng7m_capz-system_kube-rbac-proxy-6abe90a9ecc64c9eec1d187ec5074b1a396844ec8d7875e22c1a2a3cd2421717.log
+- capz-controller-manager-558b498bf7-kng7m_capz-system_manager-3d2152ce423f95b8fbc0966e59bc2034efe5d531e4314eac31285a3b3f676351.log
+- capz-controller-manager-596f66cccc-9fj76_capi-webhook-system_kube-rbac-proxy-a96d925863e0b392e05f4b0e6762b562b4590a45c0f0d969d060daba8ccd74af.log
+- capz-controller-manager-596f66cccc-9fj76_capi-webhook-system_manager-e30562f0d6ff412b076bbdb63ee931d73a97c330570c6480482d6068ce4e9810.log
+- cert-manager-5c7d4596b-4s7zn_cert-manager_cert-manager-596d9611df9d9d55924f4d6bec2ec633a46375cc715303c91424f443c3091d2e.log
+- cert-manager-cainjector-664f57c845-928rw_cert-manager_cainjector-b91b8cd8612c32b137ec92a30fbb26547dd682f36839b6658a6f235ccd2f4e07.log
+- cert-manager-webhook-66759c9f87-stz8p_cert-manager_cert-manager-55e2a33a9a98f9b0f2d5d7da85fc33ca897127e0dc4acea9b661a341aef74b38.log
+- coredns-774fbc4754-w9pqf_kube-system_coredns-03c2aed6a65afd243f5833e01546d4c229dd2254a1493e4db63bac58b0f107aa.log
+- coredns-774fbc4754-wm5b6_kube-system_coredns-45582a4882c1339b87f7ad99e3ff4beb51af5ae563581abe5f2ecc54c3659ef9.log
+- etcd-tkg-kind-bt775dc6n3gdf1rfcupg-control-plane_kube-system_etcd-4ffbe01cd538827a02aa22241c107894232cd7dd7bfd02282eff7ab9571ed9b9.log
+- kindnet-9ncml_kube-system_kindnet-cni-48c952d3ca153e1cdad50b32c05f40c351325a9004751fe175af853ccac7f6ed.log
+- kube-apiserver-tkg-kind-bt775dc6n3gdf1rfcupg-control-plane_kube-system_kube-apiserver-46148ac8dde1c7c614c636c721d6a7412129a95903de4308a1c6935056d207c7.log
+- kube-controller-manager-tkg-kind-bt775dc6n3gdf1rfcupg-control-plane_kube-system_kube-controller-manager-52e0a0c5efaa14c0f3f014d18043098a80bdd50c1d62d92244404cf4e13f6021.log
+- kube-proxy-9rb8h_kube-system_kube-proxy-f5d6f7118ec50bf1b6eaf1ea057286b50160246cca3eac6468bbcdfe1b661b9a.log
+- kube-scheduler-tkg-kind-bt775dc6n3gdf1rfcupg-control-plane_kube-system_kube-scheduler-baff068d5fb2271534d5a2ec25c257e573406784eb2768ab7e3e42e6df0fc5ff.log
+- local-path-provisioner-8b46957d4-ds69h_local-path-storage_local-path-provisioner-947e10680813178b7498dd4df0ab40579641998ad8c4401d869a7c02289eb634.log
 
 # Which logs are worth looking at ? 
 

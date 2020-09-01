@@ -47,12 +47,11 @@ This container is straightforward.  It listens on port 8443, and creates a cert.
         ```
             - webhook-system_manager
         This container takes a minute to startup, and then ends with...
-        ```
-2020-09-01T16:14:02.269887863Z stderr F I0901 16:14:02.269776       1 certwatcher.go:83] controller-runtime/certwatcher "msg"="Starting certificate watcher"
-```
+      ```
+            2020-09-01T16:14:02.269887863Z stderr F I0901 16:14:02.269776       1 certwatcher.go:83] controller-runtime/certwatcher "msg"="Starting certificate watcher"
+      ```
     - capi-system_kube-rbac-proxy
       similar to kube-rbac-proxy, this container just starts up with 3 lines of logging for port 8443
-  - capi-controller-manager
     - capi-system_manager
 
     Now, in the capi-system-manager logs , we see some informatino which actually is the  ROOT CAUSE of our failure in this example, related to a 1.19 kubernetes installation issue.

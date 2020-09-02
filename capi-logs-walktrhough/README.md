@@ -84,8 +84,14 @@ This container is straightforward.  It listens on port 8443, and creates a cert.
         2020-09-01T16:14:06.      1 leaderelection.go:252] successfully acquired lease capi-kubeadm-bootstrap-system/kubeadm-bootstrap-manager-leader-election-capi
         
         2020-09-01T16:14:06.      1 controller.go:152] controller-runtime/controller "msg"="Starting EventSource" "controller"="kubeadmconfig" "source"={"Type":{"metadata":{"creationTimestamp":null},"spec":{},"status":{}}}
-        2020-09-01T16:14:06.      1 controller.go:152] controller-runtime/controller "msg"="Starting EventSource" "controller"="kubeadmconfig" "source"={"Type":{"metadata":{"creationTimestamp":null},"spec":{"clusterName":"","bootstrap":{},"infrastructureRef":{}},"status":{"bootstrapReady":false,"infrastructureReady":false}}}
-        2020-09-01T16:14:06.      1 controller.go:152] controller-runtime/controller "msg"="Starting EventSource" "controller"="kubeadmconfig" "source"={"Type":{"metadata":{"creationTimestamp":null},"spec":{"controlPlaneEndpoint":{"host":"","port":0}},"status":{"infrastructureReady":false,"controlPlaneInitialized":false}}}
+        2020-09-01T16:14:06.      1 controller.go:152] controller-runtime/controller "msg"="Starting EventSource" "controller"="kubeadmconfig" "source"={"Type":{"metadata":{"creationTimestamp":null},"spec":{"clusterName":"","bootstrap":{},"infrastructureRef":{}},"status":{"
+                      bootstrapReady":false,
+                      "infrastructureReady":false
+        }}}
+        2020-09-01T16:14:06.      1 controller.go:152] controller-runtime/controller "msg"="Starting EventSource" "controller"="kubeadmconfig" "source"={"Type":{"metadata":{"creationTimestamp":null},"spec":{"controlPlaneEndpoint":{"host":"","port":0}},"status":{
+                      "infrastructureReady":false,
+                      "controlPlaneInitialized":false
+        }}}
         
         2020-09-01T16:14:06.      1 controller.go:159] controller-runtime/controller "msg"="Starting Controller" "controller"="kubeadmconfig"
         

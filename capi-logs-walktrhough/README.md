@@ -7,7 +7,7 @@ During the bootstrapping of a CAP* cluster, you might get containers such as the
 - capi-controller-manager--lcx64_capi-webhook-system_manager-.log
 - capi-controller-manager--l9vgn_capi-system_kube-rbac-proxy-.log
 - capi-controller-manager--l9vgn_capi-system_manager-.log
-- capi-kubeadm-bootstrap-controller-manager--5pstb_capi-kubeadm-bootstrap-system_kube-rbac-proxy-f44c8dc917a0851a7718a4ffccf158e501b1da38e77725d6a57483909aedeeec.log
+- capi-kubeadm-bootstrap-controller-manager--5pstb_capi-kubeadm-bootstrap-system_kube-rbac-proxy-.log
 - capi-kubeadm-bootstrap-controller-manager--5pstb_capi-kubeadm-bootstrap-system_manager-.log
 - capi-kubeadm-bootstrap-controller-manager--4c6z9_capi-webhook-system_kube-rbac-proxy-.log
 - capi-kubeadm-bootstrap-controller-manager--4c6z9_capi-webhook-system_manager-.log
@@ -36,7 +36,7 @@ During the bootstrapping of a CAP* cluster, you might get containers such as the
 
 Lets  break down the information present in all of the containers for a clsuter bootstrap, starting with capi-controller-manager.
 
-- capi controller manager
+## capi controller manager
   - capi-webhook-system
     - kube-rbac-proxy
 This container is straightforward.  It listens on port 8443, and creates a cert.
@@ -67,7 +67,7 @@ This container is straightforward.  It listens on port 8443, and creates a cert.
         2020-09-01T22:01:00.607320883Z stderr F E0901 22:01:00.607139       1 machine_controller.go:249] controllers/Machine "msg"="Reconciliation for Machine asked to requeue" "error"="Bootstrap provider for Machine \"tkg-mgmt-azure-md-0-59d6c89dc4-xvz7c\" in namespace \"tkg-system\" is not ready, requeuing: requeue in 30s" "cluster"="tkg-mgmt-azure" "machine"="tkg-mgmt-azure-md-0-59d6c89dc4-xvz7c" "namespace"="tkg-system"
 ```
 
-- capi-kubeadm-bootstrap-controller-manager-
+## capi-kubeadm-bootstrap-controller-manager-
   - kubeadm-bootstrap-system_kube-rbac-proxy (This is similar to kube-rbac-proxy above, just a 3 liner to serve 8443)
   - capi-kubeadm-bootstrap-system_kube-rbac-proxy (Ditto)
   - capi-kubeadm-bootstrap-system_manager-
@@ -112,7 +112,7 @@ This container is straightforward.  It listens on port 8443, and creates a cert.
 
 Now for the kubeadm control plane: 
 
--  capi-kubeadm-control-plane
+## capi-kubeadm-control-plane
    - capi-kubeadm-system_manager
     ```
         2020-09-01T22:42:32.949745883Z stderr F I0901 22:42:32.949552       1 controller.go:133] controllers/KubeadmControlPlane "msg"="Cluster Controller has not yet set OwnerRef" "kubeadmControlPlane"="tkg-mgmt-azure-control-plane" "namespace"="tkg-system"
@@ -132,7 +132,7 @@ And finally for the capz-contrller-manager logs.  In these youll usually see a g
          F I0901 22:49:32.488962       1 azuremachine_controller.go:238] controllers/AzureMachine "msg"="Bootstrap data secret reference is not yet available" "AzureCluster"="tkg-mgmt-azure" "azureMachine"="tkg-mgmt-azure-md-0-j9c6c" "cluster"="tkg-mgmt-azure" "machine"="tkg-mgmt-azure-md-0-59d6c89dc4-xvz7c" "namespace"="tkg-system"
     ```
 
-- cert-manager
+## cert-manager
   - cert-manager_cert-manager
     This container has about a 1 minute startup time ?   And then ends something like this... 
     ```
@@ -140,7 +140,7 @@ And finally for the capz-contrller-manager logs.  In these youll usually see a g
 2020-09-01T16:14:06.787257362Z stderr F I0901 16:14:06.787211       1 controller.go:135] cert-manager/controller/certificates "level"=0 "msg"="finished processing work item" "key"="capi-webhook-system/capz-serving-cert"
     ```
 
-- core-dns
+## core-dns
 A healthy coredns container starts up like this... 
 ```
     2020-09-01T16:13:23.227516361Z stdout F .:53
@@ -148,7 +148,7 @@ A healthy coredns container starts up like this...
     2020-09-01T16:13:23.227573754Z stdout F CoreDNS-1.7.0
     2020-09-01T16:13:23.227578794Z stdout F linux/amd64, go1.15,
 ```
-- api-server
+## api-server
 Its notable that the webhook failures can ALSO be detected in the api-server logs ! this might be the next best place to check for failures during bootstrapping.
 
 ```

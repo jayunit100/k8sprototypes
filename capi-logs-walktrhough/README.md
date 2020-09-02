@@ -105,12 +105,12 @@ And finally for the capz-contrller-manager logs.  In these youll usually see a g
 - capz-controller-manager 
   - capz-system_manager
     ```
-        2020-09-01T22:36:22.787485237Z stderr F I0901 22:36:22.787327       1 azurejson_machinetemplate_controller.go:82] controllers/AzureJSONTemplate "msg"="Cluster Controller has not yet set OwnerRef" "AzureMachineTemplate"="tkg-mgmt-azure-control-plane" "namespace"="tkg-system"
+         F I0901 22:36:22.787327       1 azurejson_machinetemplate_controller.go:82] controllers/AzureJSONTemplate "msg"="Cluster Controller has not yet set OwnerRef" "AzureMachineTemplate"="tkg-mgmt-azure-control-plane" "namespace"="tkg-system"
         ...
-        2020-09-01T22:49:13.059254532Z stderr F I0901 22:49:13.059145       1 azurecluster_controller.go:154] controllers/AzureCluster "msg"="Reconciling AzureCluster" "AzureCluster"="tkg-mgmt-azure" "cluster"="tkg-mgmt-azure" "namespace"="tkg-system"
-        2020-09-01T22:49:13.059502182Z stderr F I0901 22:49:13.059448       1 azuremachine_controller.go:238] controllers/AzureMachine "msg"="Bootstrap data secret reference is not yet available" "AzureCluster"="tkg-mgmt-azure" "azureMachine"="tkg-mgmt-azure-md-0-j9c6c" "cluster"="tkg-mgmt-azure" "machine"="tkg-mgmt-azure-md-0-59d6c89dc4-xvz7c" "namespace"="tkg-system"
-        2020-09-01T22:49:32.4876033Z stderr F I0901 22:49:32.487403       1 azuremachine_controller.go:216] controllers/AzureMachine "msg"="Reconciling AzureMachine" "AzureCluster"="tkg-mgmt-azure" "azureMachine"="tkg-mgmt-azure-md-0-j9c6c" "cluster"="tkg-mgmt-azure" "machine"="tkg-mgmt-azure-md-0-59d6c89dc4-xvz7c" "namespace"="tkg-system"
-        2020-09-01T22:49:32.489048512Z stderr F I0901 22:49:32.488962       1 azuremachine_controller.go:238] controllers/AzureMachine "msg"="Bootstrap data secret reference is not yet available" "AzureCluster"="tkg-mgmt-azure" "azureMachine"="tkg-mgmt-azure-md-0-j9c6c" "cluster"="tkg-mgmt-azure" "machine"="tkg-mgmt-azure-md-0-59d6c89dc4-xvz7c" "namespace"="tkg-system"
+         F I0901 22:49:13.059145       1 azurecluster_controller.go:154] controllers/AzureCluster "msg"="Reconciling AzureCluster" "AzureCluster"="tkg-mgmt-azure" "cluster"="tkg-mgmt-azure" "namespace"="tkg-system"
+         F I0901 22:49:13.059448       1 azuremachine_controller.go:238] controllers/AzureMachine "msg"="Bootstrap data secret reference is not yet available" "AzureCluster"="tkg-mgmt-azure" "azureMachine"="tkg-mgmt-azure-md-0-j9c6c" "cluster"="tkg-mgmt-azure" "machine"="tkg-mgmt-azure-md-0-59d6c89dc4-xvz7c" "namespace"="tkg-system"
+         F I0901 22:49:32.487403       1 azuremachine_controller.go:216] controllers/AzureMachine "msg"="Reconciling AzureMachine" "AzureCluster"="tkg-mgmt-azure" "azureMachine"="tkg-mgmt-azure-md-0-j9c6c" "cluster"="tkg-mgmt-azure" "machine"="tkg-mgmt-azure-md-0-59d6c89dc4-xvz7c" "namespace"="tkg-system"
+         F I0901 22:49:32.488962       1 azuremachine_controller.go:238] controllers/AzureMachine "msg"="Bootstrap data secret reference is not yet available" "AzureCluster"="tkg-mgmt-azure" "azureMachine"="tkg-mgmt-azure-md-0-j9c6c" "cluster"="tkg-mgmt-azure" "machine"="tkg-mgmt-azure-md-0-59d6c89dc4-xvz7c" "namespace"="tkg-system"
     ```
 
 - cert-manager

@@ -41,9 +41,9 @@ Lets  break down the information present in all of the containers for a clsuter 
     - kube-rbac-proxy
 This container is straightforward.  It listens on port 8443, and creates a cert.
         ```
-        2020-09-01T16:13:53.991639179Z stderr F I0901 16:13:53.991280       1 main.go:213] Generating self signed cert as no cert is provided
-        2020-09-01T16:14:10.506527477Z stderr F I0901 16:14:10.500954       1 main.go:243] Starting TCP socket on 0.0.0.0:8443
-        2020-09-01T16:14:10.508482444Z stderr F I0901 16:14:10.508385       1 main.go:250] Listening securely on 0.0.0.0:8443
+            2020-09-01T16:13:53.991639179Z stderr F I0901 16:13:53.991280       1 main.go:213] Generating self signed cert as no cert is provided
+            2020-09-01T16:14:10.506527477Z stderr F I0901 16:14:10.500954       1 main.go:243] Starting TCP socket on 0.0.0.0:8443
+            2020-09-01T16:14:10.508482444Z stderr F I0901 16:14:10.508385       1 main.go:250] Listening securely on 0.0.0.0:8443
         ```
             - webhook-system_manager
         This container takes a minute to startup, and then ends with...
@@ -56,15 +56,15 @@ This container is straightforward.  It listens on port 8443, and creates a cert.
 
     Now, in the capi-system-manager logs , we see some informatino which actually is the  ROOT CAUSE of our failure in this example, related to a 1.19 kubernetes installation issue.
 ```
-        2020-09-01T21:58:18.111047133Z stderr F E0901 21:58:18.110931       1 controller.go:248] controller-runtime/controller "msg"="Reconciler error" "error"="admission webhook \"validation.kubeadmcontrolplane.controlplane.cluster.x-k8s.io\" denied the request: KubeadmControlPlane.controlplane.cluster.x-k8s.io \"tkg-mgmt-azure-control-plane\" is invalid: spec.kubeadmConfigSpec.clusterConfiguration.dns.imageTag: Forbidden: cannot migrate CoreDNS up to '1.7.0' from '1.7.0'" "controller"="cluster" "name"="tkg-mgmt-azure" "namespace"="tkg-system"
+          2020-09-01T21:58:18.111047133Z stderr F E0901 21:58:18.110931       1 controller.go:248] controller-runtime/controller "msg"="Reconciler error" "error"="admission webhook \"validation.kubeadmcontrolplane.controlplane.cluster.x-k8s.io\" denied the request: KubeadmControlPlane.controlplane.cluster.x-k8s.io \"tkg-mgmt-azure-control-plane\" is invalid: spec.kubeadmConfigSpec.clusterConfiguration.dns.imageTag: Forbidden: cannot migrate CoreDNS up to '1.7.0' from '1.7.0'" "controller"="cluster" "name"="tkg-mgmt-azure" "namespace"="tkg-system"
 
-        2020-09-01T21:58:30.541098179Z stderr F I0901 21:58:30.540871       1 machine_controller_noderef.go:52] controllers/Machine "msg"="Machine doesn't have a valid ProviderID yet" "cluster"="tkg-mgmt-azure" "machine"="tkg-mgmt-azure-md-0-59d6c89dc4-xvz7c" "namespace"="tkg-system"
+          2020-09-01T21:58:30.541098179Z stderr F I0901 21:58:30.540871       1 machine_controller_noderef.go:52] controllers/Machine "msg"="Machine doesn't have a valid ProviderID yet" "cluster"="tkg-mgmt-azure" "machine"="tkg-mgmt-azure-md-0-59d6c89dc4-xvz7c" "namespace"="tkg-system"
 
-        2020-09-01T21:58:30.541158512Z stderr F E0901 21:58:30.540923       1 machine_controller.go:249] controllers/Machine "msg"="Reconciliation for Machine asked to requeue" "error"="Bootstrap provider for Machine \"tkg-mgmt-azure-md-0-59d6c89dc4-xvz7c\" in namespace \"tkg-system\" is not ready, requeuing: requeue in 30s" "cluster"="tkg-mgmt-azure" "machine"="tkg-mgmt-azure-md-0-59d6c89dc4-xvz7c" "namespace"="tkg-system"
+          2020-09-01T21:58:30.541158512Z stderr F E0901 21:58:30.540923       1 machine_controller.go:249] controllers/Machine "msg"="Reconciliation for Machine asked to requeue" "error"="Bootstrap provider for Machine \"tkg-mgmt-azure-md-0-59d6c89dc4-xvz7c\" in namespace \"tkg-system\" is not ready, requeuing: requeue in 30s" "cluster"="tkg-mgmt-azure" "machine"="tkg-mgmt-azure-md-0-59d6c89dc4-xvz7c" "namespace"="tkg-system"
 
-        ...
-        2020-09-01T22:01:00.607203511Z stderr F I0901 22:01:00.607003       1 machine_controller_noderef.go:52] controllers/Machine "msg"="Machine doesn't have a valid ProviderID yet" "cluster"="tkg-mgmt-azure" "machine"="tkg-mgmt-azure-md-0-59d6c89dc4-xvz7c" "namespace"="tkg-system"
-        2020-09-01T22:01:00.607320883Z stderr F E0901 22:01:00.607139       1 machine_controller.go:249] controllers/Machine "msg"="Reconciliation for Machine asked to requeue" "error"="Bootstrap provider for Machine \"tkg-mgmt-azure-md-0-59d6c89dc4-xvz7c\" in namespace \"tkg-system\" is not ready, requeuing: requeue in 30s" "cluster"="tkg-mgmt-azure" "machine"="tkg-mgmt-azure-md-0-59d6c89dc4-xvz7c" "namespace"="tkg-system"
+          ...
+          2020-09-01T22:01:00.607203511Z stderr F I0901 22:01:00.607003       1 machine_controller_noderef.go:52] controllers/Machine "msg"="Machine doesn't have a valid ProviderID yet" "cluster"="tkg-mgmt-azure" "machine"="tkg-mgmt-azure-md-0-59d6c89dc4-xvz7c" "namespace"="tkg-system"
+          2020-09-01T22:01:00.607320883Z stderr F E0901 22:01:00.607139       1 machine_controller.go:249] controllers/Machine "msg"="Reconciliation for Machine asked to requeue" "error"="Bootstrap provider for Machine \"tkg-mgmt-azure-md-0-59d6c89dc4-xvz7c\" in namespace \"tkg-system\" is not ready, requeuing: requeue in 30s" "cluster"="tkg-mgmt-azure" "machine"="tkg-mgmt-azure-md-0-59d6c89dc4-xvz7c" "namespace"="tkg-system"
 ```
 
 ## capi-kubeadm-bootstrap-controller-manager-
@@ -149,15 +149,14 @@ And finally for the capz-contrller-manager logs.  In these youll usually see a g
 ## core-dns
 A healthy coredns container starts up like this... 
 ```
-    2020-09-01T16:13:23.227516361Z stdout F .:53
-    2020-09-01T16:13:23.227559282Z stdout F [INFO] plugin/reload: Running configuration MD5 = db32ca3650231d74073ff4cf814959a7
-    2020-09-01T16:13:23.227573754Z stdout F CoreDNS-1.7.0
-    2020-09-01T16:13:23.227578794Z stdout F linux/amd64, go1.15,
+        2020-09-01T16:13:23.227516361Z stdout F .:53
+        2020-09-01T16:13:23.227559282Z stdout F [INFO] plugin/reload: Running configuration MD5 = db32ca3650231d74073ff4cf814959a7
+        2020-09-01T16:13:23.227573754Z stdout F CoreDNS-1.7.0
+        2020-09-01T16:13:23.227578794Z stdout F linux/amd64, go1.15,
 ```
 ## api-server
 Its notable that the webhook failures can ALSO be detected in the api-server logs ! this might be the next best place to check for failures during bootstrapping.
 
 ```
-    2020-09-01T22:59:16.350213378Z stderr F W0901 22:59:16.350058       1 dispatcher.go:142] rejected by webhook "validation.kubeadmcontrolplane.controlplane.cluster.x-k8s.io": &errors.StatusError{ErrStatus:v1.Status{TypeMeta:v1.TypeMeta{Kind:"", APIVersion:""}, ListMeta:v1.ListMeta{SelfLink:"", ResourceVersion:"", Continue:"", RemainingItemCount:(*int64)(nil)}, Status:"Failure", Message:"admission webhook \"validation.kubeadmcontrolplane.controlplane.cluster.x-k8s.io\" denied the request: KubeadmControlPlane.controlplane.cluster.x-k8s.io \"tkg-mgmt-azure-control-plane\" is invalid: spec.kubeadmConfigSpec.clusterConfiguration.dns.imageTag: Forbidden: cannot migrate CoreDNS up to '1.7.0' from '1.7.0'", Reason:"KubeadmControlPlane.controlplane.cluster.x-k8s.io \"tkg-mgmt-azure-control-plane\" is invalid: spec.kubeadmConfigSpec.clusterConfiguration.dns.imageTag: Forbidden: cannot migrate CoreDNS up to '1.7.0' from '1.7.0'", Details:(*v1.StatusDetails)(nil), Code:403}}
-
+        2020-09-01T22:59:16.350213378Z stderr F W0901 22:59:16.350058       1 dispatcher.go:142] rejected by webhook "validation.kubeadmcontrolplane.controlplane.cluster.x-k8s.io": &errors.StatusError{ErrStatus:v1.Status{TypeMeta:v1.TypeMeta{Kind:"", APIVersion:""}, ListMeta:v1.ListMeta{SelfLink:"", ResourceVersion:"", Continue:"", RemainingItemCount:(*int64)(nil)}, Status:"Failure", Message:"admission webhook \"validation.kubeadmcontrolplane.controlplane.cluster.x-k8s.io\" denied the request: KubeadmControlPlane.controlplane.cluster.x-k8s.io \"tkg-mgmt-azure-control-plane\" is invalid: spec.kubeadmConfigSpec.clusterConfiguration.dns.imageTag: Forbidden: cannot migrate CoreDNS up to '1.7.0' from '1.7.0'", Reason:"KubeadmControlPlane.controlplane.cluster.x-k8s.io \"tkg-mgmt-azure-control-plane\" is invalid: spec.kubeadmConfigSpec.clusterConfiguration.dns.imageTag: Forbidden: cannot migrate CoreDNS up to '1.7.0' from '1.7.0'", Details:(*v1.StatusDetails)(nil), Code:403}}
 ```

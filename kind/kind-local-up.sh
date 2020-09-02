@@ -11,6 +11,7 @@ nodes:
 - role: control-plane
 - role: worker
 - role: worker
+- role: worker
 EOF
 
 cat << EOF > kind-conf-ipv6.yaml
@@ -21,14 +22,15 @@ networking:
   ipFamily: ipv6
 EOF
 
-cluster=nocni
-conf="calico-conf.yaml"
+#cluster=nocni
+#conf="calico-conf.yaml"
 
 #cluster=cipv6
 #conf=kind-conf-ipv6.yaml
 
-#cluster=antrea
-#conf=kind-conf
+## calico conf == no cni, so use it for antrea/calico/whatever
+cluster=antrea
+conf=calico-conf.yaml
 
 #cluster=calico
 #conf=calico-conf.yaml
@@ -47,22 +49,21 @@ function install_k8s() {
     done
 }
 
-function install_antrea() {
-   kubectl apply -f https://github.com/vmware-tanzu/antrea/releases/download/v0.8.0/antrea.yml -n kube-system  
-}
-
 function install_calico() {
     kubectl get pods
     kubectl apply -f ./calico3.12.3.yaml
     kubectl get pods -n kube-system
-    
     kubectl -n kube-system set env daemonset/calico-node FELIX_IGNORELOOSERPF=true
     kubectl -n kube-system set env daemonset/calico-node FELIX_XDPENABLED=false
 }
 
 function install_antrea() {
-	kubectl create ns tkg-system
-	kubectl create -f antrea.yml -n tkg-system
+	if [[ ! -d antrea ]] ; then
+	    git clone https://github.com/vmware-tanzu/antrea.git
+	fi
+	pushd antrea/ci/kind
+    	    ./kind-setup.sh create antrea
+	popd
 }
 
 function wait() {
@@ -78,16 +79,17 @@ function testStatefulSets() {
    sonobuoy run --e2e-focus "Basic StatefulSet" --e2e-skip ""   
 }
 
-install_k8s
+if [[ $cluster == "antrea" ]] ; then 
+	echo "using antrea/master setup script for kind"
+	sleep 1
+	install_antrea
+fi
 
 if [[ $cluster == "" ]]; then
 	echo "skipping cni"
 fi
 if [[ $cluster == "calico" ]]; then
+	install_k8s
 	install_calico
 fi
-if [[ $cluster == "antrea" ]]; then
-	install_antrea
-fi
 
-#testStatefulSets

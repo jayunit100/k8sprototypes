@@ -71,23 +71,42 @@ This container is straightforward.  It listens on port 8443, and creates a cert.
   - kubeadm-bootstrap-system_kube-rbac-proxy (This is similar to kube-rbac-proxy above, just a 3 liner to serve 8443)
   - capi-kubeadm-bootstrap-system_kube-rbac-proxy (Ditto)
   - capi-kubeadm-bootstrap-system_manager-
-        ```
-                2020-09-01T16:14:03.      1 listener.go:44] controller-runtime/metrics "msg"="metrics server is starting to listen"  "addr"="127.0.0.1:8080"
+        
+  ```
+        2020-09-01T16:14:03.      1 listener.go:44] controller-runtime/metrics "msg"="metrics server is starting to listen"  "addr"="127.0.0.1:8080"
+  
         2020-09-01T16:14:04.     1 main.go:151] setup "msg"="starting manager"  "version"=""
+        
         2020-09-01T16:14:04.      1 leaderelection.go:242] attempting to acquire leader lease  capi-kubeadm-bootstrap-system/kubeadm-bootstrap-manager-leader-election-capi...
+        
         2020-09-01T16:14:04.      1 internal.go:356] controller-runtime/manager "msg"="starting metrics server"  "path"="/metrics"
+        
         2020-09-01T16:14:06.      1 leaderelection.go:252] successfully acquired lease capi-kubeadm-bootstrap-system/kubeadm-bootstrap-manager-leader-election-capi
+        
         2020-09-01T16:14:06.      1 controller.go:152] controller-runtime/controller "msg"="Starting EventSource" "controller"="kubeadmconfig" "source"={"Type":{"metadata":{"creationTimestamp":null},"spec":{},"status":{}}}
         2020-09-01T16:14:06.      1 controller.go:152] controller-runtime/controller "msg"="Starting EventSource" "controller"="kubeadmconfig" "source"={"Type":{"metadata":{"creationTimestamp":null},"spec":{"clusterName":"","bootstrap":{},"infrastructureRef":{}},"status":{"bootstrapReady":false,"infrastructureReady":false}}}
         2020-09-01T16:14:06.      1 controller.go:152] controller-runtime/controller "msg"="Starting EventSource" "controller"="kubeadmconfig" "source"={"Type":{"metadata":{"creationTimestamp":null},"spec":{"controlPlaneEndpoint":{"host":"","port":0}},"status":{"infrastructureReady":false,"controlPlaneInitialized":false}}}
+        
         2020-09-01T16:14:06.      1 controller.go:159] controller-runtime/controller "msg"="Starting Controller" "controller"="kubeadmconfig"
+        
         2020-09-01T16:14:06.      1 controller.go:180] controller-runtime/controller "msg"="Starting workers" "controller"="kubeadmconfig" "worker count"=10
-        2020-09-01T16:14:22.      1 kubeadmconfig_controller.go:225] controllers/KubeadmConfig "msg"="Cluster infrastructure is not ready, waiting" "kind"="Machine" "kubeadmconfig"={"Namespace":"tkg-system","Name":"tkg-mgmt-azure-md-0-9djj6"} "name"="tkg-mgmt-azure-md-0-59d6c89dc4-xvz7c" "version"="1480"
-        2020-09-01T16:14:22.      1 kubeadmconfig_controller.go:225] controllers/KubeadmConfig "msg"="Cluster infrastructure is not ready, waiting" "kind"="Machine" "kubeadmconfig"={"Namespace":"tkg-system","Name":"tkg-mgmt-azure-md-0-9djj6"} "name"="tkg-mgmt-azure-md-0-59d6c89dc4-xvz7c" "version"="1491"
-        2020-09-01T16:14:22.     1 kubeadmconfig_controller.go:225] controllers/KubeadmConfig "msg"="Cluster infrastructure is not ready, waiting" "kind"="Machine" "kubeadmconfig"={"Namespace":"tkg-system","Name":"tkg-mgmt-azure-md-0-9djj6"} "name"="tkg-mgmt-azure-md-0-59d6c89dc4-xvz7c" "version"="1491"
-        root@tkg-kind-bt775dainers# cat capi-kubeadm-bootstrap-controller-manager-85b4884469-4c6z9_capi-webhook-system_kube-rbac-proxy-10e19162a6cffecdb372afb4bfade5755f2e26e4c1e8082b0eff065b04726040.log
+        
+        2020-09-01T16:14:22.      1 kubeadmconfig_controller.go:225] controllers/KubeadmConfig "msg"="Cluster infrastructure is not ready, waiting" "kind"="
+        Machine" "kubeadmconfig"={"Namespace":"tkg-system","Name":"tkg-mgmt-azure-md-0-9djj6"} "name"="tkg-mgmt-azure-md-0-59d6c89dc4-xvz7c" "version"="1480"
+        
+        2020-09-01T16:14:22.      1 kubeadmconfig_controller.go:225] controllers/KubeadmConfig "msg"="Cluster infrastructure is not ready, waiting" "kind"="
+        Machine" "kubeadmconfig"={"Namespace":"tkg-system","Name":"tkg-mgmt-azure-md-0-9djj6"} "name"="tkg-mgmt-azure-md-0-59d6c89dc4-xvz7c" "version"="1491"
+        
+        2020-09-01T16:14:22.     1 kubeadmconfig_controller.go:225] controllers/KubeadmConfig "msg"="Cluster infrastructure is not ready, waiting" "kind"="
+        Machine" "kubeadmconfig"={"Namespace":"tkg-system","Name":"tkg-mgmt-azure-md-0-9djj6"} "name"="tkg-mgmt-azure-md-0-59d6c89dc4-xvz7c" "version"="1491"
+        
+        root@tkg-kind-bt775dainers# cat capi-kubeadm-bootstrap-controller-manager-85b4884469-4c6z9_capi-webhook-system_kube-rbac-proxy-10e19162
+        a6cffecdb372afb4bfade5755f2e26e4c1e8082b0eff065b04726040.log
+        
         2020-09-01T16:13:54.      1 main.go:213] Generating self signed cert as no cert is provided
+        
         2020-09-01T16:14:03.      1 main.go:243] Starting TCP socket on 0.0.0.0:8443
+        
         2020-09-01T16:14:03.     1 main.go:250] Listening securely on 0.0.0.0:8443
         ```
 

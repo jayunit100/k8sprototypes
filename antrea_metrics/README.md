@@ -7,15 +7,27 @@ as shown in the README.
 
 # Prometheus
 
-```
 	enable prometheus metrics in the configmap:		
 	this must be done in BOTH places where you see enablePrometheusMetrics
+
+```
+    # Enable metrics exposure via Prometheus. Initializes Prometheus metrics listener.
+    antrea-agent.conf:
+	    enablePrometheusMetrics: true
+    antrea-controller.conf:
+    	    enablePrometheusMetrics: true
 ```
 
 Now
 
 ```
 	kubectl apply -f build/yamls/antrea-prometheus.yml
+```
+
+Which creates
+```
+	NAME                                     READY   STATUS    RESTARTS   AGE
+	prometheus-deployment-68b648df9c-blmbj   1/1     Running   0          91m
 ```
 
 then expose them:
@@ -33,7 +45,8 @@ now go to
 You should see the targets running green.
 
 
-Now, you can see how many flow table rules are in occurance... 
+Nble metrics exposure via Prometheus. Initializes Prometheus metrics listener.
+ow, you can see how many flow table rules are in occurance... 
 
 ![Image description](flowtables.png)
 

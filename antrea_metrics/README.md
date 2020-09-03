@@ -110,7 +110,14 @@ Once you decide on the encap, you can use
 - vxlan
 - gre and stt (not sure about these)
 
-
+```
+    # Encapsulation mode for communication between Pods across Nodes, supported values:
+    # - geneve (default)
+    # - vxlan
+    # - gre
+    # - stt
+    #tunnelType: geneve
+```
 
 
 

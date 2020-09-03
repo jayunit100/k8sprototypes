@@ -72,6 +72,11 @@ ow, you can see how many flow table rules are in occurance...
 	L2ForwardingOutTable  binding.TableIDType = 110
 ```
 
+During long running tests, youll see ups and downs in the ingress tables...
+
+![Image description](e2e.png)
+
+
 # Network Policies with antctl 
 
 You can look at the antrea groups that are getting applied policies like so:

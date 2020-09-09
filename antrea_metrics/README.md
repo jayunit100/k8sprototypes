@@ -1,4 +1,4 @@
-# Install prometheus metrics service in antrea 
+# antrea config and metrics intro
 
 Some advanced usage of antrea projects. 
 

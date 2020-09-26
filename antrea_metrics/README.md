@@ -7,8 +7,8 @@ as shown in the README.
 
 # Prometheus
 
-	enable prometheus metrics in the configmap:		
-	this must be done in BOTH places where you see enablePrometheusMetrics
+enable prometheus metrics in the configmap:		
+this must be done in BOTH places where you see enablePrometheusMetrics
 
 ```
     # Enable metrics exposure via Prometheus. Initializes Prometheus metrics listener.

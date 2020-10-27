@@ -101,4 +101,32 @@ In the above scenario , it appears that the antrea agent might fail to come up u
 I1027 11:53:23.896868    7564 log_file.go:99] Set log file max size to 104857600                                                                                                I1027 11:53:23.899290    7564 agent.go:63] Starting Antrea agent (version v0.10.1)                                                                                               I1027 11:53:23.900424    7564 client.go:34] No kubeconfig file was specified. Falling back to in-cluster config                                                                 W1027 11:53:23.904702    7564 env.go:64] Environment variable POD_NAMESPACE not found                                                                                           W1027 11:53:23.907120    7564 cacert_controller.go:79] Failed to get Pod Namespace from environment. Using "kube-system" as the CA ConfigMap Namespace                            I1027 11:53:23.907120    7564 ovs_client.go:67] Connecting to OVSDB at address \\.\pipe\C:openvswitchvarrunopenvswitchdb.sock                                                    I1027 11:53:23.910886    7564 agent.go:197] Setting up node network                                                                                                              E1027 11:53:44.938614    7564 agent.go:567] Failed to get node from K8s with name win-h0c364gqvjh: Get https://100.2.2.1:443/api/v1/nodes/win-h0c364gqvjh: dial tcp 100.2.2.1:443: connectex: A connection attempt failed because the connected party did not properly resp
 F1027 11:53:44.941660    7564 main.go:58] Error running agent: error initializing agent: Get https://100.2.2.1:443/api/v1/nodes/win-h0c364gqvjh: dial tcp 100.2.2.1:443: connectex: A connection attempt failed because the connected party did not properly respond after
 ```
+# Troubleshooting 
 
+## PodCIDRs not set for nodes
+
+Antrea will refuse to start if you havent allocated pod CIDRs... In some cases your windows node might not have a PodCIDR set.  You can hack this by doing something like `kubectl edit node`.  
+
+```
+spec:
+  podCIDR: 100.1.2.2/24
+  podCIDRs:
+  - 100.1.2.2/24
+```
+
+## Agent missing adaptiors
+
+Another problem that the antrea agent can hit is that it isnt able to access the network adaptor settings.. 
+```
+F1027 12:47:30.843448    5336 main.go:58] Error running agent: error initializing agent: Set-NetAdapterAdvancedProperty : No matching MSFT_NetAdapterAdvancedPropertySettingData objects found by CIM query for
+instances of the ROOT/StandardCimv2/MSFT_NetAdapterAdvancedPropertySettingData class on the  CIM server: SELECT * FROM
+MSFT_NetAdapterAdvancedPropertySettingData  WHERE ((Name LIKE 'br-int')) AND ((RegistryKeyword = 'NetworkAddress')).
+Verify query parameters and retry.
+At line:1 char:1
++ Set-NetAdapterAdvancedProperty -Name br-int -RegistryKeyword NetworkA ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (MSFT_NetAdapter...ertySettingData:String) [Set-NetAdapterAdvancedProper
+   ty], CimJobException
+```
+
+Not sure what the workaround to this is, yet.

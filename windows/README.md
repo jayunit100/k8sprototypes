@@ -1,23 +1,6 @@
-# PowerShell
+# End to end k8s windows setup guide (local VMs)
 
-To hack around on nodes with linux like fluency, you can use powershell.
-
-- `ip a | grep 192` can be replaced with `Get-NetIPAddress | Select-String "192"`
-
-# Windows networking
-
-Things like hostNetwork and hostPort aren't really options.  If you need to access services such
-as ingress controllers, you do so by: 
-
-1) Implementing a NodePort service
-2) DaemonSet for pods
-3) Setting the NodePort Service to `externalTrafficPolicy=local`
-
-
-# end to end k8s windows setup guide (local VMs)
-
-This is done in VMWare workstation.
-
+This is done in VMWare workstation.  It can be generically followed in other hypervisors as well. 
 
 # step 1 : Create two VMs
 
@@ -124,3 +107,22 @@ In the above scenario , it appears that the antrea agent might fail to come up u
 I1027 11:53:23.896868    7564 log_file.go:99] Set log file max size to 104857600                                                                                                I1027 11:53:23.899290    7564 agent.go:63] Starting Antrea agent (version v0.10.1)                                                                                               I1027 11:53:23.900424    7564 client.go:34] No kubeconfig file was specified. Falling back to in-cluster config                                                                   W1027 11:53:23.904702    7564 env.go:64] Environment variable POD_NAMESPACE not found                                                                                             1027 11:53:23.907120    7564 cacert_controller.go:79] Failed to get Pod Namespace from environment. Using "kube-system" as the CA ConfigMap Namespace                             I1027 11:53:23.907120    7564 ovs_client.go:67] Connecting to OVSDB at address \\.\pipe\C:openvswitchvarrunopenvswitchdb.sock                                                     I1027 11:53:23.910886    7564 agent.go:197] Setting up node network                                                                                                               E1027 11:53:44.938614    7564 agent.go:567] Failed to get node from K8s with name win-h0c364gqvjh: Get https://100.2.2.1:443/api/v1/nodes/win-h0c364gqvjh: dial tcp 100.2.2.1:443: connectex: A connection attempt failed because the connected party did not properly resp
 F1027 11:53:44.941660    7564 main.go:58] Error running agent: error initializing agent: Get https://100.2.2.1:443/api/v1/nodes/win-h0c364gqvjh: dial tcp 100.2.2.1:443: connectex: A connection attempt failed because the connected party did not properly respond after
 ```
+
+
+# Miscellaneous notes about windows development
+
+# PowerShell
+
+To hack around on nodes with linux like fluency, you can use powershell.
+
+- `ip a | grep 192` can be replaced with `Get-NetIPAddress | Select-String "192"`
+
+# Windows networking
+
+Things like hostNetwork and hostPort aren't really options.  If you need to access services such
+as ingress controllers, you do so by: 
+
+1) Implementing a NodePort service
+2) DaemonSet for pods
+3) Setting the NodePort Service to `externalTrafficPolicy=local`
+

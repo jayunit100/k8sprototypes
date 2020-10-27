@@ -1,14 +1,19 @@
 # End to end k8s windows setup guide (local VMs)
 
-This is done in VMWare workstation.  It can be generically followed in other hypervisors as well. 
+This is done in VMWare workstation.  It can be generically followed in other hypervisors as well.     This is an opinionated guide:
+
+- Uses antrea for networking, which relies on Wins
+- 2 node cluster
+- Only tested in VMWare workstation
+- Tested with free trial license for microsoft windows
 
 # step 1 : Create two VMs
 
 - Create VM1, ubuntu
   - Setup sshd
 - Create VM2, windows server 2019, apply updates
-  - Enable virtualize intel vt-x/EPT and Virtualize CPU performance counters under "virtual machine settings" so HyperV can work.
-  - 
+  - Setup sshd service on windows.  You can do this from powershell via `Restart-service sshd`
+  - Enable virtualize intel vt-x/EPT and Virtualize CPU performance counters under "virtual machine settings" so HyperV can work. 
   - Go to "control panne" -> Administrative tools and start openssh
 	  - You can add a new user with a password, and microsoft will allow that to ssh in automatically
     - Also, install hyperv on windows so that the hcsschim and so on work properly like so
@@ -75,7 +80,12 @@ curl.exe -LO https://github.com/kubernetes-sigs/sig-windows-tools/releases/lates
 ```
 
 And then try to run kubeadm join, first we also cleanup a possible symlink issue which results in kubelet failing to startup bc of missing pki folder.
+
+## the tricky part 
+Now if your env isnt setup right, this is where things might fall down
+.. You may run into issues here, the first TWO commands are only need to be run if it fails, and your retrying
 ```
+kubeadm reset # <-- dont run this unless it failed the last time
  New-Item -path $env:SystemDrive\var\lib\kubelet\etc\kubernetes\pki -type SymbolicLink -value  $env:SystemDrive
 \etc\kubernetes\pki\ -Force
 
@@ -104,7 +114,7 @@ kube-system   kube-scheduler-ubuntuk8s            1/1     Running            0  
 In the above scenario , it appears that the antrea agent might fail to come up upon accessing the apiserver service:
 
 ```
-I1027 11:53:23.896868    7564 log_file.go:99] Set log file max size to 104857600                                                                                                I1027 11:53:23.899290    7564 agent.go:63] Starting Antrea agent (version v0.10.1)                                                                                               I1027 11:53:23.900424    7564 client.go:34] No kubeconfig file was specified. Falling back to in-cluster config                                                                   W1027 11:53:23.904702    7564 env.go:64] Environment variable POD_NAMESPACE not found                                                                                             1027 11:53:23.907120    7564 cacert_controller.go:79] Failed to get Pod Namespace from environment. Using "kube-system" as the CA ConfigMap Namespace                             I1027 11:53:23.907120    7564 ovs_client.go:67] Connecting to OVSDB at address \\.\pipe\C:openvswitchvarrunopenvswitchdb.sock                                                     I1027 11:53:23.910886    7564 agent.go:197] Setting up node network                                                                                                               E1027 11:53:44.938614    7564 agent.go:567] Failed to get node from K8s with name win-h0c364gqvjh: Get https://100.2.2.1:443/api/v1/nodes/win-h0c364gqvjh: dial tcp 100.2.2.1:443: connectex: A connection attempt failed because the connected party did not properly resp
+I1027 11:53:23.896868    7564 log_file.go:99] Set log file max size to 104857600                                                                                 I1027 11:53:23.899290    7564 agent.go:63] Starting Antrea agent (version v0.10.1)                                                                               I1027 11:53:23.900424    7564 client.go:34] No kubeconfig file was specified. Falling back to in-cluster config                                                   W1027 11:53:23.904702    7564 env.go:64] Environment variable POD_NAMESPACE not found                                                                             1027 11:53:23.907120    7564 cacert_controller.go:79] Failed to get Pod Namespace from environment. Using "kube-system" as the CA ConfigMap Namespace             I1027 11:53:23.907120    7564 ovs_client.go:67] Connecting to OVSDB at address \\.\pipe\C:openvswitchvarrunopenvswitchdb.sock                                     I1027 11:53:23.910886    7564 agent.go:197] Setting up node network                                                                                               E1027 11:53:44.938614    7564 agent.go:567] Failed to get node from K8s with name win-h0c364gqvjh: Get https://100.2.2.1:443/api/v1/nodes/win-h0c364gqvjh: dial tcp 100.2.2.1:443: connectex: A connection attempt failed because the connected party did not properly resp
 F1027 11:53:44.941660    7564 main.go:58] Error running agent: error initializing agent: Get https://100.2.2.1:443/api/v1/nodes/win-h0c364gqvjh: dial tcp 100.2.2.1:443: connectex: A connection attempt failed because the connected party did not properly respond after
 ```
 

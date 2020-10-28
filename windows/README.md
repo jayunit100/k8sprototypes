@@ -118,6 +118,41 @@ I1027 11:53:23.896868    7564 log_file.go:99] Set log file max size to 104857600
 F1027 11:53:44.941660    7564 main.go:58] Error running agent: error initializing agent: Get https://100.2.2.1:443/api/v1/nodes/win-h0c364gqvjh: dial tcp 100.2.2.1:443: connectex: A connection attempt failed because the connected party did not properly respond after
 ```
 
+# Troubleshooting !
+
+## Cant start windows containers bc of cni-install issues
+
+
+The install-cni command below needs to talk to the hcsship CreateComputeSystem.  If windows is buggy or doesnt have up to date OS libraries, you can get this.  Make sure you run a cumulative update such as https://www.catalog.update.microsoft.com/Search.aspx?q=KB4577668 (which worked for me), but other updates may work. 
+```
+  Normal   Scheduled  2m49s               default-scheduler  Successfully assigned kube-system/antrea-agent-windows-rtfct to win-h0c364gqvjh
+  Normal   Pulling    2m48s               kubelet            Pulling image "antrea/antrea-windows:v0.10.1"
+  Normal   Pulled     2m2s                kubelet            Successfully pulled image "antrea/antrea-windows:v0.10.1"
+  Normal   Created    31s (x5 over 2m2s)  kubelet            Created container install-cni
+  Warning  Failed     31s (x5 over 2m)    kubelet            Error: failed to start container "install-cni": Error response from daemon: hcsshim::CreateComputeSystem install-cni: The parameter is incorrect.
+(extra info: {"SystemType":"Container","Name":"install-cni","Owner":"docker","VolumePath":"\\\\?\\Volume{dabbf3fa-a41a-4388-aa50-36d529403c0b}","IgnoreFlushesDuringBoot":true,"LayerFolderPath":"C:\\ProgramData\\docker\\windowsfilter\\install-cni","Layers":[{"ID":"9c2cb086-af18-56d1-9024-e59158a354a1","Path":"C:\\ProgramData\\docker\\windowsfilter\\6e2f677d79dd67832b11ab81068fe66b0b121d13bc55d54eb90ab5e2c0c333b2"},{"ID":"745864ff-1dd8-5b50-a989-
+... 
+d4623fb7affe","Path":"C:\\ProgramData\\docker\\windowsfilter\\87831842756b6c9519993c33e7352491f42a9c7997f0ce239b5ee96df9d06022"}],"HostName":"6543ae24fe43","MappedDirectories":[{"HostPath":"c:\\","ContainerPath":"c:\\host","ReadOnly":false,"BandwidthMaximum":0,"IOPSMaximum":0,"CreateInUtilityVM":false},{"HostPath":"c:\\var\\lib\\kubelet\\pods\\cc149550-96d2-4b87-a158-d9ab6bae8f01\\volumes\\kubernetes.io~configmap\\antrea-windows-config","ContainerPath":"c:\\etc\\antrea","ReadOnly":true,"BandwidthMaximum":0,"IOPSMaximum":0,"CreateInUtilityVM":false},{"HostPath":"c:\\k\\antrea","ContainerPath":"c:\\host\\k\\antrea","ReadOnly":false,"BandwidthMaximum":0,"IOPSMaximum":0,"CreateInUtilityVM":false},{"HostPath":"c:\\etc\\cni\\net.d","ContainerPath":"c:\\host\\etc\\cni\\net.d","ReadOnly":false,"BandwidthMaximum":0,"IOPSMaximum":0,"CreateInUtilityVM":false},{"HostPath":"c:\\opt\\cni\\bin","ContainerPath":"c:\\host\\opt\\cni\\bin","ReadOnly":false,"BandwidthMaximum":0,"IOPSMaximum":0,"CreateInUtilityVM":false},{"HostPath":"c:\\var\\lib\\kubelet\\pods\\cc149550-96d2-4b87-a158-d9ab6bae8f01\\volumes\\kubernetes.io~secret\\antrea-agent-token-6vtpp","ContainerPath":"c:\\var\\run\\secrets\\kubernetes.io\\serviceaccount","ReadOnly":true,"BandwidthMaximum":0,"IOPSMaximum":0,"CreateInUtilityVM":false}],"HvPartition":false,"NetworkSharedContainerName":"6543ae24fe43b912e5f035c81825bc7c504919ee7e4665b89f969080fe8afc7d","EndpointList":["A546008E-0FF2-41A3-881E-E6ABBF636B15"]})
+```
+## KCM controller crashing
+
+This can happen if you dont set the pod-cidr correctly for your windows node.  This is a known issue with KCM, its very fragile to misconfigured podCidrs.
+
+## Agent not initialized due to OVS version
+
+In this case youll see  `Error running agent: error initializing agent:` with a
+
+```
+instances of the ROOT/StandardCimv2/MSFT_NetAdapterAdvancedPropertySettingData class on the  CIM server: SELECT * FROM
+MSFT_NetAdapterAdvancedPropertySettingData  WHERE ((Name LIKE 'br-int')) AND ((RegistryKeyword = 'NetworkAddress')).
+```
+
+Error.  This means that you need to set your OVS_VERSION, you can do that with 
+
+```
+ovs-vsctl.exe --no-wait set Open_vSwitch . ovs_version=$(Get-Item c:\openvswitch\driver\ovsext.sys).VersionInfo.ProductVersion
+```
+from a powershell terminal
 
 # Miscellaneous notes about windows development
 

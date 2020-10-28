@@ -120,6 +120,15 @@ F1027 11:53:44.941660    7564 main.go:58] Error running agent: error initializin
 
 # Troubleshooting !
 
+## Kubeadm reset / init cycle results in broken cluster
+
+After kubeadm reset you need to reset a symlink due to a cleanup error, so if you run kubeadm reset on windows, also do:
+
+```
+ New-Item -path $env:SystemDrive\var\lib\kubelet\etc\kubernetes\pki -type SymbolicLink -value  $env:SystemDrive\etc\kubernetes\pki\ -Force
+```
+
+
 ## Cant start windows containers bc of cni-install issues
 
 

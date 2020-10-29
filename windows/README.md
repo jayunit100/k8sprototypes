@@ -163,6 +163,11 @@ ovs-vsctl.exe --no-wait set Open_vSwitch . ovs_version=$(Get-Item c:\openvswitch
 ```
 from a powershell terminal
 
+## IIS or other apps arent reachable bc kube-proxy on windows isnt proxying traffic
+
+In this case, sometimes the HpyerV VMM service must ALWAYS be started "before" the ovs-vswitchdb service.
+Thus, restarting the ovs-vswitchdb service should be restarted periodically if your seeint this issue.
+
 # Miscellaneous notes about windows development
 
 # PowerShell

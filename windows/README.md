@@ -165,7 +165,9 @@ from a powershell terminal
 
 ## Concerned that ovs isnt making the right bridges 
 
-Run the `ovs-vsctl.exe` command in your windows powershell administrative terminal 
+Run the `ovs-vsctl.exe` command in your windows powershell administrative terminal , to see what the routes look like
+they should look something like this , if not, then you havent setup openvswitc (or antrea) properly
+
 ```
 PS C:\Windows\system32> ovs-vsctl.exe show
 880e9275-12bc-44f7-9b98-a4652a5ba0cb

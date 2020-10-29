@@ -163,6 +163,33 @@ ovs-vsctl.exe --no-wait set Open_vSwitch . ovs_version=$(Get-Item c:\openvswitch
 ```
 from a powershell terminal
 
+## Concerned that ovs isnt making the right bridges 
+
+Run the `ovs-vsctl.exe` command in your windows powershell administrative terminal 
+```
+PS C:\Windows\system32> ovs-vsctl.exe show
+880e9275-12bc-44f7-9b98-a4652a5ba0cb
+    Bridge br-int
+        datapath_type: system
+        Port Ethernet0
+            Interface Ethernet0
+        Port sonobuoy-c7cd88
+            Interface sonobuoy-c7cd88
+                type: internal
+        Port br-int
+            Interface br-int
+                type: internal
+        Port antrea-gw0
+            Interface antrea-gw0
+                type: internal
+        Port antrea-tun0
+            Interface antrea-tun0
+                type: geneve
+                options: {csum="true", key=flow, local_ip="10.0.0.44", remote_ip=flow}
+    ovs_version: "2.14.0"
+PS C:\Windows\system32>
+```
+
 ## IIS or other apps arent reachable bc kube-proxy on windows isnt proxying traffic
 
 In this case, sometimes the HpyerV VMM service must ALWAYS be started "before" the ovs-vswitchdb service.

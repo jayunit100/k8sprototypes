@@ -196,6 +196,7 @@ PS C:\Windows\system32>
 
 In this case, sometimes the HpyerV VMM service must ALWAYS be started "before" the ovs-vswitchdb service.
 Thus, restarting the ovs-vswitchdb service should be restarted periodically if your seeint this issue.
+FINALLY after both hyperv-vmm, AND ovs-switchdb have come up ... THEN restart the kubelet service.
 
 # Miscellaneous notes about windows development
 

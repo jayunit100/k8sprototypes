@@ -245,8 +245,46 @@ add address name="vEthernet (Ethernet) 2" address=172.19.56.17 mask=255.255.240.
 add address name="br-int" address=10.0.0.44 mask=255.255.255.0
 add address name="antrea-gw0" address=100.1.2.1 mask=255.255.255.0
 add address name="vEthernet (Ethernet)" address=172.19.48.93 mask=255.255.240.0
+```
+## Concerned that pods arent getting attached to hns
+
+HNS will be able to give you information about how pods are routed. You can view wether pods have valid devices attached by running:
 
 ```
+PS C:\Users\jayunit100> hnsdiag.exe list all
+Networks:
+Name             ID
+fe83824bf7b9e3989f9abcc8306dde3926a6130c2ede016ffd0f09836f8f8867 74B299E4-84A8-41EE-8EA7-C894522C7027
+nat              E0AE102B-F2F7-48CE-A966-3E3DA1455BCF
+antrea-hnsnetwork 85B3F02B-1BCC-48D1-92DE-AAC7E9775F33
+
+Endpoints:
+Name             ID                                   Virtual Network Name
+Ethernet         0c7119e3-3eb4-4c72-a22f-c47450a9340c fe83824bf7b9e3989f9abcc8306dde3926a6130c2ede016ffd0f09836f8f8867  
+Ethernet         5ad857af-355f-4c9f-89e8-4b68ee68cfee fe83824bf7b9e3989f9abcc8306dde3926a6130c2ede016ffd0f09836f8f8867  
+sonobuoy-8b946a  9610568d-0778-413d-9075-c67709812bfc antrea-hnsnetwork
+
+Namespaces:
+ID                                   | Endpoint IDs
+
+LoadBalancers:
+ID                                   | Virtual IPs      | Direct IP IDs
+PS C:\Users\jayunit100> hnsdiag.exe list all
+Networks:
+Name             ID
+fe83824bf7b9e3989f9abcc8306dde3926a6130c2ede016ffd0f09836f8f8867 74B299E4-84A8-41EE-8EA7-C894522C7027
+nat              E0AE102B-F2F7-48CE-A966-3E3DA1455BCF
+antrea-hnsnetwork 85B3F02B-1BCC-48D1-92DE-AAC7E9775F33
+
+Endpoints:
+Name             ID                                   Virtual Network Name
+Ethernet         0c7119e3-3eb4-4c72-a22f-c47450a9340c fe83824bf7b9e3989f9abcc8306dde3926a6130c2ede016ffd0f09836f8f8867  
+Ethernet         5ad857af-355f-4c9f-89e8-4b68ee68cfee fe83824bf7b9e3989f9abcc8306dde3926a6130c2ede016ffd0f09836f8f8867  
+sonobuoy-8b946a  9610568d-0778-413d-9075-c67709812bfc antrea-hnsnetwork
+iis-site-8cd659  c9b218fb-58f5-4fe7-b9ab-72ccc8ef421f antrea-hnsnetwork
+iis-site-9582b0  41acce28-1b23-4a4e-ba22-698060f9b417 antrea-hnsnetwork
+```
+
 
 # Miscellaneous notes about windows development
 

@@ -207,6 +207,10 @@ In this case, sometimes the HpyerV VMM service must ALWAYS be started "before" t
 Thus, restarting the ovs-vswitchdb service should be restarted periodically if your seeint this issue.
 FINALLY after both hyperv-vmm, AND ovs-switchdb have come up ... THEN restart the kubelet service.
 
+## unable to read client-cert c:\var\lib\kubelet\pki\kubelet-client-current.pem 
+
+Sometimes the kubelet cant read directories propery.  running `kubeadm.exe reset` followed by `New-Item -path $env:SystemDrive\var\lib\kubelet\etc\kubernetes\pki -type SymbolicLink -value  $env:SystemDrive\etc\kubernetes\pki\ -Force`, which cleans up the PKI symlinks , can fix this issue (possibly)
+
 # Miscellaneous notes about windows development
 
 # PowerShell

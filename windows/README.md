@@ -1,5 +1,7 @@
 # End to end k8s windows setup guide (local VMs)
 
+This is based on the guide at https://github.com/vmware-tanzu/antrea/blob/master/docs/windows.md. so read that first and make sure you understand it.
+
 This is done in VMWare workstation.  It can be generically followed in other hypervisors as well.     This is an opinionated guide:
 
 - Uses antrea for networking, which relies on Wins

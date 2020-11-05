@@ -209,7 +209,44 @@ FINALLY after both hyperv-vmm, AND ovs-switchdb have come up ... THEN restart th
 
 ## unable to read client-cert c:\var\lib\kubelet\pki\kubelet-client-current.pem 
 
-Sometimes the kubelet cant read directories propery.  running `kubeadm.exe reset` followed by `New-Item -path $env:SystemDrive\var\lib\kubelet\etc\kubernetes\pki -type SymbolicLink -value  $env:SystemDrive\etc\kubernetes\pki\ -Force`, which cleans up the PKI symlinks , can fix this issue (possibly)
+Sometimes the kubelet cant read directories propery.  running `kubeadm.exe reset` followed by `New-Item -path $env:SystemDrive\var\lib\kubelet\etc\kubernetes\pki -type 3SymbolicLink -value  $env:SystemDrive\etc\kubernetes\pki\ -Force`, which cleans up the PKI symlinks , can fix this issue (possibly)
+
+## Kube proxy windows... is it working ?
+
+You can run `netsh dump` in powershell to see wheter or not the kube proxy is working to setup pod routes from services.
+
+```
+# ----------------------------------
+# IPv4 Configuration
+# ----------------------------------
+pushd interface ipv4
+
+reset
+set global
+add route prefix=0.0.0.0/0 interface="vEthernet (Ethernet) 2" nexthop=172.19.48.1 publish=Yes
+add route prefix=0.0.0.0/0 interface="br-int" nexthop=10.0.0.1 publish=Yes
+add route prefix=100.1.1.0/24 interface="antrea-gw0" nexthop=100.1.1.1 publish=Yes
+add route prefix=0.0.0.0/0 interface="vEthernet (Ethernet)" nexthop=172.19.48.1 publish=Yes
+set interface interface="Ethernet (Kernel Debugger)" forwarding=enabled advertise=enabled nud=enabled ignoredefaultroutes=disabled
+set interface interface="Ethernet0" forwarding=enabled advertise=enabled nud=enabled ignoredefaultroutes=disabled
+set interface interface="vEthernet (nat)" forwarding=enabled advertise=enabled nud=enabled ignoredefaultroutes=disabled
+set interface interface="vEthernet (fe83824bf7b9e39)" forwarding=enabled advertise=enabled nud=enabled ignoredefaultroutes=disabled
+set interface interface="vEthernet (HNS Internal NIC)" forwarding=enabled advertise=enabled nud=enabled ignoredefaultroutes=disabled
+set interface interface="vEthernet (Ethernet) 2" forwarding=enabled advertise=enabled nud=enabled ignoredefaultroutes=disabled
+set interface interface="br-int" forwarding=enabled advertise=enabled nud=enabled ignoredefaultroutes=disabled
+set interface interface="antrea-gw0" forwarding=enabled advertise=enabled nud=enabled ignoredefaultroutes=disabled
+set interface interface="vEthernet (Ethernet)" forwarding=enabled advertise=enabled nud=enabled ignoredefaultroutes=disabled
+add address name="vEthernet (nat)" address=172.25.208.1 mask=255.255.240.0
+add address name="vEthernet (fe83824bf7b9e39)" address=172.19.48.1 mask=255.255.240.0
+add address name="vEthernet (HNS Internal NIC)" address=100.2.2.246 mask=255.0.0.0 
+add address name="vEthernet (HNS Internal NIC)" address=100.2.2.1 mask=255.0.0.0
+add address name="vEthernet (HNS Internal NIC)" address=100.2.2.10 mask=255.0.0.0
+add address name="vEthernet (Ethernet) 2" address=172.19.56.17 mask=255.255.240.0
+add address name="br-int" address=10.0.0.44 mask=255.255.255.0
+add address name="antrea-gw0" address=100.1.2.1 mask=255.255.255.0
+add address name="vEthernet (Ethernet)" address=172.19.48.93 mask=255.255.240.0
+
+```
 
 # Miscellaneous notes about windows development
 

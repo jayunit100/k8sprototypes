@@ -41,6 +41,7 @@ This is done in VMWare workstation.  It can be generically followed in other hyp
      kubeadm init --pod-network-cidr=100.1.1.0/24 --service-cidr=100.2.2.0/24
     ```
   
+ 
      And now put the basic utils :
      ```
       mkdir -p $HOME/.kube
@@ -84,14 +85,20 @@ And then try to run kubeadm join, first we also cleanup a possible symlink issue
 ## the tricky part 
 Now if your env isnt setup right, this is where things might fall down
 .. You may run into issues here, the first TWO commands are only need to be run if it fails, and your retrying
+
+- On your linux node, et the join token using `kubeadm token create --print-join-token`.
+
+- Now on your windows node, clean up the kubelet if needed:
 ```
 kubeadm reset # <-- dont run this unless it failed the last time
  New-Item -path $env:SystemDrive\var\lib\kubelet\etc\kubernetes\pki -type SymbolicLink -value  $env:SystemDrive
 \etc\kubernetes\pki\ -Force
+```
+- And finally, join the cluster by copying the above output from the `kubeadm token create... print-join-token` step.  i.e. run something like this:
 
+```
 kubeadm join 10.0.0.42:6443 --token kcwnj0.n93z9n1mwddicrr5     --discovery-token-ca-cert-hash sha256:326c18f332ad604a3174ecce0a97eb26fc5b1ba69709cebec499ee2e93e54b31  
 ```
-
 
 Finally, you should see the kube services running.  Note that this can still result in the antrea-agent-windows service being broken , i.e. because it isn't able to access the apiserver.
 

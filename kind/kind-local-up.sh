@@ -3,7 +3,7 @@
 # Thanks to https://alexbrand.dev/post/creating-a-kind-cluster-with-calico-networking/ for this snippet :)
 cat << EOF > calico-conf.yaml
 kind: Cluster
-apiVersion: kind.sigs.k8s.io/v1alpha3
+apiVersion: kind.x-k8s.io/v1alpha4
 networking:
   disableDefaultCNI: true # disable kindnet
   podSubnet: 192.168.0.0/16 # set to Calico's default subnet
@@ -29,11 +29,11 @@ EOF
 #conf=kind-conf-ipv6.yaml
 
 ## calico conf == no cni, so use it for antrea/calico/whatever
-cluster=antrea
-conf=calico-conf.yaml
-
-#cluster=calico
+#cluster=antrea
 #conf=calico-conf.yaml
+
+cluster=calico
+conf=calico-conf.yaml
 
 function install_k8s() {
     if kind delete cluster --name=${cluster}; then

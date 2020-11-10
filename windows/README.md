@@ -168,7 +168,10 @@ MSFT_NetAdapterAdvancedPropertySettingData  WHERE ((Name LIKE 'br-int')) AND ((R
 Error.  This means that you need to set your OVS_VERSION, you can do that with 
 
 ```
-ovs-vsctl.exe --no-wait set Open_vSwitch . ovs_version=$(Get-Item c:\openvswitch\driver\ovsext.sys).VersionInfo.ProductVersion
+ovs-vsctl.exe --no-wait set Open_vSwitch . ovs_version=2.14.0
+
+# or if you think you have a different ovs_version, you can do this dynamically... 
+# ovs-vsctl.exe --no-wait set Open_vSwitch . ovs_version=$(Get-Item c:\openvswitch\driver\ovsext.sys).VersionInfo.ProductVersion
 ```
 from a powershell terminal
 

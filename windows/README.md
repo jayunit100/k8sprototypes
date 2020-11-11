@@ -60,7 +60,7 @@ Now, we apply a antrea kube-proxy that'll schedule to our windows nodes in the n
 - hostNetwork: true
 - uses userspace `win cli process run` arguments.
 ```
-kubectl apply -f https://github.com/jayunit100/k8sprototypes/blob/master/windows/kube-proxy-antrea.yaml
+kubectl apply -f https://raw.githubusercontent.com/jayunit100/k8sprototypes/master/windows/kube-proxy-antrea.yaml
 kubectl apply -f https://github.com/vmware-tanzu/antrea/releases/download/v0.10.1/antrea-windows.yml
 ```
 

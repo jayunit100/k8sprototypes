@@ -45,6 +45,9 @@ And modify an app like iis to mount that volume:
    spec:
       containers:
       - image: gcr.io/dotnet-atamel/iis-site-windows
+        volumeMounts:
+        - mountPath: C:/test
+          name: test-data
       ...
       volumes:
       - name: test-data

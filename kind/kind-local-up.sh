@@ -31,7 +31,6 @@ nodes:
 - role: control-plane
 - role: worker
 - role: worker
-- role: worker
 EOF
 
     cat << EOF > cilium-conf.yaml
@@ -46,14 +45,21 @@ networking:
   disableDefaultCNI: true
 EOF
 
-    cat << EOF > kind-conf-ipv6.yaml
-kind: Cluster
-apiVersion: kind.x-k8s.io/v1alpha4
-networking:
-  disableDefaultCNI: true
-  ipFamily: ipv6
-EOF
-}
+#cluster=nocni
+#conf="calico-conf.yaml"
+
+#cluster=cipv6
+#conf=kind-conf-ipv6.yaml
+
+## calico conf == no cni, so use it for antrea/calico/whatever
+cluster=antrea
+conf=calico-conf.yaml
+
+# cluster=calico
+# conf=calico-conf.yaml
+
+cluster=calico
+conf=calico-conf.yaml
 
 function install_k8s() {
     if kind delete cluster --name=${CLUSTER}; then
@@ -76,10 +82,13 @@ function install_calico() {
 
 function install_antrea() {
 	if [[ ! -d antrea ]] ; then
-	    git clone https://github.com/vmware-tanzu/antrea.git
+	    git clone https://github.com/vmware-tanzu/antrea.git	
 	fi
-	pushd antrea/ci/kind
-    	    ./kind-setup.sh create antrea
+	pushd antrea
+	     git checkout v0.9.0
+	     pushd ci/kind
+    	      ./kind-setup.sh create antrea
+	     popd
 	popd
 }
 

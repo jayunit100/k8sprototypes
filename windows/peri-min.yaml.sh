@@ -44,7 +44,7 @@ spec:
       folder: $VSPHERE_FOLDER
       server: $VSPHERE_SERVER
   controlPlaneEndpoint:
-    host: 12.10.10.77
+    host: $VSPHERE_CP_IP
     port: 6443
   server: $VSPHERE_SERVER
 ---
@@ -107,7 +107,7 @@ spec:
             - name: vip_leaderelection
               value: "true"
             - name: vip_address
-              value: 10.176.37.17
+              value: $VSPHERE_CP_IP
             - name: vip_interface
               value: eth0
             - name: vip_leaseduration
@@ -159,7 +159,7 @@ spec:
     users:
     - name: capv
       sshAuthorizedKeys:
-      - 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCeWhZAGsKC7VezEIpVhzX9fDfxZ80/oIbO03DRVrLBlhgGdewRiHcZQDvOsHaEReKsM2HOFFH108s1e2bRbf+ZMyAlSLgq+Q3gTWzUD8Lu3UuW7ANk2CAaiAI4+3cPG+eCUsvKngWliZ4dDaTFv+kJ8mgiAZmfIJK7KRzVUM52V48pWp3+ve+IEG5NkHVvIwbOYtKj5UiQ+/MPKCh7WOyFuvT6bMSRHgfreCOeuu2AydiqkhQIKFBjtqrwutaKs8wXOlK1RzSXJttv31hQGN9+mFanDJNIziqZe9BJztE0p2hFdNt4WqkGsaC/Yqt8eDGW0UqnWn+MuGl7awTQDBoP4JV5tjZ5N9AF00Jgp/zYSL4o7m1jrIAN0Nx0/2GT/UmhdMiCgRL7vxKVNrKFEbkcMxmrgsE/MhMYLnKB9L5amZ3uNvZpNZRyCRjjiXqQAzOm0OPS8MS0G9xBmrNx+joNYK+z5q+1PMmKd9/8h2t96/yTJLBWynKWzXzyj4ra3gscGpmqf+fzkVixziW7pbyi2+e/B+idAS/d3oGq5xixHYn+/PcbUSnMitOmJ1rmQf4HfcHYokxgNnJ5Zeikn7hYjy+tjEKtk8eX2WNtLcuOmJ0IVo5fUWfeph6nWSPwNUCRElVSR26j7xW0+bm0swmZkhnUzl76PTrmfXuyXg+AtQ== perit@vmware.com '
+      - $VSPHERE_SSH_AUTHORIZED_KEY
       sudo: ALL=(ALL) NOPASSWD:ALL
   replicas: 1
   version: v1.19.1
@@ -187,7 +187,7 @@ spec:
       users:
       - name: capv
         sshAuthorizedKeys:
-        - 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCeWhZAGsKC7VezEIpVhzX9fDfxZ80/oIbO03DRVrLBlhgGdewRiHcZQDvOsHaEReKsM2HOFFH108s1e2bRbf+ZMyAlSLgq+Q3gTWzUD8Lu3UuW7ANk2CAaiAI4+3cPG+eCUsvKngWliZ4dDaTFv+kJ8mgiAZmfIJK7KRzVUM52V48pWp3+ve+IEG5NkHVvIwbOYtKj5UiQ+/MPKCh7WOyFuvT6bMSRHgfreCOeuu2AydiqkhQIKFBjtqrwutaKs8wXOlK1RzSXJttv31hQGN9+mFanDJNIziqZe9BJztE0p2hFdNt4WqkGsaC/Yqt8eDGW0UqnWn+MuGl7awTQDBoP4JV5tjZ5N9AF00Jgp/zYSL4o7m1jrIAN0Nx0/2GT/UmhdMiCgRL7vxKVNrKFEbkcMxmrgsE/MhMYLnKB9L5amZ3uNvZpNZRyCRjjiXqQAzOm0OPS8MS0G9xBmrNx+joNYK+z5q+1PMmKd9/8h2t96/yTJLBWynKWzXzyj4ra3gscGpmqf+fzkVixziW7pbyi2+e/B+idAS/d3oGq5xixHYn+/PcbUSnMitOmJ1rmQf4HfcHYokxgNnJ5Zeikn7hYjy+tjEKtk8eX2WNtLcuOmJ0IVo5fUWfeph6nWSPwNUCRElVSR26j7xW0+bm0swmZkhnUzl76PTrmfXuyXg+AtQ== perit@vmware.com '
+        - '$VSPHERE_SSH_AUTHORIZED_KEY'
         sudo: ALL=(ALL) NOPASSWD:ALL
 ---
 apiVersion: cluster.x-k8s.io/v1alpha3
@@ -397,7 +397,7 @@ spec:
         passwd: capv!!
         groups: Administrators
         sshAuthorizedKeys:
-        - 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCeWhZAGsKC7VezEIpVhzX9fDfxZ80/oIbO03DRVrLBlhgGdewRiHcZQDvOsHaEReKsM2HOFFH108s1e2bRbf+ZMyAlSLgq+Q3gTWzUD8Lu3UuW7ANk2CAaiAI4+3cPG+eCUsvKngWliZ4dDaTFv+kJ8mgiAZmfIJK7KRzVUM52V48pWp3+ve+IEG5NkHVvIwbOYtKj5UiQ+/MPKCh7WOyFuvT6bMSRHgfreCOeuu2AydiqkhQIKFBjtqrwutaKs8wXOlK1RzSXJttv31hQGN9+mFanDJNIziqZe9BJztE0p2hFdNt4WqkGsaC/Yqt8eDGW0UqnWn+MuGl7awTQDBoP4JV5tjZ5N9AF00Jgp/zYSL4o7m1jrIAN0Nx0/2GT/UmhdMiCgRL7vxKVNrKFEbkcMxmrgsE/MhMYLnKB9L5amZ3uNvZpNZRyCRjjiXqQAzOm0OPS8MS0G9xBmrNx+joNYK+z5q+1PMmKd9/8h2t96/yTJLBWynKWzXzyj4ra3gscGpmqf+fzkVixziW7pbyi2+e/B+idAS/d3oGq5xixHYn+/PcbUSnMitOmJ1rmQf4HfcHYokxgNnJ5Zeikn7hYjy+tjEKtk8eX2WNtLcuOmJ0IVo5fUWfeph6nWSPwNUCRElVSR26j7xW0+bm0swmZkhnUzl76PTrmfXuyXg+AtQ== perit@vmware.com' 
+        - $VSPHERE_SSH_AUTHORIZED_KEY
         sudo: ALL=(ALL) NOPASSWD:ALL
 ---
 apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3

@@ -288,14 +288,14 @@ spec:
       cloneMode: linkedClone
       datacenter: $VSPHERE_DATACENTER
       datastore: $VSPHERE_DATASTORE
-      diskGiB: 79
+      diskGiB: 80
       folder: $VSPHERE_FOLDER
       memoryMiB: 4192
       network:
         devices:
         - dhcp4: true
           networkName: $VSPHERE_NETWORK
-      numCPUs: 2
+      numCPUs: 3
       os: Windows
       server: $VSPHERE_SERVER
       template: windows-2019-kube-v1.19.1-containerd
@@ -311,14 +311,14 @@ spec:
       cloneMode: linkedClone
       datacenter: $VSPHERE_DATACENTER
       datastore: $VSPHERE_DATASTORE
-      diskGiB: 79
+      diskGiB: 80
       folder: $VSPHERE_FOLDER
       memoryMiB: 4192
       network:
         devices:
         - dhcp4: true
           networkName: VM Network
-      numCPUs: 2
+      numCPUs: 3
       os: Windows
       server: $VSPHERE_SERVER
       template: windows-2019-kube-v1.19.1-docker

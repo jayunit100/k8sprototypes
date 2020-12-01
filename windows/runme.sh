@@ -1,5 +1,8 @@
 source ~/env.sh
-
+if [[ ! -v VSPHERE_CP_IP ]]; then
+	echo "NO ENV SET FOR CONTROL PLANE MAKING A DEFAULT IN THE 12 SUBNET (this will work on corgi nsx jobs) !!!" 
+	VSPHERE_CP_IP=12.10.10.205
+fi
 # wget https://build-artifactory.eng.vmware.com/artifactory/webapp/#/artifacts/browse/tree/General/k8simages-windows-local/windows-2019-kube-v1.19.1-docker.ova
 #govc import.ova https://build-artifactory.eng.vmware.com/k8simages-windows-local/windows-2019-kube-v1.19.1-docker.ova
 

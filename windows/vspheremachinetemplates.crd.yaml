@@ -4,8 +4,6 @@ metadata:
   annotations:
     cert-manager.io/inject-ca-from: capi-webhook-system/capv-serving-cert
     controller-gen.kubebuilder.io/version: v0.2.9
-  creationTimestamp: "2020-11-25T17:35:52Z"
-  generation: 3
   labels:
     cluster.x-k8s.io/provider: infrastructure-vsphere
     cluster.x-k8s.io/v1alpha3: v1alpha3
@@ -684,24 +682,3 @@ spec:
         type: object
     served: true
     storage: true
-status:
-  acceptedNames:
-    categories:
-    - cluster-api
-    kind: VSphereMachineTemplate
-    listKind: VSphereMachineTemplateList
-    plural: vspheremachinetemplates
-    singular: vspheremachinetemplate
-  conditions:
-  - lastTransitionTime: "2020-11-25T17:35:52Z"
-    message: no conflicts found
-    reason: NoConflicts
-    status: "True"
-    type: NamesAccepted
-  - lastTransitionTime: "2020-11-25T17:35:52Z"
-    message: the initial names have been accepted
-    reason: InitialNamesAccepted
-    status: "True"
-    type: Established
-  storedVersions:
-  - v1alpha3

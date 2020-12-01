@@ -9,8 +9,6 @@ sed -i s/\$VSPHERE_SERVER/$VSPHERE_SERVER/  peri-min.yaml
 sed -i s/\$VSPHERE_FOLDER/$VSPHERE_FOLDER/  peri-min.yaml
 sed -i s/\$VSPHERE_CP_IP/$VSPHERE_CP_IP/  peri-min.yaml
 
-
-
 KEYYYY=$(printf %q "$VSPHERE_SSH_AUTHORIZED_KEY")
 echo $KEYYYY 
 
@@ -19,9 +17,8 @@ sed -i 's/\$VSPHERE_SSH_AUTHORIZED_KEY/\"ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA6Vf
 
 sed -i s/\$VSPHERE_DATASTORE/$VSPHERE_DATASTORE/  peri-min.yaml 
 
-
-
 echo "done substituting !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 
-#peri-min.yaml
+kubectl apply -f vspheremachinetemplates.crd.yaml
+kubectl create -f peri-min.yaml
 

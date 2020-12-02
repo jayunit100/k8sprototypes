@@ -1,9 +1,10 @@
+source ~/env.sh
 if [[ ! -v VSPHERE_CP_IP ]]; then
         echo "NO ENV SET FOR CONTROL PLANE MAKING A DEFAULT IN THE 12 SUBNET (this will work on corgi nsx jobs) !!!"
         VSPHERE_CP_IP=12.10.10.205
 fi
 # wget https://build-artifactory.eng.vmware.com/artifactory/webapp/#/artifacts/browse/tree/General/k8simages-windows-local/windows-2019-kube-v1.19.1-docker.ova
-govc import.ova https://build-artifactory.eng.vmware.com/k8simages-windows-local/windows-2019-kube-v1.19.1-docker.ova
+# govc import.ova https://build-artifactory.eng.vmware.com/k8simages-windows-local/windows-2019-kube-v1.19.1-docker.ova
 
 kubectl delete -f vspheremachinetemplates.crd.yaml
 kubectl create -f vspheremachinetemplates.crd.yaml
@@ -15,14 +16,20 @@ cat peri-min.yaml.sh | sed s/\$VSPHERE_USERNAME/administrator@vsphere.local/g > 
 # Set image to run gabi's capv controller
 kubectl set image deployment/capv-controller-manager manager=harbor-repo.vmware.com/tkgwindows/vsphere-manager:dev
 
-echo "x"
-
 
 sed -i s/\$VSPHERE_PASSWORD/$VSPHERE_PASSWORD/  peri-min.yaml
 sed -i s/\$VSPHERE_DATACENTER/$VSPHERE_DATACENTER/  peri-min.yaml
-sed -i s/\$VSPHERE_NETWORK/$VSPHERE_NETWORK/  peri-min.yaml
+
+# total hack
+if [[ "$VSPHERE_NETWORK" == "VM Network" ]] ;  then
+        VSPHERE_NETWORK='VM\ Network'
+fi
+echo $VSPHERE_NETWORK
+sed -i s/\$VSPHERE_NETWORK/"$VSPHERE_NETWORK"/  peri-min.yaml
 sed -i s/\$VSPHERE_SERVER/$VSPHERE_SERVER/  peri-min.yaml
+
 sed -i s/\$VSPHERE_FOLDER/$VSPHERE_FOLDER/  peri-min.yaml
+
 sed -i s/\$VSPHERE_CP_IP/$VSPHERE_CP_IP/  peri-min.yaml
 
 KEYYYY=$(printf %q "$VSPHERE_SSH_AUTHORIZED_KEY")

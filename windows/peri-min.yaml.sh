@@ -31,7 +31,7 @@ spec:
       secretName: cloud-provider-vsphere-credentials
       secretNamespace: kube-system
     network:
-      name: VM Network
+      name: $VSPHERE_NETWORK
     providerConfig:
       cloud:
         controllerImage: gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.2.1
@@ -488,7 +488,7 @@ spec:
         passwd: capv!!
         groups: Administrators
         sshAuthorizedKeys:
-        - 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCeWhZAGsKC7VezEIpVhzX9fDfxZ80/oIbO03DRVrLBlhgGdewRiHcZQDvOsHaEReKsM2HOFFH108s1e2bRbf+ZMyAlSLgq+Q3gTWzUD8Lu3UuW7ANk2CAaiAI4+3cPG+eCUsvKngWliZ4dDaTFv+kJ8mgiAZmfIJK7KRzVUM52V48pWp3+ve+IEG5NkHVvIwbOYtKj5UiQ+/MPKCh7WOyFuvT6bMSRHgfreCOeuu2AydiqkhQIKFBjtqrwutaKs8wXOlK1RzSXJttv31hQGN9+mFanDJNIziqZe9BJztE0p2hFdNt4WqkGsaC/Yqt8eDGW0UqnWn+MuGl7awTQDBoP4JV5tjZ5N9AF00Jgp/zYSL4o7m1jrIAN0Nx0/2GT/UmhdMiCgRL7vxKVNrKFEbkcMxmrgsE/MhMYLnKB9L5amZ3uNvZpNZRyCRjjiXqQAzOm0OPS8MS0G9xBmrNx+joNYK+z5q+1PMmKd9/8h2t96/yTJLBWynKWzXzyj4ra3gscGpmqf+fzkVixziW7pbyi2+e/B+idAS/d3oGq5xixHYn+/PcbUSnMitOmJ1rmQf4HfcHYokxgNnJ5Zeikn7hYjy+tjEKtk8eX2WNtLcuOmJ0IVo5fUWfeph6nWSPwNUCRElVSR26j7xW0+bm0swmZkhnUzl76PTrmfXuyXg+AtQ== perit@vmware.com '
+        - $VSPHERE_SSH_AUTHORIZED_KEY
         sudo: ALL=(ALL) NOPASSWD:ALL
 ---
 apiVersion: addons.cluster.x-k8s.io/v1alpha3

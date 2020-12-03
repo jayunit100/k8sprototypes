@@ -6,6 +6,7 @@ fi
 # wget https://build-artifactory.eng.vmware.com/artifactory/webapp/#/artifacts/browse/tree/General/k8simages-windows-local/windows-2019-kube-v1.19.1-docker.ova
 
 govc import.ova https://build-artifactory.eng.vmware.com/k8simages-windows-local/windows-2019-kube-v1.19.1-docker.ova
+govc object.rename windows-2019-kube-v1.19.1 windows-2019-kube-v1.19.1-docker
 
 kubectl delete -f vspheremachinetemplates.crd.yaml
 kubectl create -f vspheremachinetemplates.crd.yaml

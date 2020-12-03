@@ -338,7 +338,28 @@ spec:
             register-with-taints: os=windows:NoSchedule
           name: '{{ ds.meta_data.hostname }}'
       files:
-      - content: |
+      - path: 'c:\k\antrea\antrea-startup.ps1'
+        content: |
+          $service = Get-Service -Name ovs-vswitchd -ErrorAction SilentlyContinue
+          if($service -eq $null) {  
+            Push-Location C:\k\antrea\
+            curl.exe -LO "https://raw.githubusercontent.com/vmware-tanzu/antrea/master/hack/windows/Install-OVS.ps1"
+            curl.exe -LO "https://raw.githubusercontent.com/vmware-tanzu/antrea/master/hack/windows/Prepare-ServiceInterface.ps1"
+            curl.exe -LO "https://raw.githubusercontent.com/vmware-tanzu/antrea/master/hack/windows/Clean-AntreaNetwork.ps1"
+            & ./Install-OVS.ps1
+            Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False
+          } 
+          Invoke-expression "C:\k\antrea\Clean-AntreaNetwork.ps1" 
+          Invoke-expression "C:\k\antrea\Prepare-ServiceInterface.ps1"
+          Restart-service vmms
+          Stop-Service ovs-vswitchd
+          Stop-Service ovsdb-server
+          start-service ovsdb-server
+          start-sleep -seconds 5
+          Start-Service ovs-vswitchd
+          Restart-Service Kubelet
+      - path: 'C:\Temp\antrea.ps1'
+        content: |
           $service = Get-Service -Name ovs-vswitchd -ErrorAction SilentlyContinue
           if($service -ne $null) {
             exit
@@ -347,28 +368,7 @@ spec:
           New-Item -ItemType Directory -Force -Path C:\k\antrea
           $trigger = New-JobTrigger -AtStartup 
           $options = New-ScheduledJobOption -RunElevated
-          $startupScript = "
-            `$service = Get-Service -Name ovs-vswitchd -ErrorAction SilentlyContinue
-            if(`$service -eq `$null) {  
-              Push-Location C:\k\antrea\
-              curl.exe -LO `"https://raw.githubusercontent.com/vmware-tanzu/antrea/master/hack/windows/Install-OVS.ps1`"
-              curl.exe -LO `"https://raw.githubusercontent.com/vmware-tanzu/antrea/master/hack/windows/Prepare-ServiceInterface.ps1`"
-              curl.exe -LO `"https://raw.githubusercontent.com/vmware-tanzu/antrea/master/hack/windows/Clean-AntreaNetwork.ps1`"
-              & ./Install-OVS.ps1
-              Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False
-              & ./Prepare-ServiceInterface.ps1
-            } else {
-              Invoke-expression `"C:\k\antrea\Clean-AntreaNetwork.ps1`" 
-              Invoke-expression `"C:\k\antrea\Prepare-ServiceInterface.ps1`"
-              Restart-service vmms
-              Stop-Service ovs-vswitchd
-              Stop-Service ovsdb-server
-              start-service ovsdb-server
-              Start-Sleep -Seconds 5
-              Start-Service ovs-vswitchd
-            }
-            Restart-service kubelet  
-          "
+          Register-ScheduledJob -Name PrepareAntrea -Trigger $trigger -FilePath 'c:\k\antrea\antrea-startup.ps1' -ScheduledJobOption $options
           $env:HostIP = (
               Get-NetIPConfiguration |
               Where-Object {
@@ -381,17 +381,12 @@ spec:
           $raw = $raw -replace ".$"
           $new = "$($raw) $($newstr)`""
           Set-Content $file $new
-          $startupScript | out-file c:\k\antrea\antrea-bootprep.ps1
-          Register-ScheduledJob -Name PrepareAntrea -Trigger $trigger -FilePath C:\k\antrea\antrea-bootprep.ps1 -ScheduledJobOption $options
-          invoke-expression "docker pull harbor-repo.vmware.com/dockerhub-proxy-cache/sigwindowstools/kube-proxy:v1.19.1"
-          invoke-expression "docker pull harbor-repo.vmware.com/dockerhub-proxy-cache/antrea/antrea-windows:v0.10.1"
-          start-sleep -seconds 5
+          $nssm = (Get-Command nssm).Source
+          $serviceName = 'Kubelet'
+          & $nssm set $serviceName start SERVICE_AUTO_START
           Restart-Computer -Force
-          
-        path: 'C:\Temp\antrea.ps1'
       postKubeadmCommands:
         - powershell C:/Temp/antrea.ps1 -ExecutionPolicy Bypass
-
       users:
       - name: capv
         passwd: capv!!

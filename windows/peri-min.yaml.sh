@@ -290,12 +290,12 @@ spec:
       datastore: $VSPHERE_DATASTORE
       diskGiB: 80
       folder: $VSPHERE_FOLDER
-      memoryMiB: 4192
+      memoryMiB: 5000
       network:
         devices:
         - dhcp4: true
           networkName: $VSPHERE_NETWORK
-      numCPUs: 3
+      numCPUs: 4
       os: Windows
       server: $VSPHERE_SERVER
       template: windows-2019-kube-v1.19.1-containerd

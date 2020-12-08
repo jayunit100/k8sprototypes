@@ -113,6 +113,27 @@ RunspaceId             : 45ebf9de-33fc-4e9e-b1d1-18fb1f646b1f
 Meanwhile, running ovs-vsctl show
 
 ```
-PS C:\Windows\System32> ovs-vsctl.exe show                                                                                                            880e9275-12bc-44f7-9b98-a4652a5ba0cb                                                                                                                          Bridge br-int                                                                                                                                                 datapath_type: system                                                                                                                                     Port csi-smb--980722                                                                                                                                          Interface csi-smb--980722                                                                                                                                     type: internal                                                                                                                                            error: "could not add network device csi-smb--980722 to ofproto (Invalid argument)"                                                               Port antrea-gw0                                                                                                                                               Interface antrea-gw0                                                                                                                                          type: internal                                                                                                                                            error: "could not add network device antrea-gw0 to ofproto (Invalid argument)"                                                                    Port Ethernet0                                                                                                                                                Interface Ethernet0                                                                                                                                   Port br-int                                                                                                                                                   Interface br-int                                                                                                                                              type: internal                                                                                                                                            error: "could not add network device br-int to ofproto (Invalid argument)"                                                                        Port antrea-tun0                                                                                                                                              Interface antrea-tun0                                                                                                                                         type: geneve                                                                                                                                              options: {csum="true", key=flow, local_ip="10.0.0.44", remote_ip=flow}                                                                        ovs_version: "2.14.0"    
+880e9275-12bc-44f7-9b98-a4652a5ba0cb
+    Bridge br-int
+        datapath_type: system
+        Port csi-smb--980722
+            Interface csi-smb--980722
+                type: internal
+                error: "could not add network device csi-smb--980722 to ofproto (Invalid argument)"
+        Port antrea-gw0
+            Interface antrea-gw0
+                type: internal
+                error: "could not add network device antrea-gw0 to ofproto (Invalid argument)"
+        Port Ethernet0
+            Interface Ethernet0
+        Port br-int
+            Interface br-int
+                type: internal
+                error: "could not add network device br-int to ofproto (Invalid argument)"
+        Port antrea-tun0
+            Interface antrea-tun0
+                type: geneve
+                options: {csum="true", key=flow, local_ip="10.0.0.44", remote_ip=flow}
+    ovs_version: "2.14.0"
 ```
 

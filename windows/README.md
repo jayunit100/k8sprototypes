@@ -129,7 +129,8 @@ F1027 11:53:44.941660    7564 main.go:58] Error running agent: error initializin
 
 # Troubleshooting !
 
-## Kubeadm reset / init cycle results in broken cluster
+
+### Kubeadm reset / init cycle results in broken cluster
 
 After kubeadm reset you need to reset a symlink due to a cleanup error, so if you run kubeadm reset on windows, also do:
 
@@ -138,7 +139,8 @@ After kubeadm reset you need to reset a symlink due to a cleanup error, so if yo
 ```
 
 
-## Cant start windows containers bc of cni-install issues
+
+### Cant start windows containers bc of cni-install issues
 
 
 The install-cni command below needs to talk to the hcsship CreateComputeSystem.  If windows is buggy or doesnt have up to date OS libraries, you can get this.  Make sure you run a cumulative update such as https://www.catalog.update.microsoft.com/Search.aspx?q=KB4577668 (which worked for me), but other updates may work. 
@@ -152,11 +154,13 @@ The install-cni command below needs to talk to the hcsship CreateComputeSystem. 
 ... 
 d4623fb7affe","Path":"C:\\ProgramData\\docker\\windowsfilter\\87831842756b6c9519993c33e7352491f42a9c7997f0ce239b5ee96df9d06022"}],"HostName":"6543ae24fe43","MappedDirectories":[{"HostPath":"c:\\","ContainerPath":"c:\\host","ReadOnly":false,"BandwidthMaximum":0,"IOPSMaximum":0,"CreateInUtilityVM":false},{"HostPath":"c:\\var\\lib\\kubelet\\pods\\cc149550-96d2-4b87-a158-d9ab6bae8f01\\volumes\\kubernetes.io~configmap\\antrea-windows-config","ContainerPath":"c:\\etc\\antrea","ReadOnly":true,"BandwidthMaximum":0,"IOPSMaximum":0,"CreateInUtilityVM":false},{"HostPath":"c:\\k\\antrea","ContainerPath":"c:\\host\\k\\antrea","ReadOnly":false,"BandwidthMaximum":0,"IOPSMaximum":0,"CreateInUtilityVM":false},{"HostPath":"c:\\etc\\cni\\net.d","ContainerPath":"c:\\host\\etc\\cni\\net.d","ReadOnly":false,"BandwidthMaximum":0,"IOPSMaximum":0,"CreateInUtilityVM":false},{"HostPath":"c:\\opt\\cni\\bin","ContainerPath":"c:\\host\\opt\\cni\\bin","ReadOnly":false,"BandwidthMaximum":0,"IOPSMaximum":0,"CreateInUtilityVM":false},{"HostPath":"c:\\var\\lib\\kubelet\\pods\\cc149550-96d2-4b87-a158-d9ab6bae8f01\\volumes\\kubernetes.io~secret\\antrea-agent-token-6vtpp","ContainerPath":"c:\\var\\run\\secrets\\kubernetes.io\\serviceaccount","ReadOnly":true,"BandwidthMaximum":0,"IOPSMaximum":0,"CreateInUtilityVM":false}],"HvPartition":false,"NetworkSharedContainerName":"6543ae24fe43b912e5f035c81825bc7c504919ee7e4665b89f969080fe8afc7d","EndpointList":["A546008E-0FF2-41A3-881E-E6ABBF636B15"]})
 ```
-## KCM controller crashing
+
+### KCM controller crashing
 
 This can happen if you dont set the pod-cidr correctly for your windows node.  This is a known issue with KCM, its very fragile to misconfigured podCidrs.
 
-## Agent not initialized due to OVS version
+
+### Agent not initialized due to OVS version
 
 In this case youll see  `Error running agent: error initializing agent:` with a
 
@@ -175,7 +179,8 @@ ovs-vsctl.exe --no-wait set Open_vSwitch . ovs_version=2.14.0
 ```
 from a powershell terminal
 
-## Concerned that ovs isnt making the right bridges 
+
+### Concerned that ovs isnt making the right bridges 
 
 Run the `ovs-vsctl.exe` command in your windows powershell administrative terminal , to see what the routes look like
 they should look something like this , if not, then you havent setup openvswitc (or antrea) properly
@@ -204,17 +209,20 @@ PS C:\Windows\system32> ovs-vsctl.exe show
 PS C:\Windows\system32>
 ```
 
-## IIS or other apps arent reachable bc kube-proxy on windows isnt proxying traffic
+
+### IIS or other apps arent reachable bc kube-proxy on windows isnt proxying traffic
 
 In this case, sometimes the HpyerV VMM service must ALWAYS be started "before" the ovs-vswitchdb service.
 Thus, restarting the ovs-vswitchdb service should be restarted periodically if your seeint this issue.
 FINALLY after both hyperv-vmm, AND ovs-switchdb have come up ... THEN restart the kubelet service.
 
-## unable to read client-cert c:\var\lib\kubelet\pki\kubelet-client-current.pem 
+
+### unable to read client-cert c:\var\lib\kubelet\pki\kubelet-client-current.pem 
 
 Sometimes the kubelet cant read directories propery.  running `kubeadm.exe reset` followed by `New-Item -path $env:SystemDrive\var\lib\kubelet\etc\kubernetes\pki -type 3SymbolicLink -value  $env:SystemDrive\etc\kubernetes\pki\ -Force`, which cleans up the PKI symlinks , can fix this issue (possibly)
 
-## Kube proxy windows... is it working ?
+
+### Kube proxy windows... is it working ?
 
 You can run `netsh dump` in powershell to see wheter or not the kube proxy is working to setup pod routes from services.
 
@@ -249,7 +257,8 @@ add address name="br-int" address=10.0.0.44 mask=255.255.255.0
 add address name="antrea-gw0" address=100.1.2.1 mask=255.255.255.0
 add address name="vEthernet (Ethernet)" address=172.19.48.93 mask=255.255.240.0
 ```
-## Concerned that pods arent getting attached to hns
+
+### Concerned that pods arent getting attached to hns
 
 HNS will be able to give you information about how pods are routed. You can view wether pods have valid devices attached by running:
 
@@ -288,16 +297,14 @@ iis-site-8cd659  c9b218fb-58f5-4fe7-b9ab-72ccc8ef421f antrea-hnsnetwork
 iis-site-9582b0  41acce28-1b23-4a4e-ba22-698060f9b417 antrea-hnsnetwork
 ```
 
-
-# Miscellaneous notes about windows development
-
-# PowerShell
+### PowerShell
 
 To hack around on nodes with linux like fluency, you can use powershell.
 
 - `ip a | grep 192` can be replaced with `Get-NetIPAddress | Select-String "192"`
 
-# Windows networking
+
+### Windows networking
 
 Things like hostNetwork and hostPort aren't really options.  If you need to access services such
 as ingress controllers, you do so by: 
@@ -306,7 +313,7 @@ as ingress controllers, you do so by:
 2) DaemonSet for pods
 3) Setting the NodePort Service to `externalTrafficPolicy=local`
 
-# MSFT_NetAdapter issues
+### MSFT_NetAdapter issues
  
 Sometimes, you might also get another ovs querying issue,  related to MSFT_NetAdapter creation/removal in antrea agent_windows.go.  not sure yet what the workaround is, but this is an example.
 

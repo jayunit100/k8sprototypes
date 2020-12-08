@@ -354,3 +354,46 @@ github.com/spf13/cobra.(*Command).Execute(...)
 main.main()
 	C:/antrea/cmd/antrea-agent/main.go:37 +0x5d
 ```
+
+### Service proxy up or down  ? 
+
+Sometimes when running antrea, startup will fail bc your kube proxy is misconfigured and antrea agent cant find the apiserver.... 
+
+```W1208 11:14:50.614465     336 env.go:64] Environment variable POD_NAMESPACE not found
+W1208 11:14:50.614465     336 cacert_controller.go:79] Failed to get Pod Namespace from environment. Using "kube-system" as the CA ConfigMap Namespace
+I1208 11:14:50.614465     336 ovs_client.go:67] Connecting to OVSDB at address \\.\pipe\C:openvswitchvarrunopenvswitchdb.sock
+I1208 11:14:50.621349     336 agent.go:197] Setting up node network                            
+E1208 11:15:11.638773     336 agent.go:567] Failed to get node from K8s with name win-h0c364gqvjh: Get https://100.2.2.1:443/api/v1/nodes/win-h0c364gqvjh: dial tcp 100.2.2.1:443: connectex: A connection attempt failed because the connected party did not properly respond after a
+period of time, or established connection failed because connected host has failed to respond.                                          
+F1208 11:15:11.639936     336 main.go:58] Error running agent: error initializing agent: Get https://100.2.2.1:443/api/v1/nodes/win-h0c364gqvjh: dial tcp 100.2.2.1:443: connectex: A connection attempt failed because the connected party did not properly respond after a period of
+time, or established connection failed because connected host has failed to respond.
+goroutine 1 [running]:
+k8s.io/klog.stacks(0xc000569400, 0xc00055c780, 0x16c, 0x1c1)
+        C:/gopath/pkg/mod/k8s.io/klog@v1.0.0/klog.go:875 +0xbf
+k8s.io/klog.(*loggingT).output(0x3061d60, 0xc000000003, 0xc00011e0e0, 0x2f9dd8d, 0x7, 0x3a, 0x0)
+
+```
+To fix this, you need to doublecheck that your kube proxy is running !
+Antrea startup: Make sure your kube internal service rules are routing properly !
+
+Your service cidr can be obtained by just doing `kubectl get services -A`.  if its in the, say, `100.1` space, you can look for corresponding kube proxy rules for the default service.
+
+- When kube proxy is down, if you look for service ip addresses, youll see something like this:
+
+```
+PS C:\Users\jay> netsh dump | Select-String "100"
+
+set user name = jayunit100 dialin = policy cbpolicy = none
+```
+
+i.e., youll see nothing :) 
+
+- Meanwhie, if the kube proxy is up, youll see these rules
+```
+PS C:\Users\jay> netsh dump | Select-String "100"
+
+add address name="vEthernet (HNS Internal NIC)" address=100.2.2.1 mask=255.0.0.0
+add address name="vEthernet (HNS Internal NIC)" address=100.2.2.246 mask=255.0.0.0
+add address name="vEthernet (HNS Internal NIC)" address=100.2.2.10 mask=255.0.0.0
+set user name = jayunit100 dialin = policy cbpolicy = none
+```

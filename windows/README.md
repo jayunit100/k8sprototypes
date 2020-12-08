@@ -306,3 +306,51 @@ as ingress controllers, you do so by:
 2) DaemonSet for pods
 3) Setting the NodePort Service to `externalTrafficPolicy=local`
 
+# MSFT_NetAdapter issues
+ 
+Sometimes, you might also get another ovs querying issue,  related to MSFT_NetAdapter creation/removal in antrea agent_windows.go.  not sure yet what the workaround is, but this is an example.
+
+```
+    Directory: C:\host\k\antrea
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----           12/8/2020  7:03 AM                bin
+I1208 07:06:29.129060    6152 log_file.go:99] Set log file max size to 104857600
+I1208 07:06:29.134058    6152 agent.go:63] Starting Antrea agent (version v0.10.1)
+I1208 07:06:29.134058    6152 client.go:34] No kubeconfig file was specified. Falling back to in-cluster config
+W1208 07:06:29.145063    6152 env.go:64] Environment variable POD_NAMESPACE not found
+W1208 07:06:29.147063    6152 cacert_controller.go:79] Failed to get Pod Namespace from environment. Using "kube-system" as the CA ConfigMap Namespace
+I1208 07:06:29.147063    6152 ovs_client.go:67] Connecting to OVSDB at address \\.\pipe\C:openvswitchvarrunopenvswitchdb.sock
+I1208 07:06:29.153063    6152 agent.go:197] Setting up node network
+I1208 07:06:29.177073    6152 agent.go:584] Setting Node MTU=1450
+I1208 07:06:44.141160    6152 net_windows.go:265] Created HNSNetwork with name antrea-hnsnetwork id BDCA11C4-C0C9-44A6-868A-9082209B14F1
+I1208 07:06:44.142155    6152 ovs_client.go:118] Created bridge: 4d2064d3-fb2a-44d9-8088-09b6d36f4e36
+F1208 07:06:50.489808    6152 main.go:58] Error running agent: error initializing agent: Remove-NetIPAddress : No matching MSFT_NetIPAddress objects found by CIM query for instances of the
+ROOT/StandardCimv2/MSFT_NetIPAddress class on the  CIM server: SELECT * FROM MSFT_NetIPAddress  WHERE ((InterfaceAlias
+LIKE 'br-int')) AND ((AddressFamily = 2)). Verify query parameters and retry.
+At line:1 char:1
++ Remove-NetIPAddress  -Confirm:$false -AddressFamily IPv4 -InterfaceAl ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (MSFT_NetIPAddress:String) [Remove-NetIPAddress], CimJobException
+    + FullyQualifiedErrorId : CmdletizationQuery_NotFound,Remove-NetIPAddress
+: Remove-NetIPAddress  -Confirm:$false -AddressFamily IPv4 -InterfaceAlias br-int
+goroutine 1 [running]:
+k8s.io/klog.stacks(0xc00047f700, 0xc00028fb00, 0x344, 0x45d)
+	C:/gopath/pkg/mod/k8s.io/klog@v1.0.0/klog.go:875 +0xbf
+k8s.io/klog.(*loggingT).output(0x3061d60, 0xc000000003, 0xc0000feaf0, 0x2f9dd8d, 0x7, 0x3a, 0x0)
+	C:/gopath/pkg/mod/k8s.io/klog@v1.0.0/klog.go:826 +0x337
+k8s.io/klog.(*loggingT).printf(0x3061d60, 0x3, 0x1e1dbc8, 0x17, 0xc000741d08, 0x1, 0x1)
+	C:/gopath/pkg/mod/k8s.io/klog@v1.0.0/klog.go:707 +0x152
+k8s.io/klog.Fatalf(...)
+	C:/gopath/pkg/mod/k8s.io/klog@v1.0.0/klog.go:1276
+main.newAgentCommand.func1(0xc0001c2500, 0xc0000ef260, 0x0, 0x6)
+	C:/antrea/cmd/antrea-agent/main.go:58 +0x218
+github.com/spf13/cobra.(*Command).execute(0xc0001c2500, 0xc0000be010, 0x6, 0x7, 0xc0001c2500, 0xc0000be010)
+	C:/gopath/pkg/mod/github.com/spf13/cobra@v0.0.5/command.go:830 +0x2b1
+github.com/spf13/cobra.(*Command).ExecuteC(0xc0001c2500, 0x2fdb140, 0xc000069f50, 0xc0005d9f50)
+	C:/gopath/pkg/mod/github.com/spf13/cobra@v0.0.5/command.go:914 +0x302
+github.com/spf13/cobra.(*Command).Execute(...)
+	C:/gopath/pkg/mod/github.com/spf13/cobra@v0.0.5/command.go:864
+main.main()
+	C:/antrea/cmd/antrea-agent/main.go:37 +0x5d
+```

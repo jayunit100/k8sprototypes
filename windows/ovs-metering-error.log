@@ -1,0 +1,39 @@
+2020-12-07T22:51:05.001Z|00001|vlog|INFO|opened log file C:/openvswitch/var/log/openvswitch/ovs-vswitchd.log
+2020-12-07T22:51:05.008Z|00002|ovs_numa|INFO|Discovered 0 NUMA nodes and 0 CPU cores
+2020-12-07T22:51:05.009Z|00003|reconnect|INFO|unix:C:/openvswitch/var/run/openvswitch/db.sock: connecting...
+2020-12-07T22:51:05.010Z|00004|reconnect|INFO|unix:C:/openvswitch/var/run/openvswitch/db.sock: connected
+2020-12-07T22:51:05.016Z|00005|dpif_netlink|INFO|The kernel module does not support meters.
+
+
+2020-12-08T07:10:38.645Z|00003|reconnect|INFO|unix:C:/openvswitch/var/run/openvswitch/db.sock: connecting...
+2020-12-08T07:10:38.645Z|00004|reconnect|INFO|unix:C:/openvswitch/var/run/openvswitch/db.sock: connected
+2020-12-08T13:18:01.428Z|00001|vlog|INFO|opened log file C:/openvswitch/var/log/openvswitch/ovs-vswitchd.log
+2020-12-08T13:18:01.430Z|00002|ovs_numa|INFO|Discovered 0 NUMA nodes and 0 CPU cores
+2020-12-08T13:18:01.430Z|00003|reconnect|INFO|unix:C:/openvswitch/var/run/openvswitch/db.sock: connecting...
+2020-12-08T13:18:01.430Z|00004|reconnect|INFO|unix:C:/openvswitch/var/run/openvswitch/db.sock: connected
+2020-12-08T13:18:01.433Z|00005|dpif_netlink|INFO|The kernel module does not support meters.
+2020-12-08T13:18:02.372Z|00001|vlog|INFO|opened log file C:/openvswitch/var/log/openvswitch/ovs-vswitchd.log
+2020-12-08T13:18:02.374Z|00002|ovs_numa|INFO|Discovered 0 NUMA nodes and 0 CPU cores
+2020-12-08T13:18:02.374Z|00003|reconnect|INFO|unix:C:/openvswitch/var/run/openvswitch/db.sock: connecting...
+
+
+2020-12-08T13:36:48.269Z|00001|vlog|INFO|opened log file C:/openvswitch/var/log/openvswitch/ovs-vswitchd.log
+2020-12-08T13:36:48.271Z|00002|ovs_numa|INFO|Discovered 0 NUMA nodes and 0 CPU cores
+2020-12-08T13:36:48.271Z|00003|reconnect|INFO|unix:C:/openvswitch/var/run/openvswitch/db.sock: connecting...
+2020-12-08T13:36:48.271Z|00004|reconnect|INFO|unix:C:/openvswitch/var/run/openvswitch/db.sock: connected
+2020-12-08T13:36:48.273Z|00005|dpif_netlink|INFO|The kernel module does not support meters.
+2020-12-08T13:36:48.929Z|00001|vlog|INFO|opened log file C:/openvswitch/var/log/openvswitch/ovs-vswitchd.log
+2020-12-08T13:36:48.931Z|00002|ovs_numa|INFO|Discovered 0 NUMA nodes and 0 CPU cores
+2020-12-08T13:36:48.931Z|00003|reconnect|INFO|unix:C:/openvswitch/var/run/openvswitch/db.sock: connecting...
+2020-12-08T13:36:48.931Z|00004|reconnect|INFO|unix:C:/openvswitch/var/run/openvswitch/db.sock: connected
+2020-12-08T13:36:48.934Z|00005|dpif_netlink|INFO|The kernel module does not support meters.
+2020-12-08T13:36:50.012Z|00001|vlog|INFO|opened log file C:/openvswitch/var/log/openvswitch/ovs-vswitchd.log
+2020-12-08T13:36:50.014Z|00002|ovs_numa|INFO|Discovered 0 NUMA nodes and 0 CPU cores
+2020-12-08T13:36:50.014Z|00003|reconnect|INFO|unix:C:/openvswitch/var/run/openvswitch/db.sock: connecting...
+2020-12-08T13:36:50.014Z|00004|reconnect|INFO|unix:C:/openvswitch/var/run/openvswitch/db.sock: connected
+2020-12-08T13:36:50.018Z|00005|dpif_netlink|INFO|The kernel module does not support meters.
+2020-12-08T13:36:51.053Z|00001|vlog|INFO|opened log file C:/openvswitch/var/log/openvswitch/ovs-vswitchd.log
+2020-12-08T13:36:51.056Z|00002|ovs_numa|INFO|Discovered 0 NUMA nodes and 0 CPU cores
+2020-12-08T13:36:51.056Z|00003|reconnect|INFO|unix:C:/openvswitch/var/run/openvswitch/db.sock: connecting...
+2020-12-08T13:36:51.056Z|00004|reconnect|INFO|unix:C:/openvswitch/var/run/openvswitch/db.sock: connected
+2020-12-08T13:36:51.059Z|00005|dpif_netlink|INFO|The kernel module does not support meters.

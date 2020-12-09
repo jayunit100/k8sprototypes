@@ -1,0 +1,74 @@
+The following is the logs of a happy antrea agent starting up:
+
+```
+I1208 17:35:59.806388    7832 agent.go:388] Cleaning up flow-restore-wait config
+I1208 17:35:59.806388    7832 agent.go:392] Cleaned up flow-restore-wait config
+I1208 17:35:59.806388    7832 client.go:105] No antrea kubeconfig file was specified. Falling back to in-cluster config
+I1208 17:35:59.806388    7832 client.go:108] Didn't get CA certificate, skip updating Antrea Client
+I1208 17:35:59.808816    7832 log_file.go:127] Starting log file monitoring. Maximum log file number is 4
+I1208 17:35:59.812497    7832 log_file.go:184] Deleted log file rancher-wins-antrea-agent.exe.WIN-H0C364GQVJH.NT AUTHORITY_SYSTEM.log.INFO.20201208-153829.1100
+I1208 17:35:59.812497    7832 log_file.go:184] Deleted log file rancher-wins-antrea-agent.exe.WIN-H0C364GQVJH.NT AUTHORITY_SYSTEM.log.WARNING.20201208-153829.1100
+I1208 17:35:59.812497    7832 server.go:538] Starting CNI server
+I1208 17:35:59.812497    7832 server.go:548] CNI server is listening ...
+I1208 17:35:59.812497    7832 node_route_controller.go:263] Starting AntreaAgentNodeRouteController
+I1208 17:35:59.812497    7832 node_route_controller.go:266] Waiting for caches to sync for AntreaAgentNodeRouteController
+I1208 17:35:59.812497    7832 configmap_cafile_content.go:202] Starting antrea-ca::kube-system::antrea-ca::ca.crt
+I1208 17:35:59.812497    7832 shared_informer.go:223] Waiting for caches to sync for antrea-ca::kube-system::antrea-ca::ca.crt
+I1208 17:35:59.812497    7832 networkpolicy_controller.go:305] Waiting for Antrea client to be ready
+I1208 17:35:59.812497    7832 agent.go:46] Starting Antrea Agent Monitor
+I1208 17:35:59.813728    7832 config.go:113] Starting endpoints config controller
+I1208 17:35:59.813728    7832 config.go:204] Starting service config controller
+W1208 17:35:59.824766    7832 env.go:55] Environment variable POD_NAME not found
+W1208 17:35:59.824766    7832 env.go:64] Environment variable POD_NAMESPACE not found
+I1208 17:35:59.913088    7832 shared_informer.go:230] Caches are synced for antrea-ca::kube-system::antrea-ca::ca.crt
+I1208 17:35:59.913088    7832 node_route_controller.go:271] Caches are synced for AntreaAgentNodeRouteController
+I1208 17:35:59.913088    7832 node_route_controller.go:237] Reconciliation for AntreaAgentNodeRouteController
+I1208 17:35:59.954181    7832 client.go:105] No antrea kubeconfig file was specified. Falling back to in-cluster config
+W1208 17:35:59.954181    7832 env.go:64] Environment variable POD_NAMESPACE not found
+W1208 17:35:59.954181    7832 certificate.go:65] Failed to get Pod Namespace from environment. Using "kube-system" as the Antrea Service Namespace
+I1208 17:35:59.954181    7832 client.go:130] Updating Antrea client with the new CA bundle
+I1208 17:36:00.147996    7832 networkpolicy_controller.go:316] Antrea client is ready
+I1208 17:36:00.208056    7832 networkpolicy_controller.go:325] Waiting for all watchers to complete full sync
+I1208 17:36:00.208056    7832 networkpolicy_controller.go:483] Starting watch for NetworkPolicy
+I1208 17:36:00.206873    7832 serving.go:313] Generated self-signed cert in-memory
+I1208 17:36:00.208958    7832 networkpolicy_controller.go:483] Starting watch for AppliedToGroup
+I1208 17:36:00.208958    7832 networkpolicy_controller.go:483] Starting watch for AddressGroup
+I1208 17:36:00.289062    7832 networkpolicy_controller.go:490] Started watch for AddressGroup
+I1208 17:36:00.289864    7832 networkpolicy_controller.go:520] Received 0 init events for AddressGroup
+I1208 17:36:00.289864    7832 networkpolicy_controller.go:490] Started watch for NetworkPolicy
+I1208 17:36:00.289864    7832 networkpolicy_controller.go:520] Received 0 init events for NetworkPolicy
+I1208 17:36:00.289864    7832 networkpolicy_controller.go:490] Started watch for AppliedToGroup
+I1208 17:36:00.289864    7832 networkpolicy_controller.go:520] Received 0 init events for AppliedToGroup
+I1208 17:36:00.289864    7832 networkpolicy_controller.go:327] All watchers have completed full sync, installing flows for init events
+I1208 17:36:00.289864    7832 networkpolicy_controller.go:331] Starting NetworkPolicy workers now
+I1208 17:36:00.405616    7832 node_route_controller.go:393] Adding routes and flows to Node ubuntuk8s, podCIDR: 100.1.1.0/24, addresses: [{InternalIP 10.0.0.42} {Hostname ubuntuk8s}]
+I1208 17:36:00.440494    7832 configmap_cafile_content.go:202] Starting client-ca::kube-system::extension-apiserver-authentication::requestheader-client-ca-file
+I1208 17:36:00.440494    7832 shared_informer.go:223] Waiting for caches to sync for client-ca::kube-system::extension-apiserver-authentication::requestheader-client-ca-file
+I1208 17:36:00.440494    7832 configmap_cafile_content.go:202] Starting client-ca::kube-system::extension-apiserver-authentication::client-ca-file
+I1208 17:36:00.440494    7832 shared_informer.go:223] Waiting for caches to sync for client-ca::kube-system::extension-apiserver-authentication::client-ca-file
+I1208 17:36:00.440494    7832 secure_serving.go:178] Serving securely on [::]:10350
+I1208 17:36:00.440494    7832 tlsconfig.go:240] Starting DynamicServingCertificateController
+I1208 17:36:00.541172    7832 shared_informer.go:230] Caches are synced for client-ca::kube-system::extension-apiserver-authentication::requestheader-client-ca-file
+I1208 17:36:00.541172    7832 shared_informer.go:230] Caches are synced for client-ca::kube-system::extension-apiserver-authentication::client-ca-file
+I1208 17:36:07.149018    7832 agent.go:343] Deleting stale flows from previous round if any
+I1208 17:36:07.149018    7832 agent.go:233] Persisting round number 2 to OVSDB
+I1208 17:36:07.149906    7832 agent.go:238] Round number 2 was persisted to OVSDB
+
+```
+
+And likewise, running a pod:
+
+```
+I1208 17:37:26.029273    7832 server.go:345] Received CmdAdd request cni_args:<container_id:"12dbaf3747feadba62e4eddeee02e2ced4fa25e75c2046e6ffe155588d8e8f1d" netns:"none" ifname:"eth0" args:"IgnoreUnknown=1;K8S_POD_NAMESPACE=default;K8S_POD_NAME=iis-site-windows-9c7647d98-5m5bd;K8S_POD_INFRA_CONTAINER_ID=12dbaf3747feadba62e4eddeee02e2ced4fa25e75c2046e6ffe155588d8e8f1d" path:"/opt/cni/bin" network_configuration:"{\"capabilities\":{\"dns\":true},\"cniVersion\":\"0.3.0\",\"ipam\":{\"type\":\"host-local\"},\"name\":\"antrea\",\"runtimeConfig\":{\"dns\":{\"servers\":[\"100.2.2.10\"],\"searches\":[\"default.svc.cluster.local\",\"svc.cluster.local\",\"cluster.local\"],\"options\":[\"ndots:5\"]}},\"type\":\"antrea\"}" >
+I1208 17:37:26.029273    7832 server.go:187] Load network configurations: container_id:"12dbaf3747feadba62e4eddeee02e2ced4fa25e75c2046e6ffe155588d8e8f1d" netns:"none" ifname:"eth0" args:"IgnoreUnknown=1;K8S_POD_NAMESPACE=default;K8S_POD_NAME=iis-site-windows-9c7647d98-5m5bd;K8S_POD_INFRA_CONTAINER_ID=12dbaf3747feadba62e4eddeee02e2ced4fa25e75c2046e6ffe155588d8e8f1d" path:"/opt/cni/bin" network_configuration:"{\"cniVersion\":\"0.3.0\",\"name\":\"antrea\",\"type\":\"antrea\",\"deviceID\":\"\",\"dns\":{},\"ipam\":{\"type\":\"host-local\",\"subnet\":\"100.1.2.0/24\",\"gateway\":\"100.1.2.1\"},\"runtimeConfig\":{\"dns\":{\"servers\":[\"100.2.2.10\"],\"searches\":[\"default.svc.cluster.local\",\"svc.cluster.local\",\"cluster.local\"]}}}"
+I1208 17:37:26.146247    7832 server.go:399] Added ip addresses from IPAM driver, IP:[{Version:4 Interface:<nil> Address:{IP:100.1.2.148 Mask:ffffff00} Gateway:100.1.2.1}], DNS:{Nameservers:[] Domain: Search:[] Options:[]}
+I1208 17:37:26.146247    7832 server_windows.go:41] Got runtime DNS configuration: {[100.2.2.10]  [default.svc.cluster.local svc.cluster.local cluster.local] []}
+I1208 17:37:26.356224    7832 server.go:345] Received CmdAdd request cni_args:<container_id:"0c3cef6b050f25e7a704826d4f80ba2eb59222052013accee39e8f5bfe20220d" netns:"none" ifname:"eth0" args:"IgnoreUnknown=1;K8S_POD_NAMESPACE=default;K8S_POD_NAME=iis-site-windows-9c7647d98-jpmrd;K8S_POD_INFRA_CONTAINER_ID=0c3cef6b050f25e7a704826d4f80ba2eb59222052013accee39e8f5bfe20220d" path:"/opt/cni/bin" network_configuration:"{\"capabilities\":{\"dns\":true},\"cniVersion\":\"0.3.0\",\"ipam\":{\"type\":\"host-local\"},\"name\":\"antrea\",\"runtimeConfig\":{\"dns\":{\"servers\":[\"100.2.2.10\"],\"searches\":[\"default.svc.cluster.local\",\"svc.cluster.local\",\"cluster.local\"],\"options\":[\"ndots:5\"]}},\"type\":\"antrea\"}" >
+I1208 17:37:26.356224    7832 server.go:187] Load network configurations: container_id:"0c3cef6b050f25e7a704826d4f80ba2eb59222052013accee39e8f5bfe20220d" netns:"none" ifname:"eth0" args:"IgnoreUnknown=1;K8S_POD_NAMESPACE=default;K8S_POD_NAME=iis-site-windows-9c7647d98-jpmrd;K8S_POD_INFRA_CONTAINER_ID=0c3cef6b050f25e7a704826d4f80ba2eb59222052013accee39e8f5bfe20220d" path:"/opt/cni/bin" network_configuration:"{\"cniVersion\":\"0.3.0\",\"name\":\"antrea\",\"type\":\"antrea\",\"deviceID\":\"\",\"dns\":{},\"ipam\":{\"type\":\"host-local\",\"subnet\":\"100.1.2.0/24\",\"gateway\":\"100.1.2.1\"},\"runtimeConfig\":{\"dns\":{\"servers\":[\"100.2.2.10\"],\"searches\":[\"default.svc.cluster.local\",\"svc.cluster.local\",\"cluster.local\"]}}}"
+I1208 17:37:26.394400    7832 server.go:399] Added ip addresses from IPAM driver, IP:[{Version:4 Interface:<nil> Address:{IP:100.1.2.149 Mask:ffffff00} Gateway:100.1.2.1}], DNS:{Nameservers:[] Domain: Search:[] Options:[]}
+I1208 17:37:26.395393    7832 server_windows.go:41] Got runtime DNS configuration: {[100.2.2.10]  [default.svc.cluster.local svc.cluster.local cluster.local] []}
+I1208 17:37:26.968779    7832 pod_configuration.go:249] Configured interfaces for container 12dbaf3747feadba62e4eddeee02e2ced4fa25e75c2046e6ffe155588d8e8f1d
+I1208 17:37:26.968779    7832 server.go:428] CmdAdd succeeded
+I1208 17:37:26.968779    7832 pod_configuration.go:249] Configured interfaces for container 0c3cef6b050f25e7a704826d4f80ba2eb59222052013accee39e8f5bfe20220d
+I1208 17:37:26.968779    7832 server.go:428] CmdAdd succeeded
+```

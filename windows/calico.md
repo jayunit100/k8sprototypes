@@ -1,9 +1,9 @@
-The following is a configuration for calico:
-
-- it uses vxlan, so its windows compatible
-- it disables bird
-
-```---
+# The following is a configuration for calico:
+#
+#- it uses vxlan, so its windows compatible
+#- it disables bird
+#
+#```---
 # Source: calico/templates/calico-config.yaml
 # This ConfigMap is used to configure a self-hosted Calico installation.
 kind: ConfigMap
@@ -3874,6 +3874,6 @@ spec:
 
 ---
 # Source: calico/templates/configure-canal.yaml
-
-
-```
+#
+#
+#```

@@ -18,7 +18,7 @@ data:
   calico_backend: "vxlan"
 
   # Configure the MTU to use for workload interfaces and tunnels.
-  # By default, MTU is auto-detected, and explicitly setting this field should not be required.
+  # By default, MTU is auto-detected, and explicitly setting this field should not be require
   # You can override auto-detection by providing a non-zero value.
   veth_mtu: "0"
 
@@ -27,7 +27,7 @@ data:
   cni_network_config: |-
     {
       "name": "k8s-pod-network",
-      "cniVersion": "0.3.1",CALI
+      "cniVersion": "0.3.1",
       "plugins": [
         {
           "type": "calico",

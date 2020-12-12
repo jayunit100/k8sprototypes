@@ -1,4 +1,24 @@
-Seems like the calico namespace isnt created.... 
+
+Install calico... https://docs.projectcalico.org/getting-started/windows-calico/quickstart#install-calico-for-windows ... notes
+```
+Invoke-WebRequest https://docs.projectcalico.org/scripts/install-calico-windows.ps1 -OutFile c:\install-calico-windows.ps1
+c:\install-calico-windows.ps1 -DownloadOnly yes -KubeVersion 1.19.3
+```
+
+Then install the deps
+
+```
+Install-WindowsFeature RemoteAccess
+Install-WindowsFeature RSAT-RemoteAccess-PowerShell
+Install-WindowsFeature Routing
+```
+
+Then use POWERSHELL 5 NOT 7 ... to run the ./install-calico.ps1 script....
+
+
+# Troubleshooting
+
+Seems like the calico namespace isnt created....  solution is to make sure the kubeconfig file is in c:\\k\\config (no kubeconfig will cause those queries to fail).
 
 
 ```

@@ -1,19 +1,20 @@
 
-Install calico... https://docs.projectcalico.org/getting-started/windows-calico/quickstart#install-calico-for-windows ... notes
+Install calico...
+
+0) Install calico on linux using the YAML file in this repo.
+1) Make sure to use powershell 5 for the install-calico.ps1 script, bc it uses an api call not compatible w powershell 7.
+2) For kubeconfig make sure you copy the kubeconfig from your linux host to c:/k/config
+3) Download calicoctl , ` wget https://github.com/projectcalico/calico/releases/download/v3.17.1/release-v3.17.1.tgz` and unzip calico ctl to /usr/local/bin/ , you need it in order to configure `calicoctl ipam configure --strictaffinity=true`
+3) Then you can follow: https://docs.projectcalico.org/getting-started/windows-calico/quickstart#install-calico-for-windows ...  which starts off like so:
+
 ```
 Invoke-WebRequest https://docs.projectcalico.org/scripts/install-calico-windows.ps1 -OutFile c:\install-calico-windows.ps1
 c:\install-calico-windows.ps1 -DownloadOnly yes -KubeVersion 1.19.3
 ```
 
-Then install the deps
+And then there are other instructions, namely editing the config.ps1 file, and then running the calico installer.  There is a reboot required.
 
-```
-Install-WindowsFeature RemoteAccess
-Install-WindowsFeature RSAT-RemoteAccess-PowerShell
-Install-WindowsFeature Routing
-```
-
-Then use POWERSHELL 5 NOT 7 ... to run the ./install-calico.ps1 script....
+MAKE SURE TO USE POWERSHELL 5 NOT 7 ... to run the ./install-calico.ps1 script....
 
 
 # Troubleshooting

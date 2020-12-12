@@ -1,5 +1,4 @@
-
-Install calico...
+# How to install calico !
 
 0) Install calico on linux using the YAML file in this repo.
 1) Make sure to use powershell 5 for the install-calico.ps1 script, bc it uses an api call not compatible w powershell 7.

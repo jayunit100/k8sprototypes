@@ -317,8 +317,8 @@ spec:
       network:
         devices:
         - dhcp4: true
-          networkName: VM Network
-      numCPUs: 3
+          networkName: $VSPHERE_NETWORK
+      numCPUs: 4
       os: Windows
       server: $VSPHERE_SERVER
       template: windows-2019-kube-v1.19.1-docker
@@ -338,7 +338,28 @@ spec:
             register-with-taints: os=windows:NoSchedule
           name: '{{ ds.meta_data.hostname }}'
       files:
-      - content: |
+      - path: 'c:\k\antrea\antrea-startup.ps1'
+        content: |
+          $service = Get-Service -Name ovs-vswitchd -ErrorAction SilentlyContinue
+          if($service -eq $null) {  
+            Push-Location C:\k\antrea\
+            curl.exe -LO "https://raw.githubusercontent.com/vmware-tanzu/antrea/master/hack/windows/Install-OVS.ps1"
+            curl.exe -LO "https://raw.githubusercontent.com/vmware-tanzu/antrea/master/hack/windows/Prepare-ServiceInterface.ps1"
+            curl.exe -LO "https://raw.githubusercontent.com/vmware-tanzu/antrea/master/hack/windows/Clean-AntreaNetwork.ps1"
+            & ./Install-OVS.ps1
+            Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False
+          } 
+          Invoke-expression "C:\k\antrea\Clean-AntreaNetwork.ps1" 
+          Invoke-expression "C:\k\antrea\Prepare-ServiceInterface.ps1"
+          Restart-service vmms
+          Stop-Service ovs-vswitchd
+          Stop-Service ovsdb-server
+          start-service ovsdb-server
+          start-sleep -seconds 5
+          Start-Service ovs-vswitchd
+          Restart-Service Kubelet
+      - path: 'C:\Temp\antrea.ps1'
+        content: |
           $service = Get-Service -Name ovs-vswitchd -ErrorAction SilentlyContinue
           if($service -ne $null) {
             exit
@@ -347,28 +368,7 @@ spec:
           New-Item -ItemType Directory -Force -Path C:\k\antrea
           $trigger = New-JobTrigger -AtStartup 
           $options = New-ScheduledJobOption -RunElevated
-          $startupScript = "
-            `$service = Get-Service -Name ovs-vswitchd -ErrorAction SilentlyContinue
-            if(`$service -eq `$null) {  
-              Push-Location C:\k\antrea\
-              curl.exe -LO `"https://raw.githubusercontent.com/vmware-tanzu/antrea/master/hack/windows/Install-OVS.ps1`"
-              curl.exe -LO `"https://raw.githubusercontent.com/vmware-tanzu/antrea/master/hack/windows/Prepare-ServiceInterface.ps1`"
-              curl.exe -LO `"https://raw.githubusercontent.com/vmware-tanzu/antrea/master/hack/windows/Clean-AntreaNetwork.ps1`"
-              & ./Install-OVS.ps1
-              Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False
-              & ./Prepare-ServiceInterface.ps1
-            } else {
-              Invoke-expression `"C:\k\antrea\Clean-AntreaNetwork.ps1`" 
-              Invoke-expression `"C:\k\antrea\Prepare-ServiceInterface.ps1`"
-              Restart-service vmms
-              Stop-Service ovs-vswitchd
-              Stop-Service ovsdb-server
-              start-service ovsdb-server
-              Start-Sleep -Seconds 5
-              Start-Service ovs-vswitchd
-            }
-            Restart-service kubelet  
-          "
+          Register-ScheduledJob -Name PrepareAntrea -Trigger $trigger -FilePath 'c:\k\antrea\antrea-startup.ps1' -ScheduledJobOption $options
           $env:HostIP = (
               Get-NetIPConfiguration |
               Where-Object {
@@ -381,20 +381,15 @@ spec:
           $raw = $raw -replace ".$"
           $new = "$($raw) $($newstr)`""
           Set-Content $file $new
-          $startupScript | out-file c:\k\antrea\antrea-bootprep.ps1
-          Register-ScheduledJob -Name PrepareAntrea -Trigger $trigger -FilePath C:\k\antrea\antrea-bootprep.ps1 -ScheduledJobOption $options
-          invoke-expression "docker pull harbor-repo.vmware.com/dockerhub-proxy-cache/sigwindowstools/kube-proxy:v1.19.1"
-          invoke-expression "docker pull harbor-repo.vmware.com/dockerhub-proxy-cache/antrea/antrea-windows:v0.10.1"
-          start-sleep -seconds 5
+          $nssm = (Get-Command nssm).Source
+          $serviceName = 'Kubelet'
+          & $nssm set $serviceName start SERVICE_AUTO_START
           Restart-Computer -Force
-          
-        path: 'C:\Temp\antrea.ps1'
       postKubeadmCommands:
         - powershell C:/Temp/antrea.ps1 -ExecutionPolicy Bypass
-
       users:
       - name: capv
-        passwd: capv!!
+        passwd: VMware1!
         groups: Administrators
         sshAuthorizedKeys:
         - $VSPHERE_SSH_AUTHORIZED_KEY
@@ -416,50 +411,37 @@ spec:
             register-with-taints: os=windows:NoSchedule
           name: '{{ ds.meta_data.hostname }}'
       files:
-      - content: |
+      - path: 'c:\k\antrea\antrea-startup.ps1'
+        content: |
+          $service = Get-Service -Name ovs-vswitchd -ErrorAction SilentlyContinue
+          if($service -eq $null) {  
+            Push-Location C:\k\antrea\
+            curl.exe -LO "https://raw.githubusercontent.com/vmware-tanzu/antrea/master/hack/windows/Install-OVS.ps1"
+            curl.exe -LO "https://raw.githubusercontent.com/vmware-tanzu/antrea/master/hack/windows/Prepare-ServiceInterface.ps1"
+            curl.exe -LO "https://raw.githubusercontent.com/vmware-tanzu/antrea/master/hack/windows/Clean-AntreaNetwork.ps1"
+            & ./Install-OVS.ps1
+            Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False
+          } 
+          Invoke-expression "C:\k\antrea\Clean-AntreaNetwork.ps1" 
+          Invoke-expression "C:\k\antrea\Prepare-ServiceInterface.ps1"
+          Restart-service vmms
+          Stop-Service ovs-vswitchd
+          Stop-Service ovsdb-server
+          start-service ovsdb-server
+          start-sleep -seconds 5
+          Start-Service ovs-vswitchd
+          Restart-Service Kubelet
+      - path: 'C:\Temp\antrea.ps1'
+        content: |
           $service = Get-Service -Name ovs-vswitchd -ErrorAction SilentlyContinue
           if($service -ne $null) {
             exit
           }
-          curl -LO https://github.com/Microsoft/SDN/raw/master/Kubernetes/windows/hns.psm1 "c:\k\hns.psm1"
-          Import-Module "c:\k\hns.psm1" 
-          New-HnsNetwork -Type NAT -Name nat
           invoke-expression "bcdedit /set TESTSIGNING ON"
           New-Item -ItemType Directory -Force -Path C:\k\antrea
-          Remove-item "c:\program files\containerd\config.toml"
-          $env:path += "c:\program files\containerd\;"
-          containerd.exe config default | Out-File "c:\program files\containerd\config.toml" -Encoding ascii
-          #config file fixups
-          $config = Get-Content "c:\program files\containerd\config.toml"
-          $config = $config -replace "bin_dir = (.)*$", "bin_dir = `"c:/opt/cni/bin`""
-          $config = $config -replace "conf_dir = (.)*$", "conf_dir = `"c:/etc/cni/net.d`""
-          $config | Set-Content "c:\program files\containerd\config.toml" -Force 
-
-          mkdir -Force c:\opt\cni\bin | Out-Null
-          mkdir -Force c:\etc\cni\net.d | Out-Null
-
           $trigger = New-JobTrigger -AtStartup 
           $options = New-ScheduledJobOption -RunElevated
-          $startupScript = "
-            `$service = Get-Service -Name ovs-vswitchd -ErrorAction SilentlyContinue
-            if(`$service -eq `$null) {  
-              Push-Location C:\k\antrea\
-              curl.exe -LO `"https://raw.githubusercontent.com/vmware-tanzu/antrea/master/hack/windows/Install-OVS.ps1`"
-              curl.exe -LO `"https://raw.githubusercontent.com/vmware-tanzu/antrea/master/hack/windows/Prepare-ServiceInterface.ps1`"
-              curl.exe -LO `"https://raw.githubusercontent.com/vmware-tanzu/antrea/master/hack/windows/Clean-AntreaNetwork.ps1`"
-              & ./Install-OVS.ps1
-              Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False
-            } else {
-              Invoke-expression `"C:\k\antrea\Clean-AntreaNetwork.ps1`" 
-              Restart-service vmms
-              Stop-Service ovs-vswitchd
-              Stop-Service ovsdb-server
-              start-service ovsdb-server
-              Start-Sleep -Seconds 5
-              Start-Service ovs-vswitchd
-            }
-            Restart-service kubelet  
-          "
+          Register-ScheduledJob -Name PrepareAntrea -Trigger $trigger -FilePath 'c:\k\antrea\antrea-startup.ps1' -ScheduledJobOption $options
           $env:HostIP = (
               Get-NetIPConfiguration |
               Where-Object {
@@ -472,20 +454,15 @@ spec:
           $raw = $raw -replace ".$"
           $new = "$($raw) $($newstr)`""
           Set-Content $file $new
-          $startupScript | out-file c:\k\antrea\antrea-bootprep.ps1
-          Register-ScheduledJob -Name PrepareAntrea -Trigger $trigger -FilePath C:\k\antrea\antrea-bootprep.ps1 -ScheduledJobOption $options
-          invoke-expression "ctr.exe images pull -n k8s.io harbor-repo.vmware.com/dockerhub-proxy-cache/sigwindowstools/kube-proxy:v1.19.1"
-          invoke-expression "ctr.exe images pull -n k8s.io projects.registry.vmware.com/antrea/antrea-windows:v0.10.1"
-          start-sleep -seconds 5
+          $nssm = (Get-Command nssm).Source
+          $serviceName = 'Kubelet'
+          & $nssm set $serviceName start SERVICE_AUTO_START
           Restart-Computer -Force
-          
-        path: 'C:\Temp\antrea.ps1'
       postKubeadmCommands:
         - powershell C:/Temp/antrea.ps1 -ExecutionPolicy Bypass
-
       users:
       - name: capv
-        passwd: capv!!
+        passwd: VMware1!
         groups: Administrators
         sshAuthorizedKeys:
         - $VSPHERE_SSH_AUTHORIZED_KEY
@@ -1135,7 +1112,7 @@ data:
 
         # Enable metrics exposure via Prometheus. Initializes Prometheus metrics listener.
         #enablePrometheusMetrics: false
-        antrea-cni.conflist: |
+      antrea-cni.conflist: |
         {
             "cniVersion":"0.3.0",
             "name": "antrea",

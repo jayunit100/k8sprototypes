@@ -47,4 +47,56 @@ Ok... not when your apiserver mounts, it will output all failed api calls to thi
  ./audit2rbac -f /etc/auditperi/audit.log --serviceaccount=kube-system:kube-proxy
 ```
 
+## OUTPUT
 
+```
+Loading events....
+Evaluating API calls...
+Generating roles...
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  annotations:
+    audit2rbac.liggitt.net/version: v0.8.0
+  labels:
+    audit2rbac.liggitt.net/generated: "true"
+    audit2rbac.liggitt.net/user: system-serviceaccount-kube-system-kube-proxy
+  name: audit2rbac:system:serviceaccount:kube-system:kube-proxy
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - endpoints
+  - services
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - discovery.k8s.io
+  resources:
+  - endpointslices
+  verbs:
+  - get
+  - list
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  annotations:
+    audit2rbac.liggitt.net/version: v0.8.0
+  labels:
+    audit2rbac.liggitt.net/generated: "true"
+    audit2rbac.liggitt.net/user: system-serviceaccount-kube-system-kube-proxy
+  name: audit2rbac:system:serviceaccount:kube-system:kube-proxy
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: audit2rbac:system:serviceaccount:kube-system:kube-proxy
+subjects:
+- kind: ServiceAccount
+  name: kube-proxy
+  namespace: kube-system
+  ```
+  create that and fix your dang kube-proxy !

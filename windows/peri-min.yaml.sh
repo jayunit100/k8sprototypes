@@ -335,7 +335,7 @@ spec:
           $config = $config -replace "conf_dir = (.)*$", "conf_dir = `"c:/etc/cni/net.d`""
           $config | Set-Content "$global:ConainterDPath\config.toml" -Force 
           Add-MpPreference -ExclusionProcess "ctr.exe"
-          Add-MpPreference-ExclusionProcess "containerd.exe"
+          Add-MpPreference -ExclusionProcess "containerd.exe"
           mkdir -Force c:\opt\cni\bin | Out-Null
           mkdir -Force c:\etc\cni\net.d | Out-Null
           Restart-Computer -Force

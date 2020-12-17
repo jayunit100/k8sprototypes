@@ -297,7 +297,7 @@ spec:
             Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False
           }
           $KubeConfigPath="c:\etc\kubernetes\kubelet.conf"
-          c:\k\antrea\bin\Start.ps1 -kubeconfig $KubeConfigPath -KubernetesVersion v1.19.1 -AntreaVersion v0.11.1 
+          & c:\k\antrea\bin\Start.ps1 -kubeconfig $KubeConfigPath -KubernetesVersion v1.19.1 -AntreaVersion v0.11.1 
       - path: 'C:\Temp\antrea.ps1'
         content: |
           $service = Get-Service -Name ovs-vswitchd -ErrorAction SilentlyContinue
@@ -329,6 +329,14 @@ spec:
           curl.exe -LO https://raw.githubusercontent.com/vmware-tanzu/antrea/master/hack/windows/Start.ps1
           curl.exe -LO http://10.133.1.220:9292/antrea-agent.exe
           mv antrea-agent.exe c:\k\antrea\bin
+          $global:ConainterDPath = "$env:ProgramFiles\containerd"
+          $config = Get-Content "$global:ConainterDPath\config.toml"
+          $config = $config -replace "bin_dir = (.)*$", "bin_dir = `"c:/opt/cni/bin`""
+          $config = $config -replace "conf_dir = (.)*$", "conf_dir = `"c:/etc/cni/net.d`""
+          $config | Set-Content "$global:ConainterDPath\config.toml" -Force 
+
+          mkdir -Force c:\opt\cni\bin | Out-Null
+          mkdir -Force c:\etc\cni\net.d | Out-Null
           Restart-Computer -Force
       postKubeadmCommands:
         - powershell C:/Temp/antrea.ps1 -ExecutionPolicy Bypass

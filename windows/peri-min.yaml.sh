@@ -297,7 +297,7 @@ spec:
             Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False
           }
           $KubeConfigPath="c:\etc\kubernetes\kubelet.conf"
-          & c:\k\antrea\bin\Start.ps1 -kubeconfig $KubeConfigPath -KubernetesVersion v1.19.1 -AntreaVersion v0.11.1 
+          & c:\k\antrea\Start.ps1 -kubeconfig $KubeConfigPath -KubernetesVersion v1.19.1 -AntreaVersion v0.11.1 
       - path: 'C:\Temp\antrea.ps1'
         content: |
           $service = Get-Service -Name ovs-vswitchd -ErrorAction SilentlyContinue

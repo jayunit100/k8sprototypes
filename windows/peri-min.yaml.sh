@@ -921,7 +921,7 @@ data:
     kind: Role
     metadata:
       namespace: kube-system
-      name: antrea-node
+      name: node:antrea-sa-read
     rules:
     - apiGroups: [""]
       resources: ["serviceaccounts"]
@@ -934,7 +934,7 @@ data:
     apiVersion: rbac.authorization.k8s.io/v1
     kind: RoleBinding
     metadata:
-      name: read-antrea
+      name: node:read-antrea-sa
       namespace: kube-system
     subjects:
     - kind: Group
@@ -942,36 +942,7 @@ data:
       apiGroup: rbac.authorization.k8s.io
     roleRef:
       kind: Role
-      name: antrea-node
-      apiGroup: rbac.authorization.k8s.io
-    ---
-    rules:
-    apiVersion: rbac.authorization.k8s.io/v1
-    kind: RoleBinding
-    metadata:
-      name: read-antrea
-      namespace: kube-system
-    subjects:
-    - kind: Group
-      name: system:nodes
-      apiGroup: rbac.authorization.k8s.io
-    roleRef:
-      kind: Role
-      name: antrea-node
-      apiGroup: rbac.authorization.k8s.io
-    ---
-    apiVersion: rbac.authorization.k8s.io/v1
-    kind: ClusterRoleBinding
-    metadata:
-      name: read-kubeproxy
-      namespace: kube-system
-    subjects:
-    - kind: Group
-      name: system:nodes
-      apiGroup: rbac.authorization.k8s.io
-    roleRef:
-      kind: ClusterRole
-      name: kubeproxy-node
+      name: node:antrea-sa-read
       apiGroup: rbac.authorization.k8s.io
     ---
     apiVersion: rbac.authorization.k8s.io/v1

@@ -248,35 +248,6 @@ spec:
         name: clusterapi-peri-windows-containerd
       version: v1.19.1
 ---
-apiVersion: cluster.x-k8s.io/v1alpha3
-kind: MachineDeployment
-metadata:
-  labels:
-    cluster.x-k8s.io/cluster-name: clusterapi-peri
-  name: clusterapi-peri-md-0-windows-docker
-  namespace: default
-spec:
-  clusterName: clusterapi-peri
-  replicas: 1
-  selector:
-    matchLabels: {}
-  template:
-    metadata:
-      labels:
-        cluster.x-k8s.io/cluster-name: clusterapi-peri
-    spec:
-      bootstrap:
-        configRef:
-          apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3
-          kind: KubeadmConfigTemplate
-          name: clusterapi-peri-md-0-windows-docker
-      clusterName: clusterapi-peri
-      infrastructureRef:
-        apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
-        kind: VSphereMachineTemplate
-        name: clusterapi-peri-windows-docker
-      version: v1.19.1
----
 apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
 kind: VSphereMachineTemplate
 metadata:
@@ -300,101 +271,6 @@ spec:
       server: $VSPHERE_SERVER
       template: windows-2019-kube-v1.19.1-containerd
 ---
-apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
-kind: VSphereMachineTemplate
-metadata:
-  name: clusterapi-peri-windows-docker
-  namespace: default
-spec:
-  template:
-    spec:
-      cloneMode: linkedClone
-      datacenter: $VSPHERE_DATACENTER
-      datastore: $VSPHERE_DATASTORE
-      diskGiB: 80
-      folder: $VSPHERE_FOLDER
-      memoryMiB: 4192
-      network:
-        devices:
-        - dhcp4: true
-          networkName: $VSPHERE_NETWORK
-      numCPUs: 4
-      os: Windows
-      server: $VSPHERE_SERVER
-      template: windows-2019-kube-v1.19.1-docker
----
-apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3
-kind: KubeadmConfigTemplate
-metadata:
-  name: clusterapi-peri-md-0-windows-docker
-  namespace: default
-spec:
-  template:
-    spec:
-      joinConfiguration:
-        nodeRegistration:
-          kubeletExtraArgs:
-            cloud-provider: external
-            register-with-taints: os=windows:NoSchedule
-          name: '{{ ds.meta_data.hostname }}'
-      files:
-      - path: 'c:\k\antrea\antrea-startup.ps1'
-        content: |
-          $service = Get-Service -Name ovs-vswitchd -ErrorAction SilentlyContinue
-          if($service -eq $null) {  
-            Push-Location C:\k\antrea\
-            curl.exe -LO "https://raw.githubusercontent.com/vmware-tanzu/antrea/master/hack/windows/Install-OVS.ps1"
-            curl.exe -LO "https://raw.githubusercontent.com/vmware-tanzu/antrea/master/hack/windows/Prepare-ServiceInterface.ps1"
-            curl.exe -LO "https://raw.githubusercontent.com/vmware-tanzu/antrea/master/hack/windows/Clean-AntreaNetwork.ps1"
-            & ./Install-OVS.ps1
-            Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False
-          } 
-          Invoke-expression "C:\k\antrea\Clean-AntreaNetwork.ps1" 
-          Invoke-expression "C:\k\antrea\Prepare-ServiceInterface.ps1"
-          Restart-service vmms
-          Stop-Service ovs-vswitchd
-          Stop-Service ovsdb-server
-          start-service ovsdb-server
-          start-sleep -seconds 5
-          Start-Service ovs-vswitchd
-          Restart-Service Kubelet
-      - path: 'C:\Temp\antrea.ps1'
-        content: |
-          $service = Get-Service -Name ovs-vswitchd -ErrorAction SilentlyContinue
-          if($service -ne $null) {
-            exit
-          }
-          invoke-expression "bcdedit /set TESTSIGNING ON"
-          New-Item -ItemType Directory -Force -Path C:\k\antrea
-          $trigger = New-JobTrigger -AtStartup 
-          $options = New-ScheduledJobOption -RunElevated
-          Register-ScheduledJob -Name PrepareAntrea -Trigger $trigger -FilePath 'c:\k\antrea\antrea-startup.ps1' -ScheduledJobOption $options
-          $env:HostIP = (
-              Get-NetIPConfiguration |
-              Where-Object {
-                  $_.IPv4DefaultGateway -ne $null -and $_.NetAdapter.Status -ne "Disconnected"
-              }
-          ).IPv4Address.IPAddress
-          $file = 'C:\var\lib\kubelet\kubeadm-flags.env'
-          $newstr="--node-ip=" + $env:HostIP
-          $raw = Get-Content -Path $file -TotalCount 1
-          $raw = $raw -replace ".$"
-          $new = "$($raw) $($newstr)`""
-          Set-Content $file $new
-          $nssm = (Get-Command nssm).Source
-          $serviceName = 'Kubelet'
-          & $nssm set $serviceName start SERVICE_AUTO_START
-          Restart-Computer -Force
-      postKubeadmCommands:
-        - powershell C:/Temp/antrea.ps1 -ExecutionPolicy Bypass
-      users:
-      - name: capv
-        passwd: VMware1!
-        groups: Administrators
-        sshAuthorizedKeys:
-        - $VSPHERE_SSH_AUTHORIZED_KEY
-        sudo: ALL=(ALL) NOPASSWD:ALL
----
 apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3
 kind: KubeadmConfigTemplate
 metadata:
@@ -414,23 +290,14 @@ spec:
       - path: 'c:\k\antrea\antrea-startup.ps1'
         content: |
           $service = Get-Service -Name ovs-vswitchd -ErrorAction SilentlyContinue
+          Push-Location C:\k\antrea\
           if($service -eq $null) {  
-            Push-Location C:\k\antrea\
             curl.exe -LO "https://raw.githubusercontent.com/vmware-tanzu/antrea/master/hack/windows/Install-OVS.ps1"
-            curl.exe -LO "https://raw.githubusercontent.com/vmware-tanzu/antrea/master/hack/windows/Prepare-ServiceInterface.ps1"
-            curl.exe -LO "https://raw.githubusercontent.com/vmware-tanzu/antrea/master/hack/windows/Clean-AntreaNetwork.ps1"
             & ./Install-OVS.ps1
             Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False
-          } 
-          Invoke-expression "C:\k\antrea\Clean-AntreaNetwork.ps1" 
-          Invoke-expression "C:\k\antrea\Prepare-ServiceInterface.ps1"
-          Restart-service vmms
-          Stop-Service ovs-vswitchd
-          Stop-Service ovsdb-server
-          start-service ovsdb-server
-          start-sleep -seconds 5
-          Start-Service ovs-vswitchd
-          Restart-Service Kubelet
+          }
+          $KubeConfigPath="c:\etc\kubernetes\kubelet.conf"
+          & c:\k\antrea\Start.ps1 -kubeconfig $KubeConfigPath -KubernetesVersion v1.19.1 -AntreaVersion v0.11.1 
       - path: 'C:\Temp\antrea.ps1'
         content: |
           $service = Get-Service -Name ovs-vswitchd -ErrorAction SilentlyContinue
@@ -456,7 +323,21 @@ spec:
           Set-Content $file $new
           $nssm = (Get-Command nssm).Source
           $serviceName = 'Kubelet'
-          & $nssm set $serviceName start SERVICE_AUTO_START
+          & $nssm set $serviceName start SERVICE_AUTO_START    
+          mkdir c:\k\antrea\bin
+          cd c:\k\antrea
+          curl.exe -LO https://raw.githubusercontent.com/vmware-tanzu/antrea/master/hack/windows/Start.ps1
+          curl.exe -LO http://10.133.1.220:9292/antrea-agent.exe
+          mv antrea-agent.exe c:\k\antrea\bin
+          $global:ConainterDPath = "$env:ProgramFiles\containerd"
+          $config = Get-Content "$global:ConainterDPath\config.toml"
+          $config = $config -replace "bin_dir = (.)*$", "bin_dir = `"c:/opt/cni/bin`""
+          $config = $config -replace "conf_dir = (.)*$", "conf_dir = `"c:/etc/cni/net.d`""
+          $config | Set-Content "$global:ConainterDPath\config.toml" -Force 
+          Add-MpPreference -ExclusionProcess "ctr.exe"
+          Add-MpPreference-ExclusionProcess "containerd.exe"
+          mkdir -Force c:\opt\cni\bin | Out-Null
+          mkdir -Force c:\etc\cni\net.d | Out-Null
           Restart-Computer -Force
       postKubeadmCommands:
         - powershell C:/Temp/antrea.ps1 -ExecutionPolicy Bypass
@@ -496,8 +377,6 @@ spec:
     name: vsphere-csi-controller
   - kind: ConfigMap
     name: antrea
-  - kind: ConfigMap
-    name: antrea-windows-kubeproxy
   - kind: ConfigMap
     name: antrea-windows
   - kind: ConfigMap
@@ -965,101 +844,6 @@ data:
   data: |
     apiVersion: v1
     data:
-      run-script.ps1: |-
-        $ErrorActionPreference = "Stop";
-        mkdir -force /host/var/lib/kube-proxy/var/run/secrets/kubernetes.io/serviceaccount
-        mkdir -force /host/k/kube-proxy
-
-        cp -force /k/kube-proxy/* /host/k/kube-proxy
-        cp -force /var/lib/kube-proxy/* /host/var/lib/kube-proxy
-        cp -force /var/run/secrets/kubernetes.io/serviceaccount/* /host/var/lib/kube-proxy/var/run/secrets/kubernetes.io/serviceaccount
-
-        wins cli process run --path /k/kube-proxy/kube-proxy.exe --args "--v=3 --config=/var/lib/kube-proxy/config.conf --proxy-mode=userspace --hostname-override=$env:NODE_NAME"
-
-    kind: ConfigMap
-    metadata:
-      labels:
-        app: kube-proxy
-      name: kube-proxy-windows
-      namespace: kube-system
-    ---
-    apiVersion: apps/v1
-    kind: DaemonSet
-    metadata:
-      labels:
-        k8s-app: kube-proxy
-      name: kube-proxy-windows
-      namespace: kube-system
-    spec:
-      selector:
-        matchLabels:
-          k8s-app: kube-proxy-windows
-      template:
-        metadata:
-          labels:
-            k8s-app: kube-proxy-windows
-        spec:
-          containers:
-          - args:
-            - -file
-            - /var/lib/kube-proxy-windows/run-script.ps1
-            command:
-            - powershell
-            env:
-            - name: NODE_NAME
-              valueFrom:
-                fieldRef:
-                  apiVersion: v1
-                  fieldPath: spec.nodeName
-            - name: POD_IP
-              valueFrom:
-                fieldRef:
-                  fieldPath: status.podIP
-            image: harbor-repo.vmware.com/dockerhub-proxy-cache/sigwindowstools/kube-proxy:v1.19.1
-            name: kube-proxy
-            volumeMounts:
-            - mountPath: /host
-              name: host
-            - mountPath: \\.\pipe\rancher_wins
-              name: wins
-            - mountPath: /var/lib/kube-proxy
-              name: kube-proxy
-            - mountPath: /var/lib/kube-proxy-windows
-              name: kube-proxy-windows
-          hostNetwork: true
-          nodeSelector:
-            kubernetes.io/os: windows
-          serviceAccountName: kube-proxy
-          tolerations:
-          - key: CriticalAddonsOnly
-            operator: Exists
-          - operator: Exists
-          volumes:
-          - configMap:
-              defaultMode: 420
-              name: kube-proxy-windows
-            name: kube-proxy-windows
-          - configMap:
-              name: kube-proxy
-            name: kube-proxy
-          - hostPath:
-              path: /
-            name: host
-          - hostPath:
-              path: \\.\pipe\rancher_wins
-            name: wins
-      updateStrategy:
-        type: RollingUpdate
-kind: ConfigMap
-metadata:
-  name: antrea-windows-kubeproxy
-  namespace: default
----
-apiVersion: v1
-data:
-  data: |
-    apiVersion: v1
-    data:
       Run-AntreaAgent.ps1: |
         $ErrorActionPreference = "Stop"
         # wins will rename the binary when executing it. So we need to copy the binary everytime before running it.
@@ -1133,116 +917,98 @@ data:
       name: antrea-windows-config-4f6g849tgk
       namespace: kube-system
     ---
-    apiVersion: apps/v1
-    kind: DaemonSet
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: Role
     metadata:
-      labels:
-        app: antrea
-        component: antrea-agent
-      name: antrea-agent-windows
       namespace: kube-system
-    spec:
-      selector:
-        matchLabels:
-          app: antrea
-          component: antrea-agent
-      template:
-        metadata:
-          labels:
-            app: antrea
-            component: antrea-agent
-        spec:
-          containers:
-          - args:
-            - -file
-            - /var/lib/antrea-windows/Run-AntreaAgent.ps1
-            command:
-            - pwsh
-            env:
-            - name: POD_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-            - name: POD_NAMESPACE
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.namespace
-            - name: NODE_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: spec.nodeName
-            image: harbor-repo.vmware.com/dockerhub-proxy-cache/antrea/antrea-windows:v0.10.1
-            name: antrea-agent
-            volumeMounts:
-            - mountPath: /host
-              name: host
-            - mountPath: \\.\pipe\rancher_wins
-              name: wins
-            - mountPath: /etc/antrea
-              name: antrea-windows-config
-            - mountPath: /var/lib/antrea-windows
-              name: antrea-agent-windows
-            - mountPath: /host/k/antrea/
-              name: host-antrea-home
-          hostNetwork: true
-          initContainers:
-          - args:
-            - -File
-            - /k/antrea/Install-WindowsCNI.ps1
-            command:
-            - pwsh
-            image: harbor-repo.vmware.com/dockerhub-proxy-cache/antrea/antrea-windows:v0.10.1
-            name: install-cni
-            volumeMounts:
-            - mountPath: /etc/antrea
-              name: antrea-windows-config
-              readOnly: true
-            - mountPath: /host/etc/cni/net.d
-              name: host-cni-conf
-            - mountPath: /host/opt/cni/bin
-              name: host-cni-bin
-            - mountPath: /host/k/antrea/
-              name: host-antrea-home
-            - mountPath: /host
-              name: host
-          nodeSelector:
-            kubernetes.io/os: windows
-          priorityClassName: system-node-critical
-          serviceAccountName: antrea-agent
-          tolerations:
-          - key: CriticalAddonsOnly
-            operator: Exists
-          - effect: NoSchedule
-            operator: Exists
-          volumes:
-          - configMap:
-              name: antrea-windows-config-4f6g849tgk
-            name: antrea-windows-config
-          - configMap:
-              defaultMode: 420
-              name: antrea-agent-windows-h7td2mh9gm
-            name: antrea-agent-windows
-          - hostPath:
-              path: /etc/cni/net.d
-              type: DirectoryOrCreate
-            name: host-cni-conf
-          - hostPath:
-              path: /opt/cni/bin
-              type: DirectoryOrCreate
-            name: host-cni-bin
-          - hostPath:
-              path: /k/antrea
-              type: DirectoryOrCreate
-            name: host-antrea-home
-          - hostPath:
-              path: /
-            name: host
-          - hostPath:
-              path: \\.\pipe\rancher_wins
-              type: null
-            name: wins
-      updateStrategy:
-        type: RollingUpdate
+      name: antrea-node
+    rules:
+    - apiGroups: [""]
+      resources: ["serviceaccounts"]
+      resourceNames: ["antrea-agent"]
+      verbs: ["get"]
+    - apiGroups: [""]
+      resources: ["secrets"]
+      verbs: ["list","get"]
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: RoleBinding
+    metadata:
+      name: read-antrea
+      namespace: kube-system
+    subjects:
+    - kind: Group
+      name: system:nodes
+      apiGroup: rbac.authorization.k8s.io
+    roleRef:
+      kind: Role
+      name: antrea-node
+      apiGroup: rbac.authorization.k8s.io
+    ---
+    rules:
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: RoleBinding
+    metadata:
+      name: read-antrea
+      namespace: kube-system
+    subjects:
+    - kind: Group
+      name: system:nodes
+      apiGroup: rbac.authorization.k8s.io
+    roleRef:
+      kind: Role
+      name: antrea-node
+      apiGroup: rbac.authorization.k8s.io
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRoleBinding
+    metadata:
+      name: read-kubeproxy
+      namespace: kube-system
+    subjects:
+    - kind: Group
+      name: system:nodes
+      apiGroup: rbac.authorization.k8s.io
+    roleRef:
+      kind: ClusterRole
+      name: kubeproxy-node
+      apiGroup: rbac.authorization.k8s.io
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRole
+    metadata:
+      name: node:kube-proxy
+    rules:
+    - apiGroups:
+      - ""
+      resources:
+      - endpoints
+      - services
+      verbs:
+      - get
+      - list
+      - watch
+    - apiGroups:
+      - discovery.k8s.io
+      resources:
+      - endpointslices
+      verbs:
+      - get
+      - list
+      - watch
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRoleBinding
+    metadata:
+      name: node:kube-proxy
+    roleRef:
+      apiGroup: rbac.authorization.k8s.io
+      kind: ClusterRole
+      name: node:kube-proxy
+    subjects:
+    - kind: Group
+      name: system:nodes
+      apiGroup: rbac.authorization.k8s.io
 kind: ConfigMap
 metadata:
   name: antrea-windows

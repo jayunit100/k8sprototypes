@@ -5,9 +5,6 @@ if [[ ! -v VSPHERE_CP_IP ]]; then
 fi
 # wget https://build-artifactory.eng.vmware.com/artifactory/webapp/#/artifacts/browse/tree/General/k8simages-windows-local/windows-2019-kube-v1.19.1-docker.ova
 
-govc import.ova https://build-artifactory.eng.vmware.com/k8simages-windows-local/windows-2019-kube-v1.19.1-docker.ova
-govc object.rename windows-2019-kube-v1.19.1 windows-2019-kube-v1.19.1-docker
-govc vm.change -vm windows-2019-kube-v1.19.1-docker -nested-hv-enabled=false 
 govc import.ova https://build-artifactory.eng.vmware.com/k8simages-windows-local/windows-2019-kube-v1.19.1-containerd.ova
 govc object.rename windows-2019-kube-v1.19.1 windows-2019-kube-v1.19.1-containerd
 govc vm.change -vm windows-2019-kube-v1.19.1-containerd -nested-hv-enabled=false 

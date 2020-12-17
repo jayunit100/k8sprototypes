@@ -1,5 +1,11 @@
 Working Example:
 
+# First get audit2rbac and unzip it
+
+```
+wget https://github.com/liggitt/audit2rbac/releases/download/v0.8.0/audit2rbac-linux-amd64.tar.gz
+tar -xvf audit2rbac-linux-amd64.tar.gz
+```
 
 Lets assume your kube-proxy can't talk to the APIServer, and your not sure why. 
 

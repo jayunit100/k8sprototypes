@@ -1,181 +1,27 @@
-COUNTING LOCALIZED FAILURES AND SORTING BY FREQUENCY......................
-
-# List of stuff that only failed once "near" the failure site... most likely irrelevant... 
-
-   1 [k8s.io] Container Lifecycle Hook when create a pod with lifecycle hook should execute prestop http hook properly [NodeConformance] [Conformance]","total":-1,"completed":14,"skipped":223,"failed":1,"failures":["[k8s.io] Container Lifecycle Hook when create a pod with lifecycle hook should execute prestop http hook properly [NodeConformance] [Conformance]"]}
-   1 [sig-api-machinery] Namespaces [Serial] should ensure that all pods are removed when a namespace is deleted [Conformance]","total":-1,"completed":1,"skipped":25,"failed":1,"failures":["[sig-api-machinery] Namespaces [Serial] should ensure that all pods are removed when a namespace is deleted [Conformance]"]}
-   1 [sig-apps] Daemon set [Serial] should run and stop complex daemon [Conformance]","total":-1,"completed":13,"skipped":129,"failed":1,"failures":["[sig-apps] Daemon set [Serial] should run and stop complex daemon [Conformance]"]}
-   1 [sig-network] NetworkPolicy [LinuxOnly] NetworkPolicy between server and client should enforce updated policy [Feature:NetworkPolicy]","total":-1,"completed":10,"skipped":95,"failed":1,"failures":["[sig-network] NetworkPolicy [LinuxOnly] NetworkPolicy between server and client should enforce updated policy [Feature:NetworkPolicy]"]}
-   1 [sig-network] NoSNAT [Feature:NoSNAT] [Slow] Should be able to send traffic between Pods without SNAT","total":-1,"completed":16,"skipped":262,"failed":1,"failures":["[sig-network] NoSNAT [Feature:NoSNAT] [Slow] Should be able to send traffic between Pods without SNAT"]}
-   1 [sig-network] NoSNAT [Feature:NoSNAT] [Slow] Should be able to send traffic between Pods without SNAT","total":-1,"completed":8,"skipped":96,"failed":1,"failures":["[sig-network] NoSNAT [Feature:NoSNAT] [Slow] Should be able to send traffic between Pods without SNAT"]}
-   1 [sig-network] Services should be able to change the type from ClusterIP to ExternalName [Conformance]","total":-1,"completed":22,"skipped":278,"failed":2,"failures":["[sig-scheduling] SchedulerPredicates [Serial] validates resource limits of pods that are allowed to run  [Conformance]","[sig-network] Services should be able to change the type from ClusterIP to ExternalName [Conformance]"]}
-   1 [sig-network] Services should be able to change the type from NodePort to ExternalName [Conformance]","total":-1,"completed":5,"skipped":41,"failed":1,"failures":["[sig-network] Services should be able to change the type from NodePort to ExternalName [Conformance]"]}
-   1 [sig-network] Services should reconcile LB health check interval [Slow][Serial]","total":-1,"completed":16,"skipped":140,"failed":1,"failures":["[sig-network] Services should reconcile LB health check interval [Slow][Serial]"]}
-   1 [sig-scheduling] SchedulerPredicates [Serial] validates resource limits of pods that are allowed to run  [Conformance]","total":-1,"completed":19,"skipped":227,"failed":1,"failures":["[sig-scheduling] SchedulerPredicates [Serial] validates resource limits of pods that are allowed to run  [Conformance]"]}
-   1 [sig-scheduling] SchedulerPredicates [Serial] validates that NodeSelector is respected if not matching  [Conformance]","total":-1,"completed":3,"skipped":36,"failed":1,"failures":["[sig-scheduling] SchedulerPredicates [Serial] validates that NodeSelector is respected if not matching  [Conformance]"]}
-   1 [sig-scheduling] SchedulerPreemption [Serial] validates basic preemption works [Conformance]","total":-1,"completed":7,"skipped":105,"failed":1,"failures":["[sig-scheduling] SchedulerPreemption [Serial] validates basic preemption works [Conformance]"]}
-   1 {"msg":"PASSED [k8s.io] Container Lifecycle Hook when create a pod with lifecycle hook should execute poststart exec hook properly [NodeConformance] [Conformance]","total":-1,"completed":26,"skipped":335,"failed":0}
-   1 {"msg":"PASSED [k8s.io] Container Lifecycle Hook when create a pod with lifecycle hook should execute poststart http hook properly [NodeConformance] [Conformance]","total":-1,"completed":23,"skipped":278,"failed":2,"failures":["[sig-scheduling] SchedulerPredicates [Serial] validates resource limits of pods that are allowed to run  [Conformance]","[sig-network] Services should be able to change the type from ClusterIP to ExternalName [Conformance]"]}
-   1 {"msg":"PASSED [k8s.io] Container Runtime blackbox test on terminated container should report termination message [LinuxOnly] if TerminationMessagePath is set as non-root user and at a non-default path [NodeConformance] [Conformance]","total":-1,"completed":6,"skipped":81,"failed":0}
-   1 {"msg":"PASSED [k8s.io] InitContainer [NodeConformance] should invoke init containers on a RestartNever pod [Conformance]","total":-1,"completed":9,"skipped":90,"failed":0}
-   1 {"msg":"PASSED [k8s.io] InitContainer [NodeConformance] should not start app containers and fail the pod if init containers fail on a RestartNever pod [Conformance]","total":-1,"completed":15,"skipped":193,"failed":0}
-   1 {"msg":"PASSED [k8s.io] InitContainer [NodeConformance] should not start app containers if init containers fail on a RestartAlways pod [Conformance]","total":-1,"completed":13,"skipped":211,"failed":0}
-   1 {"msg":"PASSED [k8s.io] Kubelet when scheduling a busybox command that always fails in a pod should be possible to delete [NodeConformance] [Conformance]","total":-1,"completed":10,"skipped":131,"failed":0}
-   1 {"msg":"PASSED [k8s.io] Probing container should *not* be restarted with a /healthz http liveness probe [NodeConformance] [Conformance]","total":-1,"completed":2,"skipped":23,"failed":0}
-   1 {"msg":"PASSED [k8s.io] Probing container should *not* be restarted with a exec \"cat /tmp/health\" liveness probe [NodeConformance] [Conformance]","total":-1,"completed":16,"skipped":193,"failed":0}
-   1 {"msg":"PASSED [k8s.io] Probing container with readiness probe should not be ready before initial delay and never restart [NodeConformance] [Conformance]","total":-1,"completed":5,"skipped":101,"failed":0}
-   1 {"msg":"PASSED [k8s.io] Variable Expansion should allow composing env vars into new env vars [NodeConformance] [Conformance]","total":-1,"completed":7,"skipped":64,"failed":0}
-   1 {"msg":"PASSED [k8s.io] Variable Expansion should allow substituting values in a volume subpath [sig-storage] [Conformance]","total":-1,"completed":3,"skipped":30,"failed":0}
-   1 {"msg":"PASSED [k8s.io] Variable Expansion should fail substituting values in a volume subpath with backticks [sig-storage][Slow] [Conformance]","total":-1,"completed":12,"skipped":132,"failed":1,"failures":["[sig-api-machinery] Namespaces [Serial] should ensure that all pods are removed when a namespace is deleted [Conformance]"]}
-   1 {"msg":"PASSED [k8s.io] Variable Expansion should verify that a failing subpath expansion can be modified during the lifecycle of a container [sig-storage][Slow] [Conformance]","total":-1,"completed":11,"skipped":84,"failed":0}
-   1 {"msg":"PASSED [k8s.io] [sig-node] PreStop should call prestop when killing a pod  [Conformance]","total":-1,"completed":18,"skipped":204,"failed":0}
-   1 {"msg":"PASSED [sig-api-machinery] AdmissionWebhook [Privileged:ClusterAdmin] should mutate custom resource with pruning [Conformance]","total":-1,"completed":15,"skipped":185,"failed":0}
-   1 {"msg":"PASSED [sig-api-machinery] AdmissionWebhook [Privileged:ClusterAdmin] should mutate pod and apply defaults after mutation [Conformance]","total":-1,"completed":9,"skipped":131,"failed":0}
-   1 {"msg":"PASSED [sig-api-machinery] AdmissionWebhook [Privileged:ClusterAdmin] should unconditionally reject operations on fail closed webhook [Conformance]","total":-1,"completed":21,"skipped":291,"failed":0}
-   1 {"msg":"PASSED [sig-api-machinery] CustomResourceDefinition resources [Privileged:ClusterAdmin] should include custom resource definition resources in discovery documents [Conformance]","total":-1,"completed":11,"skipped":153,"failed":0}
-   1 {"msg":"PASSED [sig-api-machinery] CustomResourcePublishOpenAPI [Privileged:ClusterAdmin] works for CRD preserving unknown fields at the schema root [Conformance]","total":-1,"completed":14,"skipped":179,"failed":0}
-   1 {"msg":"PASSED [sig-api-machinery] Garbage collector should not be blocked by dependency circle [Conformance]","total":-1,"completed":7,"skipped":105,"failed":0}
-   1 {"msg":"PASSED [sig-api-machinery] Secrets should fail to create secret due to empty secret key [Conformance]","total":-1,"completed":11,"skipped":99,"failed":0}
-   1 {"msg":"PASSED [sig-api-machinery] server version should find the server version [Conformance]","total":-1,"completed":9,"skipped":48,"failed":0}
-   1 {"msg":"PASSED [sig-apps] Daemon set [Serial] should retry creating failed daemon pods [Conformance]","total":-1,"completed":8,"skipped":70,"failed":0}
-   1 {"msg":"PASSED [sig-apps] Daemon set [Serial] should rollback without unnecessary restarts [Conformance]","total":-1,"completed":5,"skipped":110,"failed":0}
-   1 {"msg":"PASSED [sig-apps] Daemon set [Serial] should update pod when spec was updated and update strategy is RollingUpdate [Conformance]","total":-1,"completed":6,"skipped":96,"failed":0}
-   1 {"msg":"PASSED [sig-apps] Deployment deployment should support proportional scaling [Conformance]","total":-1,"completed":12,"skipped":99,"failed":0}
-   1 {"msg":"PASSED [sig-cli] Kubectl client Kubectl replace should update a single-container pod's image  [Conformance]","total":-1,"completed":10,"skipped":104,"failed":0}
-   1 {"msg":"PASSED [sig-cli] Kubectl client Kubectl version should check is all data is printed  [Conformance]","total":-1,"completed":11,"skipped":120,"failed":0}
-   1 {"msg":"PASSED [sig-network] DNS configMap nameserver Change stubDomain should be able to change stubDomain configuration [Slow][Serial]","total":-1,"completed":22,"skipped":294,"failed":0}
-   1 {"msg":"PASSED [sig-network] DNS configMap nameserver Forward PTR lookup should forward PTR records lookup to upstream nameserver [Slow][Serial]","total":-1,"completed":8,"skipped":47,"failed":0}
-   1 {"msg":"PASSED [sig-network] DNS should provide DNS for pods for Subdomain [Conformance]","total":-1,"completed":16,"skipped":249,"failed":0}
-   1 {"msg":"PASSED [sig-network] ESIPP [Slow] should handle updates to ExternalTrafficPolicy field","total":-1,"completed":18,"skipped":311,"failed":0}
-   1 {"msg":"PASSED [sig-network] ESIPP [Slow] should work for type=LoadBalancer","total":-1,"completed":18,"skipped":292,"failed":0}
-   1 {"msg":"PASSED [sig-network] ESIPP [Slow] should work for type=NodePort","total":-1,"completed":14,"skipped":159,"failed":0}
-   1 {"msg":"PASSED [sig-network] ESIPP [Slow] should work from pods","total":-1,"completed":20,"skipped":149,"failed":0}
-   1 {"msg":"PASSED [sig-network] IngressClass API  should support creating IngressClass API operations [Conformance]","total":-1,"completed":6,"skipped":42,"failed":0}
-   1 {"msg":"PASSED [sig-network] KubeProxy should resolve connection reset issue #74839 [Slow]","total":-1,"completed":4,"skipped":27,"failed":0}
-   1 {"msg":"PASSED [sig-network] Netpol [LinuxOnly] NetworkPolicy between server and client should enforce policy to allow traffic from pods within server namespace based on PodSelector [Feature:NetworkPolicy]","total":-1,"completed":5,"skipped":33,"failed":0}
-   1 {"msg":"PASSED [sig-network] Netpol [LinuxOnly] NetworkPolicy between server and client should ensure an IP overlapping both IPBlock.CIDR and IPBlock.Except is allowed [Feature:NetworkPolicy]","total":-1,"completed":12,"skipped":153,"failed":0}
-   1 {"msg":"PASSED [sig-network] Netpol [LinuxOnly] NetworkPolicy between server and client should not allow access by TCP when a policy specifies only UDP [Feature:NetworkPolicy] [Feature:UDP]","total":-1,"completed":14,"skipped":142,"failed":0}
-   1 {"msg":"PASSED [sig-network] NetworkPolicy API should support creating NetworkPolicy API operations","total":-1,"completed":17,"skipped":258,"failed":0}
-   1 {"msg":"PASSED [sig-network] NetworkPolicy [LinuxOnly] NetworkPolicy between server and client should allow egress access to server in CIDR block [Feature:NetworkPolicy]","total":-1,"completed":11,"skipped":95,"failed":1,"failures":["[sig-scheduling] SchedulerPredicates [Serial] validates that NodeSelector is respected if not matching  [Conformance]"]}
-   1 {"msg":"PASSED [sig-network] NetworkPolicy [LinuxOnly] NetworkPolicy between server and client should allow egress access to server in CIDR block [Feature:NetworkPolicy]","total":-1,"completed":5,"skipped":56,"failed":0}
-   1 {"msg":"PASSED [sig-network] NetworkPolicy [LinuxOnly] NetworkPolicy between server and client should enforce policies to check ingress and egress policies can be controlled independently based on PodSelector [Feature:NetworkPolicy]","total":-1,"completed":14,"skipped":114,"failed":0}
-   1 {"msg":"PASSED [sig-network] NetworkPolicy [LinuxOnly] NetworkPolicy between server and client should ensure an IP overlapping both IPBlock.CIDR and IPBlock.Except is allowed [Feature:NetworkPolicy]","total":-1,"completed":6,"skipped":46,"failed":0}
-   1 {"msg":"PASSED [sig-network] NetworkPolicy [LinuxOnly] NetworkPolicy between server and client should support allow-all policy [Feature:NetworkPolicy]","total":-1,"completed":4,"skipped":37,"failed":1,"failures":["[sig-scheduling] SchedulerPredicates [Serial] validates that NodeSelector is respected if not matching  [Conformance]"]}
-   1 {"msg":"PASSED [sig-network] NetworkPolicy [LinuxOnly] NetworkPolicy between server and client should work with Ingress,Egress specified together [Feature:NetworkPolicy]","total":-1,"completed":18,"skipped":139,"failed":0}
-   1 {"msg":"PASSED [sig-network] Networking Granular Checks: Services should function for client IP based session affinity: udp [LinuxOnly]","total":-1,"completed":5,"skipped":67,"failed":0}
-   1 {"msg":"PASSED [sig-network] Networking Granular Checks: Services should update endpoints: udp","total":-1,"completed":12,"skipped":121,"failed":0}
-   1 {"msg":"PASSED [sig-network] Service endpoints latency should not be very high  [Conformance]","total":-1,"completed":13,"skipped":224,"failed":0}
-   1 {"msg":"PASSED [sig-network] Services [Slow] should be able to create and tear down a standard-tier load balancer [Slow]","total":-1,"completed":10,"skipped":144,"failed":1,"failures":["[sig-network] Services should be able to change the type from NodePort to ExternalName [Conformance]"]}
-   1 {"msg":"PASSED [sig-network] Services should be able to change the type and ports of a service [Slow]","total":-1,"completed":16,"skipped":185,"failed":1,"failures":["[sig-scheduling] SchedulerPreemption [Serial] validates basic preemption works [Conformance]"]}
-   1 {"msg":"PASSED [sig-network] Services should be able to switch session affinity for NodePort service [LinuxOnly] [Conformance]","total":-1,"completed":18,"skipped":265,"failed":1,"failures":["[k8s.io] Container Lifecycle Hook when create a pod with lifecycle hook should execute prestop http hook properly [NodeConformance] [Conformance]"]}
-   1 {"msg":"PASSED [sig-network] Services should find a service from listing all namespaces [Conformance]","total":-1,"completed":15,"skipped":225,"failed":1,"failures":["[k8s.io] Container Lifecycle Hook when create a pod with lifecycle hook should execute prestop http hook properly [NodeConformance] [Conformance]"]}
-   1 {"msg":"PASSED [sig-network] Services should handle load balancer cleanup finalizer for service [Slow]","total":-1,"completed":3,"skipped":20,"failed":0}
-   1 {"msg":"PASSED [sig-node] ConfigMap should run through a ConfigMap lifecycle [Conformance]","total":-1,"completed":15,"skipped":203,"failed":0}
-   1 {"msg":"PASSED [sig-node] PodTemplates should run the lifecycle of PodTemplates [Conformance]","total":-1,"completed":17,"skipped":199,"failed":0}
-   1 {"msg":"PASSED [sig-storage] ConfigMap should be consumable from pods in volume as non-root [NodeConformance] [Conformance]","total":-1,"completed":15,"skipped":116,"failed":0}
-   1 {"msg":"PASSED [sig-storage] ConfigMap should be consumable in multiple volumes in the same pod [NodeConformance] [Conformance]","total":-1,"completed":6,"skipped":34,"failed":0}
-   1 {"msg":"PASSED [sig-storage] ConfigMap updates should be reflected in volume [NodeConformance] [Conformance]","total":-1,"completed":8,"skipped":112,"failed":1,"failures":["[sig-api-machinery] Namespaces [Serial] should ensure that all pods are removed when a namespace is deleted [Conformance]"]}
-   1 {"msg":"PASSED [sig-storage] Downward API volume should update annotations on modification [NodeConformance] [Conformance]","total":-1,"completed":16,"skipped":211,"failed":0}
-   1 {"msg":"PASSED [sig-storage] EmptyDir volumes pod should support shared volumes between containers [Conformance]","total":-1,"completed":6,"skipped":70,"failed":0}
-   1 {"msg":"PASSED [sig-storage] EmptyDir volumes should support (non-root,0644,tmpfs) [LinuxOnly] [NodeConformance] [Conformance]","total":-1,"completed":9,"skipped":71,"failed":0}
-   1 {"msg":"PASSED [sig-storage] EmptyDir volumes should support (non-root,0777,tmpfs) [LinuxOnly] [NodeConformance] [Conformance]","total":-1,"completed":10,"skipped":86,"failed":0}
-   1 {"msg":"PASSED [sig-storage] EmptyDir volumes should support (root,0666,default) [LinuxOnly] [NodeConformance] [Conformance]","total":-1,"completed":15,"skipped":185,"failed":1,"failures":["[sig-scheduling] SchedulerPreemption [Serial] validates basic preemption works [Conformance]"]}
-   1 {"msg":"PASSED [sig-storage] EmptyDir wrapper volumes should not cause race condition when used for configmaps [Serial] [Conformance]","total":-1,"completed":19,"skipped":280,"failed":0}
-   1 {"msg":"PASSED [sig-storage] Projected configMap should be consumable from pods in volume with mappings as non-root [NodeConformance] [Conformance]","total":-1,"completed":17,"skipped":284,"failed":0}
-   1 {"msg":"PASSED [sig-storage] Projected downwardAPI should provide container's memory limit [NodeConformance] [Conformance]","total":-1,"completed":4,"skipped":47,"failed":0}
-   1 {"msg":"PASSED [sig-storage] Projected downwardAPI should set mode on item file [LinuxOnly] [NodeConformance] [Conformance]","total":-1,"completed":11,"skipped":57,"failed":0}
-   1 {"msg":"PASSED [sig-storage] Projected downwardAPI should update labels on modification [NodeConformance] [Conformance]","total":-1,"completed":6,"skipped":101,"failed":0}
-   1 {"msg":"PASSED [sig-storage] Projected secret optional updates should be reflected in volume [NodeConformance] [Conformance]","total":-1,"completed":4,"skipped":103,"failed":0}
-   1 {"msg":"PASSED [sig-storage] Secrets should be consumable from pods in volume with mappings and Item Mode set [LinuxOnly] [NodeConformance] [Conformance]","total":-1,"completed":10,"skipped":57,"failed":0}
-
-
-# Stuff that is suspicious, found more then once near the call site
-
-   2 [k8s.io] Container Lifecycle Hook when create a pod with lifecycle hook should execute poststart exec hook properly [NodeConformance] [Conformance]","total":-1,"completed":12,"skipped":137,"failed":1,"failures":["[k8s.io] Container Lifecycle Hook when create a pod with lifecycle hook should execute poststart exec hook properly [NodeConformance] [Conformance]"]}
-   2 [k8s.io] Container Lifecycle Hook when create a pod with lifecycle hook should execute prestop exec hook properly [NodeConformance] [Conformance]","total":-1,"completed":10,"skipped":93,"failed":1,"failures":["[k8s.io] Container Lifecycle Hook when create a pod with lifecycle hook should execute prestop exec hook properly [NodeConformance] [Conformance]"]}
-   2 [sig-network] Netpol [LinuxOnly] NetworkPolicy between server and client should enforce policy based on PodSelector and NamespaceSelector [Feature:NetworkPolicy]","total":-1,"completed":16,"skipped":172,"failed":1,"failures":["[sig-network] Netpol [LinuxOnly] NetworkPolicy between server and client should enforce policy based on PodSelector and NamespaceSelector [Feature:NetworkPolicy]"]}
-   2 [sig-network] NetworkPolicy [LinuxOnly] NetworkPolicy between server and client should allow ingress access from updated namespace [Feature:NetworkPolicy]","total":-1,"completed":4,"skipped":50,"failed":1,"failures":["[sig-network] NetworkPolicy [LinuxOnly] NetworkPolicy between server and client should allow ingress access from updated namespace [Feature:NetworkPolicy]"]}
-   2 [sig-network] NetworkPolicy [LinuxOnly] NetworkPolicy between server and client should enforce policy based on Ports [Feature:NetworkPolicy]","total":-1,"completed":13,"skipped":184,"failed":1,"failures":["[sig-network] NetworkPolicy [LinuxOnly] NetworkPolicy between server and client should enforce policy based on Ports [Feature:NetworkPolicy]"]}
-   2 [sig-network] NetworkPolicy [LinuxOnly] NetworkPolicy between server and client should enforce policy to allow traffic only from a pod in a different namespace based on PodSelector and NamespaceSelector [Feature:NetworkPolicy]","total":-1,"completed":14,"skipped":193,"failed":1,"failures":["[sig-network] NetworkPolicy [LinuxOnly] NetworkPolicy between server and client should enforce policy to allow traffic only from a pod in a different namespace based on PodSelector and NamespaceSelector [Feature:NetworkPolicy]"]}
+ # POSSIBLE "driver" failures
+ 
+ 
+``` 
    2 {"msg":"PASSED [k8s.io] Container Lifecycle Hook when create a pod with lifecycle hook should execute poststart http hook properly [NodeConformance] [Conformance]","total":-1,"completed":10,"skipped":95,"failed":0}
    2 {"msg":"PASSED [k8s.io] Kubelet when scheduling a busybox command that always fails in a pod should have an terminated reason [NodeConformance] [Conformance]","total":-1,"completed":12,"skipped":211,"failed":0}
-   2 {"msg":"PASSED [k8s.io] Probing container should *not* be restarted with a /healthz http liveness probe [NodeConformance] [Conformance]","total":-1,"completed":11,"skipped":106,"failed":0}
    2 {"msg":"PASSED [k8s.io] Variable Expansion should succeed in writing subpaths in container [sig-storage][Slow] [Conformance]","total":-1,"completed":6,"skipped":99,"failed":0}
-   2 {"msg":"PASSED [sig-api-machinery] AdmissionWebhook [Privileged:ClusterAdmin] should deny crd creation [Conformance]","total":-1,"completed":8,"skipped":116,"failed":0}
-   2 {"msg":"PASSED [sig-api-machinery] Secrets should be consumable from pods in env vars [NodeConformance] [Conformance]","total":-1,"completed":11,"skipped":103,"failed":0}
-   2 {"msg":"PASSED [sig-api-machinery] Secrets should patch a secret [Conformance]","total":-1,"completed":4,"skipped":50,"failed":0}
+   2 {"msg":"PASSED [sig-api-machinery] Garbage collector should keep the rc around until all its pods are deleted if the deleteOptions says so [Conformance]","total":-1,"completed":7,"skipped":45,"failed":0}
+   2 {"msg":"PASSED [sig-api-machinery] Secrets should fail to create secret due to empty secret key [Conformance]","total":-1,"completed":3,"skipped":20,"failed":1,"failures":["[sig-network] NetworkPolicy [LinuxOnly] NetworkPolicy between server and client should enforce policy based on NamespaceSelector with MatchExpressions[Feature:NetworkPolicy]"]}
    2 {"msg":"PASSED [sig-api-machinery] Watchers should be able to restart watching from the last resource version observed by the previous watch [Conformance]","total":-1,"completed":9,"skipped":108,"failed":1,"failures":["[sig-network] NoSNAT [Feature:NoSNAT] [Slow] Should be able to send traffic between Pods without SNAT"]}
-   2 {"msg":"PASSED [sig-apps] Deployment RollingUpdateDeployment should delete old pods and create new ones [Conformance]","total":-1,"completed":8,"skipped":63,"failed":0}
-   2 {"msg":"PASSED [sig-apps] Deployment deployment should delete old replica sets [Conformance]","total":-1,"completed":19,"skipped":342,"failed":0}
-   2 {"msg":"PASSED [sig-apps] Deployment deployment should support rollover [Conformance]","total":-1,"completed":9,"skipped":80,"failed":0}
-   2 {"msg":"PASSED [sig-auth] ServiceAccounts should mount an API token into pods  [Conformance]","total":-1,"completed":12,"skipped":181,"failed":0}
-   2 {"msg":"PASSED [sig-cli] Kubectl client Proxy server should support proxy with --port 0  [Conformance]","total":-1,"completed":5,"skipped":103,"failed":1,"failures":["[sig-network] NetworkPolicy [LinuxOnly] NetworkPolicy between server and client should allow ingress access from updated namespace [Feature:NetworkPolicy]"]}
-   2 {"msg":"PASSED [sig-network] Conntrack should be able to preserve UDP traffic when server pod cycles for a ClusterIP service","total":-1,"completed":10,"skipped":135,"failed":0}
-   2 {"msg":"PASSED [sig-network] Conntrack should be able to preserve UDP traffic when server pod cycles for a NodePort service","total":-1,"completed":5,"skipped":59,"failed":0}
-   2 {"msg":"PASSED [sig-network] DNS should provide DNS for the cluster  [Conformance]","total":-1,"completed":10,"skipped":80,"failed":0}
-   2 {"msg":"PASSED [sig-network] ESIPP [Slow] should handle updates to ExternalTrafficPolicy field","total":-1,"completed":18,"skipped":305,"failed":0}
-   2 {"msg":"PASSED [sig-network] EndpointSlice should have Endpoints and EndpointSlices pointing to API Server","total":-1,"completed":7,"skipped":114,"failed":0}
-   2 {"msg":"PASSED [sig-network] Netpol [LinuxOnly] NetworkPolicy between server and client should allow ingress access from updated namespace [Feature:NetworkPolicy]","total":-1,"completed":14,"skipped":158,"failed":0}
+   2 {"msg":"PASSED [sig-cli] Kubectl client Kubectl run pod should create a pod from an image when restart is Never  [Conformance]","total":-1,"completed":10,"skipped":93,"failed":0}
    2 {"msg":"PASSED [sig-network] Netpol [LinuxOnly] NetworkPolicy between server and client should allow ingress access from updated pod [Feature:NetworkPolicy]","total":-1,"completed":4,"skipped":39,"failed":0}
-   2 {"msg":"PASSED [sig-network] Netpol [LinuxOnly] NetworkPolicy between server and client should enforce multiple egress policies with egress allow-all policy taking precedence [Feature:NetworkPolicy]","total":-1,"completed":8,"skipped":51,"failed":0}
-   2 {"msg":"PASSED [sig-network] Netpol [LinuxOnly] NetworkPolicy between server and client should enforce policy based on Multiple PodSelectors and NamespaceSelectors [Feature:NetworkPolicy]","total":-1,"completed":10,"skipped":109,"failed":0}
-   2 {"msg":"PASSED [sig-network] Netpol [LinuxOnly] NetworkPolicy between server and client should enforce policy based on PodSelector or NamespaceSelector [Feature:NetworkPolicy]","total":-1,"completed":17,"skipped":194,"failed":0}
+   2 {"msg":"PASSED [sig-network] Netpol [LinuxOnly] NetworkPolicy between server and client should enforce multiple ingress policies with ingress allow-all policy taking precedence [Feature:NetworkPolicy]","total":-1,"completed":20,"skipped":181,"failed":0}
+   2 {"msg":"PASSED [sig-network] Netpol [LinuxOnly] NetworkPolicy between server and client should enforce policy to allow traffic only from a pod in a different namespace based on PodSelector and NamespaceSelector [Feature:NetworkPolicy]","total":-1,"completed":11,"skipped":151,"failed":0}
    2 {"msg":"PASSED [sig-network] Netpol [LinuxOnly] NetworkPolicy between server and client should enforce updated policy [Feature:NetworkPolicy]","total":-1,"completed":5,"skipped":39,"failed":0}
-   2 {"msg":"PASSED [sig-network] Netpol [LinuxOnly] NetworkPolicy between server and client should stop enforcing policies after they are deleted [Feature:NetworkPolicy]","total":-1,"completed":13,"skipped":237,"failed":0}
-   2 {"msg":"PASSED [sig-network] NetworkPolicy [LinuxOnly] NetworkPolicy between server and client should enforce multiple ingress policies with ingress allow-all policy taking precedence [Feature:NetworkPolicy]","total":-1,"completed":9,"skipped":174,"failed":0}
-   2 {"msg":"PASSED [sig-network] NetworkPolicy [LinuxOnly] NetworkPolicy between server and client should enforce updated policy [Feature:NetworkPolicy]","total":-1,"completed":8,"skipped":115,"failed":0}
-   2 {"msg":"PASSED [sig-network] NetworkPolicy [LinuxOnly] NetworkPolicy between server and client should ensure an IP overlapping both IPBlock.CIDR and IPBlock.Except is allowed [Feature:NetworkPolicy]","total":-1,"completed":16,"skipped":216,"failed":0}
-   2 {"msg":"PASSED [sig-network] NetworkPolicy [LinuxOnly] NetworkPolicy between server and client should support a 'default-deny-ingress' policy [Feature:NetworkPolicy]","total":-1,"completed":9,"skipped":81,"failed":0}
-   2 {"msg":"PASSED [sig-network] Networking Granular Checks: Pods should function for node-pod communication: http [LinuxOnly] [NodeConformance] [Conformance]","total":-1,"completed":14,"skipped":106,"failed":0}
-   2 {"msg":"PASSED [sig-network] Networking IPerf2 [Feature:Networking-Performance] should run iperf2","total":-1,"completed":13,"skipped":190,"failed":0}
-   2 {"msg":"PASSED [sig-network] Networking should provide unchanging, static URL paths for kubernetes api services","total":-1,"completed":17,"skipped":287,"failed":0}
-   2 {"msg":"PASSED [sig-network] Proxy version v1 should proxy through a service and a pod  [Conformance]","total":-1,"completed":14,"skipped":211,"failed":1,"failures":["[sig-network] NetworkPolicy [LinuxOnly] NetworkPolicy between server and client should enforce policy based on Ports [Feature:NetworkPolicy]"]}
-   2 {"msg":"PASSED [sig-network] Service endpoints latency should not be very high  [Conformance]","total":-1,"completed":16,"skipped":283,"failed":0}
-   2 {"msg":"PASSED [sig-network] Services should be able to change the type from NodePort to ExternalName [Conformance]","total":-1,"completed":6,"skipped":155,"failed":0}
-   2 {"msg":"PASSED [sig-network] Services should be able to up and down services","total":-1,"completed":8,"skipped":161,"failed":0}
-   2 {"msg":"PASSED [sig-network] Services should create endpoints for unready pods","total":-1,"completed":12,"skipped":153,"failed":0}
+   2 {"msg":"PASSED [sig-network] Netpol [LinuxOnly] NetworkPolicy between server and client should ensure an IP overlapping both IPBlock.CIDR and IPBlock.Except is allowed [Feature:NetworkPolicy]","total":-1,"completed":20,"skipped":256,"failed":0}
+   2 {"msg":"PASSED [sig-network] Netpol [LinuxOnly] NetworkPolicy between server and client should work with Ingress, Egress specified together [Feature:NetworkPolicy]","total":-1,"completed":25,"skipped":304,"failed":0}
+   2 {"msg":"PASSED [sig-network] NetworkPolicy [LinuxOnly] NetworkPolicy between server and client should deny ingress access to updated pod [Feature:NetworkPolicy]","total":-1,"completed":15,"skipped":177,"failed":0}
+   2 {"msg":"PASSED [sig-network] Networking Granular Checks: Services should function for endpoint-Service: http","total":-1,"completed":18,"skipped":363,"failed":0}
+   2 {"msg":"PASSED [sig-network] Services should be able to switch session affinity for NodePort service [LinuxOnly] [Conformance]","total":-1,"completed":10,"skipped":168,"failed":0}
+   2 {"msg":"PASSED [sig-node] ConfigMap should run through a ConfigMap lifecycle [Conformance]","total":-1,"completed":6,"skipped":45,"failed":0}
    2 {"msg":"PASSED [sig-storage] Projected configMap should be consumable from pods in volume as non-root [NodeConformance] [Conformance]","total":-1,"completed":8,"skipped":82,"failed":0}
-   2 {"msg":"PASSED [sig-storage] Projected configMap should be consumable from pods in volume with mappings as non-root [NodeConformance] [Conformance]","total":-1,"completed":12,"skipped":111,"failed":0}
-
-
-# Most highly correlated failures - these tests were seen lingering, 4 times, near the failure site
-
-   4 [k8s.io] Probing container should have monotonically increasing restart count [NodeConformance] [Conformance]","total":-1,"completed":3,"skipped":22,"failed":1,"failures":["[k8s.io] Probing container should have monotonically increasing restart count [NodeConformance] [Conformance]"]}
-   4 [sig-network] NetworkPolicy [LinuxOnly] NetworkPolicy between server and client should deny ingress access to updated pod [Feature:NetworkPolicy]","total":-1,"completed":9,"skipped":108,"failed":1,"failures":["[sig-network] NetworkPolicy [LinuxOnly] NetworkPolicy between server and client should deny ingress access to updated pod [Feature:NetworkPolicy]"]}
-   4 [sig-network] NetworkPolicy [LinuxOnly] NetworkPolicy between server and client should stop enforcing policies after they are deleted [Feature:NetworkPolicy]","total":-1,"completed":9,"skipped":130,"failed":1,"failures":["[sig-network] NetworkPolicy [LinuxOnly] NetworkPolicy between server and client should stop enforcing policies after they are deleted [Feature:NetworkPolicy]"]}
-   4 {"msg":"PASSED [k8s.io] Docker Containers should be able to override the image's default command and arguments [NodeConformance] [Conformance]","total":-1,"completed":21,"skipped":360,"failed":0}
-   4 {"msg":"PASSED [sig-api-machinery] AdmissionWebhook [Privileged:ClusterAdmin] should be able to deny attaching pod [Conformance]","total":-1,"completed":12,"skipped":196,"failed":0}
-   4 {"msg":"PASSED [sig-api-machinery] CustomResourcePublishOpenAPI [Privileged:ClusterAdmin] removes definition from spec when one version gets changed to not be served [Conformance]","total":-1,"completed":7,"skipped":63,"failed":0}
-   4 {"msg":"PASSED [sig-api-machinery] CustomResourcePublishOpenAPI [Privileged:ClusterAdmin] updates the published spec when one version gets renamed [Conformance]","total":-1,"completed":12,"skipped":104,"failed":0}
-   4 {"msg":"PASSED [sig-api-machinery] Events should ensure that an event can be fetched, patched, deleted, and listed [Conformance]","total":-1,"completed":10,"skipped":140,"failed":1,"failures":["[sig-network] NetworkPolicy [LinuxOnly] NetworkPolicy between server and client should deny ingress access to updated pod [Feature:NetworkPolicy]"]}
-   4 {"msg":"PASSED [sig-api-machinery] ResourceQuota should create a ResourceQuota and capture the life of a secret. [Conformance]","total":-1,"completed":14,"skipped":353,"failed":0}
-   4 {"msg":"PASSED [sig-api-machinery] Secrets should patch a secret [Conformance]","total":-1,"completed":22,"skipped":362,"failed":0}
-   4 {"msg":"PASSED [sig-auth] Certificates API [Privileged:ClusterAdmin] should support CSR API operations [Conformance]","total":-1,"completed":10,"skipped":118,"failed":0}
-   4 {"msg":"PASSED [sig-auth] ServiceAccounts should mount an API token into pods  [Conformance]","total":-1,"completed":4,"skipped":30,"failed":1,"failures":["[k8s.io] Probing container should have monotonically increasing restart count [NodeConformance] [Conformance]"]}
-   4 {"msg":"PASSED [sig-cli] Kubectl client Kubectl run pod should create a pod from an image when restart is Never  [Conformance]","total":-1,"completed":10,"skipped":93,"failed":0}
-   4 {"msg":"PASSED [sig-cli] Kubectl client Kubectl server-side dry-run should check if kubectl can dry-run update Pods [Conformance]","total":-1,"completed":10,"skipped":116,"failed":0}
-   4 {"msg":"PASSED [sig-cli] Kubectl client Update Demo should scale a replication controller  [Conformance]","total":-1,"completed":9,"skipped":108,"failed":0}
-   4 {"msg":"PASSED [sig-network] Firewall rule should have correct firewall rules for e2e cluster","total":-1,"completed":20,"skipped":360,"failed":0}
-   4 {"msg":"PASSED [sig-network] IngressClass API  should support creating IngressClass API operations [Conformance]","total":-1,"completed":14,"skipped":221,"failed":0}
-   4 {"msg":"PASSED [sig-network] Netpol [LinuxOnly] NetworkPolicy between server and client should deny ingress access to updated pod [Feature:NetworkPolicy]","total":-1,"completed":12,"skipped":135,"failed":0}
-   4 {"msg":"PASSED [sig-network] Netpol [LinuxOnly] NetworkPolicy between server and client should enforce egress policy allowing traffic to a server in a different namespace based on PodSelector and NamespaceSelector [Feature:NetworkPolicy]","total":-1,"completed":14,"skipped":146,"failed":0}
-   4 {"msg":"PASSED [sig-network] Netpol [LinuxOnly] NetworkPolicy between server and client should enforce multiple ingress policies with ingress allow-all policy taking precedence [Feature:NetworkPolicy]","total":-1,"completed":20,"skipped":181,"failed":0}
-   4 {"msg":"PASSED [sig-network] Netpol [LinuxOnly] NetworkPolicy between server and client should enforce multiple, stacked policies with overlapping podSelectors [Feature:NetworkPolicy]","total":-1,"completed":12,"skipped":190,"failed":0}
-   4 {"msg":"PASSED [sig-network] Netpol [LinuxOnly] NetworkPolicy between server and client should enforce policy to allow traffic only from a pod in a different namespace based on PodSelector and NamespaceSelector [Feature:NetworkPolicy]","total":-1,"completed":11,"skipped":151,"failed":0}
-   4 {"msg":"PASSED [sig-network] Netpol [LinuxOnly] NetworkPolicy between server and client should ensure an IP overlapping both IPBlock.CIDR and IPBlock.Except is allowed [Feature:NetworkPolicy]","total":-1,"completed":20,"skipped":256,"failed":0}
-   4 {"msg":"PASSED [sig-network] Netpol [LinuxOnly] NetworkPolicy between server and client should work with Ingress, Egress specified together [Feature:NetworkPolicy]","total":-1,"completed":11,"skipped":91,"failed":0}
-   4 {"msg":"PASSED [sig-network] Netpol [LinuxOnly] NetworkPolicy between server and client should work with Ingress, Egress specified together [Feature:NetworkPolicy]","total":-1,"completed":25,"skipped":304,"failed":0}
-   4 {"msg":"PASSED [sig-network] NetworkPolicy API should support creating NetworkPolicy API operations","total":-1,"completed":23,"skipped":370,"failed":0}
-   4 {"msg":"PASSED [sig-network] NetworkPolicy [LinuxOnly] NetworkPolicy between server and client should allow ingress access from namespace on one named port [Feature:NetworkPolicy]","total":-1,"completed":3,"skipped":38,"failed":0}
-   4 {"msg":"PASSED [sig-network] NetworkPolicy [LinuxOnly] NetworkPolicy between server and client should allow ingress access from updated namespace [Feature:NetworkPolicy]","total":-1,"completed":7,"skipped":142,"failed":0}
-   4 {"msg":"PASSED [sig-network] NetworkPolicy [LinuxOnly] NetworkPolicy between server and client should deny ingress access to updated pod [Feature:NetworkPolicy]","total":-1,"completed":15,"skipped":177,"failed":0}
-   4 {"msg":"PASSED [sig-network] Networking Granular Checks: Services should function for endpoint-Service: http","total":-1,"completed":18,"skipped":363,"failed":0}
-   4 {"msg":"PASSED [sig-network] Services should be able to switch session affinity for NodePort service [LinuxOnly] [Conformance]","total":-1,"completed":10,"skipped":168,"failed":0}
-   4 {"msg":"PASSED [sig-scheduling] LimitRange should create a LimitRange with defaults and ensure pod has those defaults applied. [Conformance]","total":-1,"completed":14,"skipped":143,"failed":0}
-   4 {"msg":"PASSED [sig-storage] Downward API volume should provide node allocatable (memory) as default memory limit if the limit is not set [NodeConformance] [Conformance]","total":-1,"completed":13,"skipped":217,"failed":0}
-   4 {"msg":"PASSED [sig-storage] Downward API volume should provide podname only [NodeConformance] [Conformance]","total":-1,"completed":12,"skipped":184,"failed":0}
-   4 {"msg":"PASSED [sig-storage] EmptyDir volumes volume on tmpfs should have the correct mode [LinuxOnly] [NodeConformance] [Conformance]","total":-1,"completed":14,"skipped":138,"failed":0}
-  36 {"msg":"
-  37 
-  42 --
-  72 ********
+  29 
+  29 {"msg":"
+  33 --
+  58 ********
+```

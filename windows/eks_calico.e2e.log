@@ -14,6 +14,7 @@ Make sure you change the 'darwin' download to the proper kubectl download in the
 
 PASSED
 ```
+  [sig-windows] [Feature:Windows] Memory Limits [Serial] [Slow] Allocatable node memory should be equal to a calculated allocatable memory value
   [sig-windows] Hybrid cluster network for all supported CNIs should have stable networking for Linux and Windows pods
   [sig-windows] [Feature:Windows] SecurityContext should not be able to create pods with unknown usernames
   [sig-windows] [Feature:Windows] SecurityContext should be able create pods and run containers with a given username

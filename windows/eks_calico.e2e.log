@@ -1,0 +1,46 @@
+# methodology 
+
+
+After installing `aws`,  `eksctl` and so on on windows (chocolatey), you can do the instructions in
+
+https://aws.amazon.com/blogs/containers/open-source-calico-for-windows-containers-on-amazon-eks/
+
+Make sure you change the 'darwin' download to the proper kubectl download in the powershell node init script.
+
+# results
+
+Summarizing 10 Failures:
+
+[Fail] [sig-windows] [Feature:Windows] Cpu Resources [Serial] Container limits [It] should not be exceeded after waiting 2 minutes
+/mnt/c/Users/jayun/source/k8s2/_output/local/go/src/k8s.io/kubernetes/test/e2e/windows/cpu_limits.go:88
+
+[Fail] [sig-windows] Device Plugin [It] should be able to create a functioning device plugin for Windows
+/mnt/c/Users/jayun/source/k8s2/_output/local/go/src/k8s.io/kubernetes/test/e2e/windows/device_plugin.go:133
+
+[Fail] [sig-windows] DNS [It] should support configurable pod DNS servers
+/mnt/c/Users/jayun/source/k8s2/_output/local/go/src/k8s.io/kubernetes/test/e2e/windows/dns.go:62
+
+[Fail] [sig-windows] Windows volume mounts  check volume mount permissions [It] container should have readOnly permissions on hostMapPath
+/mnt/c/Users/jayun/source/k8s2/_output/local/go/src/k8s.io/kubernetes/test/e2e/framework/pods.go:103
+
+[Fail] [sig-windows] [Feature:Windows] Kubelet-Stats [Serial] Kubelet stats collection for Windows nodes when running 10 pods [It] should return within 10 seconds
+/mnt/c/Users/jayun/source/k8s2/_output/local/go/src/k8s.io/kubernetes/test/e2e/framework/pods.go:103
+
+[Fail] [sig-windows] [Feature:Windows] SecurityContext [It] should ignore Linux Specific SecurityContext if set
+/mnt/c/Users/jayun/source/k8s2/_output/local/go/src/k8s.io/kubernetes/test/e2e/windows/security_context.go:94
+
+[Fail] [sig-windows] Windows volume mounts  check volume mount permissions [It] container should have readOnly permissions on emptyDir
+/mnt/c/Users/jayun/source/k8s2/_output/local/go/src/k8s.io/kubernetes/test/e2e/framework/pods.go:103
+
+[Fail] [sig-windows] Services [It] should be able to create a functioning NodePort service for Windows
+/mnt/c/Users/jayun/source/k8s2/_output/local/go/src/k8s.io/kubernetes/test/e2e/windows/service.go:60
+
+[Fail] [sig-windows] [Feature:Windows] GMSA Kubelet [Slow] kubelet GMSA support when creating a pod with correct GMSA credential specs [It] passes the credential specs down to the Pod's containers
+/mnt/c/Users/jayun/source/k8s2/_output/local/go/src/k8s.io/kubernetes/test/e2e/framework/pods.go:103
+
+[Fail] [sig-windows] [Feature:Windows] SecurityContext [It] should override SecurityContext username if set
+/mnt/c/Users/jayun/source/k8s2/_output/local/go/src/k8s.io/kubernetes/test/e2e/framework/util.go:742
+
+Ran 16 of 5700 Specs in 20427.770 seconds
+FAIL! -- 6 Passed | 10 Failed | 0 Pending | 5684 Skipped
+--- FAIL: TestE2E (20427.88s)

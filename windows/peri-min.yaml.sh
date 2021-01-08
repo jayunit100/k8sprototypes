@@ -327,7 +327,7 @@ spec:
           mkdir c:\k\antrea\bin
           cd c:\k\antrea
           curl.exe -LO https://raw.githubusercontent.com/vmware-tanzu/antrea/master/hack/windows/Start.ps1
-          curl.exe -LO http://10.133.1.220:9292/antrea-agent.exe
+          curl.exe -LO http://w3-dbc302.eng.vmware.com/rcao/image/containerd/antrea-agent.exe
           mv antrea-agent.exe c:\k\antrea\bin
           Add-MpPreference -ExclusionProcess "ctr.exe"
           Add-MpPreference -ExclusionProcess "containerd.exe"

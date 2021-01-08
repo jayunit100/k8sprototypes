@@ -2610,17 +2610,23 @@ metadata:
   name: antrea
   namespace: default  
 ---
-apiVersion: node.k8s.io/v1beta1
-handler: windows
-kind: RuntimeClass
+apiVersion: v1
+data:
+  data: |
+    apiVersion: node.k8s.io/v1beta1
+    handler: windows
+    kind: RuntimeClass
+    metadata:
+      name: windows
+    scheduling:
+      nodeSelector:
+        kubernetes.io/arch: amd64
+        kubernetes.io/os: windows
+      tolerations:
+      - effect: NoSchedule
+        key: os
+        operator: Equal
+        value: windows
+kind: ConfigMap
 metadata:
-  name: windows
-scheduling:
-  nodeSelector:
-    kubernetes.io/arch: amd64
-    kubernetes.io/os: windows
-  tolerations:
-  - effect: NoSchedule
-    key: os
-    operator: Equal
-    value: windows
+  name: windowsruntimeclass

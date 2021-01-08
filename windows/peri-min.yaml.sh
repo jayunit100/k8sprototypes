@@ -329,21 +329,13 @@ spec:
           curl.exe -LO https://raw.githubusercontent.com/vmware-tanzu/antrea/master/hack/windows/Start.ps1
           curl.exe -LO http://10.133.1.220:9292/antrea-agent.exe
           mv antrea-agent.exe c:\k\antrea\bin
-          $global:ConainterDPath = "$env:ProgramFiles\containerd"
-          $config = Get-Content "$global:ConainterDPath\config.toml"
-          $config = $config -replace "bin_dir = (.)*$", "bin_dir = `"c:/opt/cni/bin`""
-          $config = $config -replace "conf_dir = (.)*$", "conf_dir = `"c:/etc/cni/net.d`""
-          $config | Set-Content "$global:ConainterDPath\config.toml" -Force 
           Add-MpPreference -ExclusionProcess "ctr.exe"
           Add-MpPreference -ExclusionProcess "containerd.exe"
-          mkdir -Force c:\opt\cni\bin | Out-Null
-          mkdir -Force c:\etc\cni\net.d | Out-Null
           Restart-Computer -Force
       postKubeadmCommands:
         - powershell C:/Temp/antrea.ps1 -ExecutionPolicy Bypass
       users:
       - name: capv
-        passwd: VMware1!
         groups: Administrators
         sshAuthorizedKeys:
         - $VSPHERE_SSH_AUTHORIZED_KEY
@@ -2618,24 +2610,17 @@ metadata:
   name: antrea
   namespace: default  
 ---
-apiVersion: v1
-data:
-  data: |
-    apiVersion: node.k8s.io/v1beta1
-    kind: RuntimeClass
-    metadata:
-      name: windows
-    handler: 'docker'
-    scheduling:
-      nodeSelector:
-        kubernetes.io/os: 'windows'
-        kubernetes.io/arch: 'amd64'
-      tolerations:
-      - effect: NoSchedule
-        key: os
-        operator: Equal
-        value: "windows"
-kind: ConfigMap
+apiVersion: node.k8s.io/v1beta1
+handler: windows
+kind: RuntimeClass
 metadata:
-  name: windowsruntimeclass
-  namespace: default
+  name: windows
+scheduling:
+  nodeSelector:
+    kubernetes.io/arch: amd64
+    kubernetes.io/os: windows
+  tolerations:
+  - effect: NoSchedule
+    key: os
+    operator: Equal
+    value: windows

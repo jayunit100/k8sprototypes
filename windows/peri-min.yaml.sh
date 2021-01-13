@@ -834,6 +834,19 @@ metadata:
 apiVersion: v1
 data:
   data: |
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: Role
+    metadata:
+      namespace: kube-system
+      name: node:antrea-sa-read
+    rules:
+    - apiGroups: [""]
+      resources: ["serviceaccounts"]
+      resourceNames: ["antrea-agent"]
+      verbs: ["get"]
+    - apiGroups: [""]
+      resources: ["secrets"]
+      verbs: ["list","get"]
     ---
     apiVersion: rbac.authorization.k8s.io/v1
     kind: RoleBinding

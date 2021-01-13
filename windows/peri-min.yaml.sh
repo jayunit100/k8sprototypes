@@ -2837,7 +2837,7 @@ apiVersion: v1
 data:
   data: |
     apiVersion: node.k8s.io/v1beta1
-    handler: windows
+    handler: runhcs-wcow-process
     kind: RuntimeClass
     metadata:
       name: windows

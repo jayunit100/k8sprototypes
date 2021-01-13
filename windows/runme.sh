@@ -4,11 +4,6 @@ if [[ ! -v VSPHERE_CP_IP ]]; then
         VSPHERE_CP_IP=12.10.10.205
 fi
 wget https://build-artifactory.eng.vmware.com/artifactory/webapp/#/artifacts/browse/tree/General/k8simages-windows-local/windows-2019-kube-v1.19.1-containerd-nohyper.ova
-wget https://build-artifactory.eng.vmware.com/k8simages-windows-local/isos/en_windows_server_2019_x64_dvd_4cb967d8.iso
-wget https://build-artifactory.eng.vmware.com/k8simages-windows-local/isos/vmtools.iso
-
-govc datastore.upload ./en_windows_server_2019_x64_dvd_4cb967d8.iso ISOs/en_windows_server_2019_x64_dvd_4cb967d8.iso
-govc datastore.upload ./vmtools.iso ISOs/win-vmtools.iso
 
 govc import.ova https://build-artifactory.eng.vmware.com/k8simages-windows-local/windows-2019-kube-v1.19.1-containerd-nohyper.ova
 govc object.rename windows-2019-kube-v1.19.1 windows-2019-kube-v1.19.1-containerd

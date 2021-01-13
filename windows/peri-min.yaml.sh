@@ -2828,10 +2828,10 @@ data:
         scope: Namespaced
       sideEffects: None
       timeoutSeconds: 5
-    kind: ConfigMap
-    metadata:
-      name: antrea
-      namespace: default  
+kind: ConfigMap
+metadata:
+  name: antrea
+  namespace: default  
 ---
 apiVersion: v1
 data:

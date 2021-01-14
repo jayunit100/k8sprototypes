@@ -339,6 +339,7 @@ spec:
           mv antrea-agent.exe c:\k\antrea\bin
           Import-Module ./helper.psm1
           & Install-AntreaAgent -KubernetesVersion "v1.19.1" -KubernetesHome "c:/k" -KubeConfig "C:/etc/kubernetes/kubelet.conf" -AntreaVersion "v0.12.0" -AntreaHome "c:/k/antrea"
+          New-KubeProxyServiceInterface
           Add-MpPreference -ExclusionProcess "ctr.exe"
           Add-MpPreference -ExclusionProcess "containerd.exe"
           Restart-Computer -Force

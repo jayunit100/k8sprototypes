@@ -290,14 +290,18 @@ spec:
       - path: 'c:\k\antrea\antrea-startup.ps1'
         content: |
           $service = Get-Service -Name ovs-vswitchd -ErrorAction SilentlyContinue
-          Push-Location C:\k\antrea\
-          if($service -eq $null) {  
+          Push-Location C:\k\antrea
+          if($service -eq $null) {
             curl.exe -LO "https://raw.githubusercontent.com/vmware-tanzu/antrea/master/hack/windows/Install-OVS.ps1"
             & ./Install-OVS.ps1
             Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False
+            & nssm install kube-proxy "c:/k/kube-proxy.exe" "--proxy-mode=userspace --kubeconfig=C:/etc/kubernetes/kubelet.conf --log-dir=c:/var/log/kube-proxy --logtostderr=false --alsologtostderr"
+            & nssm install antrea-agent "c:/k/antrea/bin/antrea-agent.exe" "--config=c:/k/antrea/etc/antrea-agent.conf --logtostderr=false --log_dir=c:/k/antrea/logs --alsologtostderr --log_file_max_size=100 --log_file_max_num=4"
+            & nssm set antrea-agent DependOnService kube-proxy ovs-vswitchd
+            & nssm set antrea-agent Start SERVICE_DELAYED_START
+            start-service kube-proxy
+            start-service antrea-agent
           }
-          $KubeConfigPath="c:\etc\kubernetes\kubelet.conf"
-          & c:\k\antrea\Start.ps1 -kubeconfig $KubeConfigPath -KubernetesVersion v1.19.1 -AntreaVersion v0.11.1 
       - path: 'C:\Temp\antrea.ps1'
         content: |
           $service = Get-Service -Name ovs-vswitchd -ErrorAction SilentlyContinue
@@ -306,7 +310,11 @@ spec:
           }
           invoke-expression "bcdedit /set TESTSIGNING ON"
           New-Item -ItemType Directory -Force -Path C:\k\antrea
-          $trigger = New-JobTrigger -AtStartup 
+          New-Item -ItemType Directory -Force -Path C:\k\antrea\logs
+          New-Item -ItemType Directory -Force -Path C:\k\antrea\bin
+          New-Item -ItemType Directory -Force -Path C:\var\log\kube-proxy
+          [Environment]::SetEnvironmentVariable("NODE_NAME", (hostname).ToLower())
+          $trigger = New-JobTrigger -AtStartup
           $options = New-ScheduledJobOption -RunElevated
           Register-ScheduledJob -Name PrepareAntrea -Trigger $trigger -FilePath 'c:\k\antrea\antrea-startup.ps1' -ScheduledJobOption $options
           $env:HostIP = (
@@ -323,12 +331,14 @@ spec:
           Set-Content $file $new
           $nssm = (Get-Command nssm).Source
           $serviceName = 'Kubelet'
-          & $nssm set $serviceName start SERVICE_AUTO_START    
-          mkdir c:\k\antrea\bin
+          & $nssm set $serviceName start SERVICE_AUTO_START
           cd c:\k\antrea
           curl.exe -LO https://raw.githubusercontent.com/vmware-tanzu/antrea/master/hack/windows/Start.ps1
+          curl.exe -LO https://raw.githubusercontent.com/vmware-tanzu/antrea/master/hack/windows/Helper.psm1
           curl.exe -LO http://w3-dbc302.eng.vmware.com/rcao/image/containerd/antrea-agent.exe
           mv antrea-agent.exe c:\k\antrea\bin
+          Import-Module ./helper.psm1
+          & Install-AntreaAgent -KubernetesVersion "v1.19.1" -KubernetesHome "c:/k" -KubeConfig "C:/etc/kubernetes/kubelet.conf" -AntreaVersion "v0.12.0" -AntreaHome "c:/k/antrea"
           Add-MpPreference -ExclusionProcess "ctr.exe"
           Add-MpPreference -ExclusionProcess "containerd.exe"
           Restart-Computer -Force

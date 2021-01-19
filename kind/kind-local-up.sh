@@ -44,6 +44,7 @@ nodes:
 networking:
   disableDefaultCNI: true
 EOF
+}
 
 #cluster=nocni
 #conf="calico-conf.yaml"

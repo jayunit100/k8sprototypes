@@ -69,7 +69,7 @@ spec:
       numCPUs: 2
       os: Linux
       server: $VSPHERE_SERVER
-      template: $VSPHERE_DATACENTER/vm/photon-3-kube-v1.19.1
+      template: $VSPHERE_DATACENTER/vm/photon-3-kube-v1.19.3
 ---
 apiVersion: controlplane.cluster.x-k8s.io/v1alpha3
 kind: KubeadmControlPlane

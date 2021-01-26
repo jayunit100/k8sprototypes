@@ -1,3 +1,9 @@
+# Input file is any text/log file.  This program will remove the specificities
+# from the input logs and print them out as a frequency plot.
+# The example file here is a kubelet error file.
+input_file="/data/workspace_files/Kubelet.Error"
+
+
 def join(ar):
     out = ""
     for x in ar:
@@ -26,19 +32,15 @@ def splitAny(inp):
 x = splitAny("A---v  g g 2o4i23mof02i3f -- aasdf -232342342 sfdsdfa")
 print(join(x))
 
-# count lines in the file...
+# 1 count lines in the file...
 count = 0
-f = open("/data/workspace_files/Kubelet.Error")
+f = open(input_file)
 for line in f.readlines(  ): count += 1
+print("TOTAL LINES")
 print(count)
+    
 
-# print genericized logs...
-count = 0
-unique_strings=[]
-f = open("/data/workspace_files/Kubelet.Error")
-
-
-# Build an index of all log types
+# 2 Build an index of all log types
 line_set={"":0}
 line_map={"":0}
 
@@ -52,15 +54,17 @@ for line in f.readlines(  ):
         line_set[ss] = 1
 
 print(line_set)
-#print(line_map)
+print(line_map)
 #print(len(line_set))
 #print(len(line_map))
 
+# 3 now we have integer ids for all unique log "types", 
 print("((((((((((((((((((((((((((((((((((((")
 counttt=0
-f = open("/data/workspace_files/Kubelet.Error")
+f = open(input_file)
 for line in f.readlines(  ):
     split=splitAny(line)
     ss = join(split)
+
     print(line_map[ss])
 print("))))))))))))))))))))))))))))))))))))")

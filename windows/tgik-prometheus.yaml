@@ -1,0 +1,147 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  labels:
+    component: windows-exporter
+  name: windows-exporter
+  namespace: monitoring
+spec:
+  selector:
+    matchLabels:
+      component: windows-exporter
+  template:
+    metadata:
+      labels:
+        component: windows-exporter
+    spec:
+      containers:
+        - command:
+            - pwsh
+          args:
+            - -file
+            - /var/lib/windows-exporter/run-script.ps1
+          ports:
+          - containerPort: 9182
+            name: http-metrics
+            hostPort: 9182
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          image: harbor-repo.vmware.com/tcre/windows-prometheus:v0.14.0-1809
+          name: windows-exporter
+          imagePullPolicy: Always
+          volumeMounts:
+            - mountPath: /host
+              name: host
+            - mountPath: \\.\pipe\rancher_wins
+              name: wins
+              type: null
+            - mountPath: /var/lib/windows-exporter
+              name: windows-exporter-config
+            - mountPath: /host/k/prometheus/
+              name: host-prometheus-home
+      runtimeClassName: windows
+      nodeSelector:
+        kubernetes.io/os: windows
+      priorityClassName: system-node-critical
+      tolerations:
+        - key: CriticalAddonsOnly
+          operator: Exists
+        - effect: NoSchedule
+          operator: Exists
+      volumes:
+        - configMap:
+            name: windows-exporter-config
+          name: windows-exporter-config
+        - hostPath:
+            path: /k/prometheus
+            type: DirectoryOrCreate
+          name: host-prometheus-home
+        - hostPath:
+            path: /
+          name: host
+        - name: wins
+          hostPath:
+            path: \\.\pipe\rancher_wins
+  updateStrategy:
+    type: RollingUpdate
+---
+apiVersion: v1
+data:
+  run-script.ps1: |-
+    $ErrorActionPreference = "Stop"
+    # wins will rename the binary when executing it. So we need to copy the binary everytime before running it.
+    mkdir -force /host/k/prometheus/bin
+    cp /k/prometheus/bin/windows_exporter.exe /host/k/prometheus/bin/
+
+    C:/k/prometheus/utils/wins.exe cli process run --path /k/prometheus/bin/windows_exporter.exe --exposes TCP:9182
+kind: ConfigMap
+metadata:
+  labels:
+    app: windows-exporter
+  name: windows-exporter-config
+  namespace: monitoring
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  labels:
+    component: windows-exporter
+  name: windows-exporter
+  namespace: monitoring
+subsets:
+- addresses: # can manually add all windows nodes in here
+  - ip: 10.176.37.216 # change to node ip
+    targetRef:
+      kind: Node
+      name: clusterapi-peri-md-0-windows-containerd-5dc857845c-c98sv # change to your node name
+  ports:
+  - name: http-metrics
+    port: 9182
+    protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    component: windows-exporter
+  name: windows-exporter
+  namespace: monitoring
+spec:
+  clusterIP: None
+  ports:
+  - name: http-metrics
+    port: 9182
+    protocol: TCP
+    targetPort: 9182
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    component: windows-exporter
+  name: windows-exporter
+  namespace: monitoring
+spec:
+  endpoints:
+  - interval: 30s
+    port: http-metrics
+  jobLabel: windows-exporter
+  namespaceSelector:
+    matchNames:
+    - monitoring
+  selector:
+    matchLabels:
+      component: windows-exporter

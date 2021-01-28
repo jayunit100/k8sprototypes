@@ -17,6 +17,7 @@ kubectl create -f vspheremachinetemplates.crd.yaml
 cat peri-min.yaml.sh | sed s/\$VSPHERE_USERNAME/administrator@vsphere.local/g > peri-min.yaml
 
 # Set image to run gabi's capv controller
+# 1/28, totally optional since we dont really do any special logic in it anymore :)
 kubectl set image deployment/capv-controller-manager manager=harbor-repo.vmware.com/tkgwindows/vsphere-manager:dev -n capv-system
 kubectl set image deployment/capv-controller-manager manager=harbor-repo.vmware.com/tkgwindows/vsphere-manager:dev -n capi-webhook-system
 

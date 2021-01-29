@@ -35,7 +35,7 @@ spec:
     spec:
      containers:
       - name: windowswebserver
-        image: mcr.microsoft.com/windows/servercore:ltsc2019
+        image: mcr.microsoft.com/windows/servercore/iis:windowsservercore-ltsc2019
         command:
         - powershell.exe
         - -command

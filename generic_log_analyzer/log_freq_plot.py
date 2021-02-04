@@ -34,6 +34,8 @@ print(join(x))
 
 # 1 count lines in the file...
 count = 0
+
+# make sure to always do this before a read ! otherwise your EOF 
 f = open(input_file)
 for line in f.readlines(  ): count += 1
 print("TOTAL LINES")
@@ -43,7 +45,8 @@ print(count)
 # 2 Build an index of all log types
 line_set={"":0}
 line_map={"":0}
-
+# make sure to always do this before a read! otherwise your EOF
+f = open(input_file)
 for line in f.readlines(  ):
     split=splitAny(line)
     ss = join(split)
@@ -61,6 +64,7 @@ print(line_map)
 # 3 now we have integer ids for all unique log "types", 
 print("((((((((((((((((((((((((((((((((((((")
 counttt=0
+# make sure to always do this before a read ! 
 f = open(input_file)
 for line in f.readlines(  ):
     split=splitAny(line)

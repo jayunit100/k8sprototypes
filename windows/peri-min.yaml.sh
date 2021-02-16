@@ -335,10 +335,10 @@ spec:
           cd c:\k\antrea
           curl.exe -LO https://raw.githubusercontent.com/vmware-tanzu/antrea/master/hack/windows/Start.ps1
           curl.exe -LO https://raw.githubusercontent.com/vmware-tanzu/antrea/master/hack/windows/Helper.psm1
-          curl.exe -LO http://w3-dbc302.eng.vmware.com/rcao/image/containerd/antrea-agent.exe
-          mv antrea-agent.exe c:\k\antrea\bin
+          curl.exe -LO https://github.com/vmware-tanzu/antrea/releases/download/v0.13.0/antrea-agent-windows-x86_64.exe
+          mv antrea-agent-windows-x86_64.exe c:\k\antrea\bin\antrea-agent.exe
           Import-Module ./helper.psm1
-          & Install-AntreaAgent -KubernetesVersion "v1.19.1" -KubernetesHome "c:/k" -KubeConfig "C:/etc/kubernetes/kubelet.conf" -AntreaVersion "v0.12.0" -AntreaHome "c:/k/antrea"
+          & Install-AntreaAgent -KubernetesVersion "v1.19.1" -KubernetesHome "c:/k" -KubeConfig "C:/etc/kubernetes/kubelet.conf" -AntreaVersion "v0.13.0" -AntreaHome "c:/k/antrea"
           New-KubeProxyServiceInterface
           Add-MpPreference -ExclusionProcess "ctr.exe"
           Add-MpPreference -ExclusionProcess "containerd.exe"
@@ -2389,7 +2389,7 @@ data:
               valueFrom:
                 fieldRef:
                   fieldPath: spec.serviceAccountName
-            image: projects.registry.vmware.com/antrea/antrea-ubuntu:v0.12.0
+            image: projects.registry.vmware.com/antrea/antrea-ubuntu:v0.13.0
             name: antrea-controller
             ports:
             - containerPort: 10349
@@ -2560,7 +2560,7 @@ data:
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
-            image: projects.registry.vmware.com/antrea/antrea-ubuntu:v0.12.0
+            image: projects.registry.vmware.com/antrea/antrea-ubuntu:v0.13.0
             livenessProbe:
               exec:
                 command:
@@ -2620,7 +2620,7 @@ data:
             - --log_file_max_num=4
             command:
             - start_ovs
-            image: projects.registry.vmware.com/antrea/antrea-ubuntu:v0.12.0
+            image: projects.registry.vmware.com/antrea/antrea-ubuntu:v0.13.0
             livenessProbe:
               exec:
                 command:
@@ -2654,7 +2654,7 @@ data:
           initContainers:
           - command:
             - install_cni
-            image: projects.registry.vmware.com/antrea/antrea-ubuntu:v0.12.0
+            image: projects.registry.vmware.com/antrea/antrea-ubuntu:v0.13.0
             name: install-cni
             resources:
               requests:

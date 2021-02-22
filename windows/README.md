@@ -93,8 +93,10 @@ Now if your env isnt setup right, this is where things might fall down
 - Now on your windows node, clean up the kubelet if needed:
 ```
 kubeadm reset # <-- dont run this unless it failed the last time
- New-Item -path $env:SystemDrive\var\lib\kubelet\etc\kubernetes\pki -type SymbolicLink -value  $env:SystemDrive
-\etc\kubernetes\pki\ -Force
+
+# Now, replace the /var/lib/kubelet/etc/... with /etc/kubernetes/pki/ symlinked... 
+
+New-Item -path $env:SystemDrive\var\lib\kubelet\etc\kubernetes\pki -type SymbolicLink -value  $env:SystemDrive\etc\kubernetes\pki\ -Force
 ```
 - And finally, join the cluster by copying the above output from the `kubeadm token create... print-join-token` step.  i.e. run something like this:
 

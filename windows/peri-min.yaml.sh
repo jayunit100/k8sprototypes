@@ -69,7 +69,7 @@ spec:
       numCPUs: 2
       os: Linux
       server: $VSPHERE_SERVER
-      template: $VSPHERE_DATACENTER/vm/photon-3-kube-v1.19.3
+      template: $VSPHERE_DATACENTER/vm/photon-3-kube-v1.20.1
 ---
 apiVersion: controlplane.cluster.x-k8s.io/v1alpha3
 kind: KubeadmControlPlane
@@ -162,7 +162,7 @@ spec:
       - $VSPHERE_SSH_AUTHORIZED_KEY
       sudo: ALL=(ALL) NOPASSWD:ALL
   replicas: 1
-  version: v1.19.1
+  version: v1.20.1
 ---
 apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3
 kind: KubeadmConfigTemplate
@@ -217,7 +217,7 @@ spec:
         apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
         kind: VSphereMachineTemplate
         name: clusterapi-peri
-      version: v1.19.1
+      version: v1.20.1
 ---
 apiVersion: cluster.x-k8s.io/v1alpha3
 kind: MachineDeployment
@@ -246,7 +246,7 @@ spec:
         apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
         kind: VSphereMachineTemplate
         name: clusterapi-peri-windows-containerd
-      version: v1.19.1
+      version: v1.20.1
 ---
 apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
 kind: VSphereMachineTemplate
@@ -269,7 +269,7 @@ spec:
       numCPUs: 4
       os: Windows
       server: $VSPHERE_SERVER
-      template: windows-2019-kube-v1.19.1-containerd
+      template: windows-2019-kube-v1.20.1
 ---
 apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3
 kind: KubeadmConfigTemplate
@@ -338,7 +338,7 @@ spec:
           curl.exe -LO http://w3-dbc302.eng.vmware.com/rcao/image/containerd/antrea-agent.exe
           mv antrea-agent.exe c:\k\antrea\bin
           Import-Module ./helper.psm1
-          & Install-AntreaAgent -KubernetesVersion "v1.19.1" -KubernetesHome "c:/k" -KubeConfig "C:/etc/kubernetes/kubelet.conf" -AntreaVersion "v0.12.0" -AntreaHome "c:/k/antrea"
+          & Install-AntreaAgent -KubernetesVersion "v1.20.1" -KubernetesHome "c:/k" -KubeConfig "C:/etc/kubernetes/kubelet.conf" -AntreaVersion "v0.12.0" -AntreaHome "c:/k/antrea"
           New-KubeProxyServiceInterface
           Add-MpPreference -ExclusionProcess "ctr.exe"
           Add-MpPreference -ExclusionProcess "containerd.exe"

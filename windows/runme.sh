@@ -3,11 +3,11 @@ if [[ ! -v VSPHERE_CP_IP ]]; then
         echo "NO ENV SET FOR CONTROL PLANE MAKING A DEFAULT IN THE 12 SUBNET (this will work on corgi nsx jobs) !!!"
         VSPHERE_CP_IP=12.10.10.205
 fi
-wget https://build-artifactory.eng.vmware.com/artifactory/webapp/#/artifacts/browse/tree/General/k8simages-windows-local/windows-2019-kube-v1.19.1-containerd-nohyper.ova
+wget https://build-artifactory.eng.vmware.com/artifactory/webapp/#/artifacts/browse/tree/General/k8simages-windows-local/windows-2019-kube-v1.20.1.ova
 
-govc import.ova https://build-artifactory.eng.vmware.com/k8simages-windows-local/windows-2019-kube-v1.19.1-containerd-nohyper.ova
-govc object.rename windows-2019-kube-v1.19.1 windows-2019-kube-v1.19.1-containerd
-govc vm.change -vm windows-2019-kube-v1.19.1-containerd -nested-hv-enabled=false 
+govc import.ova https://build-artifactory.eng.vmware.com/k8simages-windows-local/windows-2019-kube-v1.20.1.ova
+govc object.rename windows-2019-kube-v1.20.1 windows-2019-kube-v1.20.1-containerd
+govc vm.change -vm windows-2019-kube-v1.20.1-containerd -nested-hv-enabled=false 
 
 kubectl delete -f vspheremachinetemplates.crd.yaml
 kubectl create -f vspheremachinetemplates.crd.yaml

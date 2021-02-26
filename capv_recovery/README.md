@@ -1,3 +1,18 @@
+capi reconciles: <-
+- clusters
+- machines
+- machinesets
+- machinedeployments
+- machine health checks
+- clusterresourcesets
+
+kubeadmbootstrapcontroller reconcilers:
+- kubeadmbootstrap configs
+- kubeadmboostrap config templates <- 
+
+kubeadmcontrolplane reconciles:
+- kubeadmcontrolplane resources
+ 
 # What does a CAPV recovery scenario look like ? 
 
 In CAPV HAProxy can be used to indicate the health of yourclusters.

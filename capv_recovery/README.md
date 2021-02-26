@@ -1,3 +1,7 @@
+# update 2/26/2021
+
+This doc now is used to generally take notes abotu capv reconcilation... WIP... 
+```
 capi reconciles: <-
 - clusters
 - machines
@@ -12,7 +16,10 @@ kubeadmbootstrapcontroller reconcilers:
 
 kubeadmcontrolplane reconciles:
 - kubeadmcontrolplane resources
+```
  
+# original notes from early 2020 , this is obsolete now, this is from TKG 1.0
+
 # What does a CAPV recovery scenario look like ? 
 
 In CAPV HAProxy can be used to indicate the health of yourclusters.

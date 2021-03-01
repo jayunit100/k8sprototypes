@@ -75,7 +75,8 @@ function install_k8s() {
 
 function install_calico() {
     kubectl get pods
-    kubectl apply -f ./calico312.yaml
+    curl https://docs.projectcalico.org/manifests/calico.yaml -O
+    kubectl apply -f ./calico.yaml
     kubectl get pods -n kube-system
     kubectl -n kube-system set env daemonset/calico-node FELIX_IGNORELOOSERPF=true
     kubectl -n kube-system set env daemonset/calico-node FELIX_XDPENABLED=false
@@ -86,7 +87,7 @@ function install_antrea() {
 	    git clone https://github.com/vmware-tanzu/antrea.git	
 	fi
 	pushd antrea
-	     git checkout v0.9.0
+	     git checkout v0.12.0
 	     pushd ci/kind
     	      ./kind-setup.sh create antrea
 	     popd

@@ -75,7 +75,8 @@ function install_k8s() {
 
 function install_calico() {
     kubectl get pods
-    curl https://docs.projectcalico.org/manifests/calico.yaml -O
+    # this might fail ... if so, no problem, we just use calico.yaml thats in the github repo here :)...
+    # curl https://docs.projectcalico.org/manifests/calico.yaml -O
     kubectl apply -f ./calico.yaml
     kubectl get pods -n kube-system
     kubectl -n kube-system set env daemonset/calico-node FELIX_IGNORELOOSERPF=true

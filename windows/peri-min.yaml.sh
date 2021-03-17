@@ -329,7 +329,7 @@ spec:
           $newstr="--node-ip=" + $env:HostIP
           $raw = Get-Content -Path $file -TotalCount 1
           $raw = $raw -replace ".$"
-          $new = "$($raw) $($newstr)`""
+          $new = "$($raw) $($newstr)`"
           Set-Content $file $new
           $nssm = (Get-Command nssm).Source
           $serviceName = 'Kubelet'
@@ -337,6 +337,7 @@ spec:
           cd c:\k\antrea
           curl.exe -LO https://raw.githubusercontent.com/vmware-tanzu/antrea/master/hack/windows/Start.ps1
           curl.exe -LO https://raw.githubusercontent.com/vmware-tanzu/antrea/master/hack/windows/Helper.psm1
+          curl.exe -LO https://github.com/vmware-tanzu/antrea/releases/download/v0.13.0/antrea-agent-windows-x86_64.exe
           curl.exe -LO http://w3-dbc302.eng.vmware.com/rcao/image/containerd/antrea-agent.exe
           mv antrea-agent.exe c:\k\antrea\bin
           Import-Module ./helper.psm1

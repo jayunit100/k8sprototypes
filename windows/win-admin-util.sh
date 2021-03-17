@@ -1,5 +1,11 @@
 #!/bin/bash
 
+function get_antrea_logs() {
+	for i in `kubectl get nodes -o jsonpath='{.items[*].status.addresses[?(@.type=="ExternalIP")].address}'` ; do
+		ssh -o StrictHostKeyChecking=no capv@$i "cd C:/k/antrea/logs ; Get-ChildItem -Path C:\k\antrea\logs\ -Name | cat"
+	done
+}
+
 function update_tomls() {
 	for i in `kubectl get nodes -o jsonpath='{.items[*].status.addresses[?(@.type=="ExternalIP")].address}'` ; do 
 		echo "START --------------  $i"; 
@@ -25,15 +31,18 @@ function reboot() {
 	done
 }
 
-if "$1" == "t" ; then
+if [[ "$1" == "t" ]] ; then
 	update_tomls
 fi
 
-if "$1" == "c" ; then
+if [[ "$1" == "c" ]] ; then
 	clear_defender
 fi
 
-if "$1" == "r" ; then
+if [[ "$1" == "r" ]] ; then
 	reboot
 fi
 
+if [[ "$1" == "a" ]] ; then
+	get_antrea_logs	
+fi

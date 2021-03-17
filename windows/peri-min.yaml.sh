@@ -9,7 +9,7 @@ spec:
   clusterNetwork:
     pods:
       cidrBlocks:
-      - 192.168.0.0/16
+      - 100.168.0.0/16
   controlPlaneRef:
     apiVersion: controlplane.cluster.x-k8s.io/v1alpha3
     kind: KubeadmControlPlane
@@ -31,22 +31,22 @@ spec:
       secretName: cloud-provider-vsphere-credentials
       secretNamespace: kube-system
     network:
-      name: $VSPHERE_NETWORK
+      name: sddc-cgw-network-8 
     providerConfig:
       cloud:
         controllerImage: gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.2.1
     virtualCenter:
-      $VSPHERE_SERVER:
-        datacenters: $VSPHERE_DATACENTER
+      xVSPHERE_SERVER:
+        datacenters: xVSPHERE_DATACENTER
     workspace:
-      datacenter: $VSPHERE_DATACENTER
-      datastore: $VSPHERE_DATASTORE
-      folder: $VSPHERE_FOLDER
-      server: $VSPHERE_SERVER
+      datacenter: xVSPHERE_DATACENTER
+      datastore: xVSPHERE_DATASTORE
+      folder: xVSPHERE_FOLDER
+      server: xVSPHERE_SERVER
   controlPlaneEndpoint:
-    host: $VSPHERE_CP_IP
+    host: xVSPHERE_CP_IP
     port: 6443
-  server: $VSPHERE_SERVER
+  server: xVSPHERE_SERVER
 ---
 apiVersion: infrastructure.cluster.x-k8s.io/v1alpha3
 kind: VSphereMachineTemplate
@@ -57,19 +57,20 @@ spec:
   template:
     spec:
       cloneMode: linkedClone
-      datacenter: $VSPHERE_DATACENTER
-      datastore: $VSPHERE_DATASTORE
+      datacenter: xVSPHERE_DATACENTER
+      datastore: xVSPHERE_DATASTORE
+      resourcePool: xVSPHERE_RESOURCE_POOL
       diskGiB: 25
-      folder: $VSPHERE_FOLDER
+      folder: xVSPHERE_FOLDER
       memoryMiB: 8192
       network:
         devices:
         - dhcp4: true
-          networkName: $VSPHERE_NETWORK
+          networkName: sddc-cgw-network-8
       numCPUs: 2
       os: Linux
-      server: $VSPHERE_SERVER
-      template: $VSPHERE_DATACENTER/vm/photon-3-kube-v1.19.3
+      server: xVSPHERE_SERVER
+      template: xVSPHERE_MACHINE_TEMPLATE
 ---
 apiVersion: controlplane.cluster.x-k8s.io/v1alpha3
 kind: KubeadmControlPlane
@@ -107,7 +108,7 @@ spec:
             - name: vip_leaderelection
               value: "true"
             - name: vip_address
-              value: $VSPHERE_CP_IP
+              value: xVSPHERE_CP_IP
             - name: vip_interface
               value: eth0
             - name: vip_leaseduration
@@ -159,7 +160,7 @@ spec:
     users:
     - name: capv
       sshAuthorizedKeys:
-      - $VSPHERE_SSH_AUTHORIZED_KEY
+      - xVSPHERE_SSH_AUTHORIZED_KEY
       sudo: ALL=(ALL) NOPASSWD:ALL
   replicas: 1
   version: v1.19.1
@@ -187,7 +188,7 @@ spec:
       users:
       - name: capv
         sshAuthorizedKeys:
-        - '$VSPHERE_SSH_AUTHORIZED_KEY'
+        - 'xVSPHERE_SSH_AUTHORIZED_KEY'
         sudo: ALL=(ALL) NOPASSWD:ALL
 ---
 apiVersion: cluster.x-k8s.io/v1alpha3
@@ -257,19 +258,20 @@ spec:
   template:
     spec:
       cloneMode: linkedClone
-      datacenter: $VSPHERE_DATACENTER
-      datastore: $VSPHERE_DATASTORE
+      datacenter: xVSPHERE_DATACENTER
+      datastore: xVSPHERE_DATASTORE
       diskGiB: 80
-      folder: $VSPHERE_FOLDER
+      folder: xVSPHERE_FOLDER
+      resourcePool: xVSPHERE_RESOURCE_POOL
       memoryMiB: 5000
       network:
         devices:
         - dhcp4: true
-          networkName: $VSPHERE_NETWORK
+          networkName: sddc-cgw-network-8
       numCPUs: 4
       os: Windows
-      server: $VSPHERE_SERVER
-      template: windows-2019-kube-v1.19.1-containerd
+      server: xVSPHERE_SERVER
+      template: xVSPHERE_MACHINE_TEMPLATE_WINDOWS
 ---
 apiVersion: bootstrap.cluster.x-k8s.io/v1alpha3
 kind: KubeadmConfigTemplate
@@ -349,7 +351,7 @@ spec:
       - name: capv
         groups: Administrators
         sshAuthorizedKeys:
-        - $VSPHERE_SSH_AUTHORIZED_KEY
+        - xVSPHERE_SSH_AUTHORIZED_KEY
         sudo: ALL=(ALL) NOPASSWD:ALL
 ---
 apiVersion: addons.cluster.x-k8s.io/v1alpha3
@@ -542,13 +544,13 @@ stringData:
         insecure-flag = true
         cluster-id = "default/clusterapi-peri"
 
-        [VirtualCenter "$VSPHERE_SERVER"]
-        user = "$VSPHERE_USERNAME"
-        password = "$VSPHERE_PASSWORD"
-        datacenters = "$VSPHERE_DATACENTER"
+        [VirtualCenter "xVSPHERE_SERVER"]
+        user = "xVSPHERE_USERNAME"
+        password = "xVSPHERE_PASSWORD"
+        datacenters = "xVSPHERE_DATACENTER"
 
         [Network]
-        public-network = "$VSPHERE_NETWORK"
+        public-network = "sddc-cgw-network-8"
 
     type: Opaque
 type: addons.cluster.x-k8s.io/resource-set

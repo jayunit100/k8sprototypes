@@ -329,7 +329,7 @@ spec:
           $newstr="--node-ip=" + $env:HostIP
           $raw = Get-Content -Path $file -TotalCount 1
           $raw = $raw -replace ".$"
-          $new = "$($raw) $($newstr)`"
+          $new = "$($raw) $($newstr)"
           Set-Content $file $new
           $nssm = (Get-Command nssm).Source
           $serviceName = 'Kubelet'

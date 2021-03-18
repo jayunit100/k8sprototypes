@@ -17,8 +17,8 @@ function update_tomls() {
 }
 
 function svc_check() {
-	 for i in `kubectl get nodes -o jsonpath='{.items[*].status.addresses[?(@.type=="ExternalIP")].address}'` ; do
-	ssh -o StrictHostKeyChecking=no capv@$i "Get-Service *antrea* ; Get-Service *ovs* ; Get-Service *containerd* ; Get-Service *kubelet*"
+	for i in `kubectl get nodes -o jsonpath='{.items[*].status.addresses[?(@.type=="ExternalIP")].address}'` ; do
+		ssh -o StrictHostKeyChecking=no capv@$i "Get-Service *antrea* ; Get-Service *ovs* ; Get-Service *containerd* ; Get-Service *kubelet*"
 	done
 }
 

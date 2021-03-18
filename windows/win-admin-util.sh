@@ -13,6 +13,20 @@ function update_tomls() {
 		ssh -o StrictHostKeyChecking=no capv@$i "curl.exe https://raw.githubusercontent.com/jayunit100/k8sprototypes/master/kind/capi-containerd-win.toml > a.txt"
 		ssh -o StrictHostKeyChecking=no capv@$i "Get-Content a.txt | out-file -encoding ASCII 'C:\Program Files\containerd\config.toml'"
 		ssh -o StrictHostKeyChecking=no capv@$i "Get-Content 'C:\Program Files\containerd\config.toml' | Measure-Object -Line "
+	done
+}
+
+function svc_check() {
+	 for i in `kubectl get nodes -o jsonpath='{.items[*].status.addresses[?(@.type=="ExternalIP")].address}'` ; do
+	ssh -o StrictHostKeyChecking=no capv@$i "Get-Service *antrea* ; Get-Service *ovs* ; Get-Service *containerd* ; Get-Service *kubelet*"
+	done
+}
+
+
+# bounce containerd and tomls
+function bounce_ctr() {
+	for i in `kubectl get nodes -o jsonpath='{.items[*].status.addresses[?(@.type=="ExternalIP")].address}'` ; do
+		echo "START --------------$i"  ;
 		ssh -o StrictHostKeyChecking=no capv@$i "Restart-Service containerd"
 		ssh -o StrictHostKeyChecking=no capv@$i "Start-Service Kubelet" 
 		echo "DONE -------------- $i"  ; 
@@ -27,22 +41,27 @@ function clear_defender() {
 
 function reboot() {
 	for i in `kubectl get nodes -o jsonpath='{.items[*].status.addresses[?(@.type=="ExternalIP")].address}'` ; do 
-		ssh -o StrictHostKeyChecking=no capv@$i "Reboot-Machine" ; echo $i ; 
+		ssh -o StrictHostKeyChecking=no capv@$i "Restart-Computer" ; echo $i ; 
 	done
 }
 
 if [[ "$1" == "t" ]] ; then
 	update_tomls
 fi
-
 if [[ "$1" == "c" ]] ; then
 	clear_defender
 fi
-
 if [[ "$1" == "r" ]] ; then
 	reboot
 fi
-
 if [[ "$1" == "a" ]] ; then
 	get_antrea_logs	
 fi
+if [[ "$1" == "b" ]] ; then
+	bounce_ctr
+fi
+if [[ "$1" == "s" ]] ; then
+	svc_check
+fi
+
+

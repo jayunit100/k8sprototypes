@@ -1,5 +1,7 @@
 # CNI Debugging 
 
+https://www.youtube.com/watch?v=RQNy1PHd5_A
+
 How can I debug the datapath of containers in my Kubernetes clusters using basic linux commands? 
 
 - Rough outline of pod -> service -> node -> policy flow, generalized for any CNI.

@@ -274,7 +274,7 @@ spec:
             Expand-Archive -Force -Path C:\k\antrea\antrea-windows.zip -DestinationPath C:\k\antrea
             New-Item -ItemType Directory -Force -Path C:\opt\cni\bin
             New-Item -ItemType Directory -Force -Path C:\etc\cni\net.d
-            cp C:\k\antrea\bin\antrea-cni.exe C:\opt\cni\bin\antrea.exe
+            cp C:\k\antrea\bin\antrea-cni.exe C:\opt\cni\bin\antrea.exe -Force
             [Environment]::SetEnvironmentVariable("NODE_NAME", (hostname).ToLower())
             $trigger = New-JobTrigger -AtStartup
             $options = New-ScheduledJobOption -RunElevated
@@ -309,7 +309,7 @@ spec:
             curl.exe -LO https://raw.githubusercontent.com/vmware-tanzu/antrea/master/hack/windows/Start.ps1
             curl.exe -LO https://raw.githubusercontent.com/vmware-tanzu/antrea/master/hack/windows/Helper.psm1
             curl.exe -LO http://w3-dbc302.eng.vmware.com/rcao/image/containerd/antrea-agent.exe
-            mv antrea-agent.exe c:\k\antrea\bin
+            mv antrea-agent.exe c:\k\antrea\bin -Force
             Import-Module ./helper.psm1
             & Install-AntreaAgent -KubernetesVersion "v1.19.1" -KubernetesHome "c:/k" -KubeConfig "C:/etc/kubernetes/kubelet.conf" -AntreaVersion "v0.12.0" -AntreaHome "c:/k/antrea"
             New-KubeProxyServiceInterface

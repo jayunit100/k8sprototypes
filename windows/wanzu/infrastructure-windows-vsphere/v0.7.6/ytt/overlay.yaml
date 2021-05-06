@@ -255,7 +255,7 @@ spec:
           # Add Windows Defender Options
           $avexceptions = @('c:\program files\containerd\ctr.exe', 'c:\program files\containerd\containerd.exe' )
           foreach ($e in $avexceptions) {
-                Add-MpPreference -ExclusionProcess $f
+                Add-MpPreference -ExclusionProcess $e
           }
 
           # Install Antrea

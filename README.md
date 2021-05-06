@@ -5,9 +5,12 @@ This project has a variety of prototypes for utilities, tools that are being dev
 ## A markdown walkthrough comparing calico w/ antrea
 https://github.com/jayunit100/k8sprototypes/tree/master/2020kubecon
 
+## Windows TKG/Cluster API Ytt templates
+https://github.com/jayunit100/k8sprototypes/windows
+
+
 ## Truth table driven network policy tests
 https://github.com/jayunit100/k8sprototypes/tree/master/netpol
-![Alt text](https://github.com/jayunit100/k8sprototypes/raw/master/netpol.png)
 
 ## A simple Kind cluster for testing network policies
 https://github.com/jayunit100/k8sprototypes/tree/master/kind

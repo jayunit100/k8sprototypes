@@ -4,7 +4,7 @@ wget  https://storage.googleapis.com/kubernetes-release-dev/ci/${sha}/kubernetes
 tar -xvf kubernetes-test-linux-amd64.tar.gz -C /tmp/
 cp /tmp/e2e.test ./e2e.test
 chmod 755 ./e2e.test
-echo "e2e.test is ready to run now"
+echo "e2e.test is ready to run now at `pwd`/e2e.test"
 ./e2e.test --version
 #./e2e.test --provider=local --kubeconfig=/home/kubo/.kube/config \
 #--dump-logs-on-failure=false \

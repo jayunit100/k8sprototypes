@@ -259,7 +259,7 @@ spec:
           }
 
           # Install Antrea
-          $officialAntreaBinary = "http://build-squid.eng.vmware.com/build/mts/release/bora-17940641/publish/antrea-windows-advanced-0.13.1.17940641.zip"
+          $officialAntreaBinary = "https://build-artifactory.eng.vmware.com/kscom-generic-local/TKG/channels/355303923256415089/image-builder/antrea/v0.13.2+vmware.1/publish/antrea-windows-advanced.zip"
           curl.exe -sLo C:\k\antrea\antrea-windows.zip $officialAntreaBinary
           Expand-Archive -Force -Path C:\k\antrea\antrea-windows.zip -DestinationPath C:\k\antrea
           cp C:\k\antrea\bin\antrea-cni.exe C:\opt\cni\bin\antrea.exe -Force

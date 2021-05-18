@@ -259,7 +259,7 @@ spec:
           }
 
           # Install Antrea
-          $officialAntreaBinary = "http://build-squid.eng.vmware.com/build/mts/release/bora-17940641/publish/antrea-windows-advanced-0.13.1.17940641.zip"
+          $officialAntreaBinary = "https://build-artifactory.eng.vmware.com/kscom-generic-local/TKG/channels/355303923256415089/image-builder/antrea/v0.13.2+vmware.1/publish/antrea-windows-advanced.zip"
           curl.exe -sLo C:\k\antrea\antrea-windows.zip $officialAntreaBinary
           Expand-Archive -Force -Path C:\k\antrea\antrea-windows.zip -DestinationPath C:\k\antrea
           cp C:\k\antrea\bin\antrea-cni.exe C:\opt\cni\bin\antrea.exe -Force
@@ -280,18 +280,6 @@ spec:
           Set-Content $file $new
 
           $KubeConfigFile='C:\etc\kubernetes\kubelet.conf'
-
-          # Setup kubo-proxy config file
-          $KubeProxyConfig="C:\k\antrea\etc\kube-proxy.conf"
-          $KubeAPIServer=$(kubectl --kubeconfig=$KubeConfigFile config view -o jsonpath='{.clusters[0].cluster.server}')
-          $KubeProxyTOKEN=$(kubectl --kubeconfig=$KubeConfigFile get secrets -n kube-system -o jsonpath="{.items[?(@.metadata.annotations['kubernetes\.io/service-account\.name']=='kube-proxy')].data.token}")
-          $KubeProxyTOKEN=$([System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($KubeProxyTOKEN)))
-          kubectl config --kubeconfig=$KubeProxyConfig set-cluster kubernetes --server=$KubeAPIServer --insecure-skip-tls-verify
-          kubectl config --kubeconfig=$KubeProxyConfig set-credentials kube-proxy --token=$KubeProxyTOKEN
-          kubectl config --kubeconfig=$KubeProxyConfig set-context kube-proxy@kubernetes --cluster=kubernetes --user=kube-proxy
-          kubectl config --kubeconfig=$KubeProxyConfig use-context kube-proxy@kubernetes
-
-          # Wait for antrea-agent token to be ready
           $AntreaToken=$null
           $LoopCount=1000
           do {
@@ -303,7 +291,6 @@ spec:
               $AntreaToken=$(kubectl --kubeconfig=$KubeConfigFile get secrets -n kube-system -o jsonpath="{.items[?(@.metadata.annotations['kubernetes\.io/service-account\.name']=='antrea-agent')].data.token}")
           } while ($AntreaToken -eq $null)
 
-          # Install antrea-agent & ovs
           Import-Module c:/k/antrea/helper.psm1
           & Install-AntreaAgent -KubernetesVersion "v1.19.1" -KubernetesHome "c:/k" -KubeConfig "C:/etc/kubernetes/kubelet.conf" -AntreaVersion "v0.13.1" -AntreaHome "c:/k/antrea"
           New-KubeProxyServiceInterface
@@ -313,7 +300,7 @@ spec:
           # Setup Services
           $nssm = (Get-Command nssm).Source
           & $nssm set Kubelet start SERVICE_AUTO_START
-          & nssm install kube-proxy "c:/k/kube-proxy.exe" "--proxy-mode=userspace --kubeconfig=$KubeProxyConfig --log-dir=c:/var/log/kube-proxy --logtostderr=false --alsologtostderr"
+          & nssm install kube-proxy "c:/k/kube-proxy.exe" "--proxy-mode=userspace --kubeconfig=C:/etc/kubernetes/kubelet.conf --log-dir=c:/var/log/kube-proxy --logtostderr=false --alsologtostderr"
           & nssm install antrea-agent "c:/k/antrea/bin/antrea-agent.exe" "--config=c:/k/antrea/etc/antrea-agent.conf --logtostderr=false --log_dir=c:/var/log/antrea --alsologtostderr --log_file_max_size=100 --log_file_max_num=4"
           & nssm set antrea-agent DependOnService kube-proxy ovs-vswitchd
           & nssm set antrea-agent Start SERVICE_DELAYED_START

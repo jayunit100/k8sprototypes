@@ -261,11 +261,13 @@ spec:
           # Install Antreaa
           $antreaZipFile = 'C:\k\antrea\antrea-windows-advanced.zip'
           if (!(Test-Path $antreaZipFile)) {
-              $officialAntreaBinary = "https://build-artifactory.eng.vmware.com/kscom-generic-local/TKG/channels/355303923256415089/image-builder/antrea/v0.13.2+vmware.1/publish/antrea-windows-advanced.zip"
+              $officialAntreaBinary = "http://build-squid.eng.vmware.com/build/mts/release/bora-18056847/publish/windows-advanced/antrea-windows-advanced.zip"
               curl.exe -sLo $antreaZipFile $officialAntreaBinary
           }
           Expand-Archive -Force -Path $antreaZipFile -DestinationPath C:\k\antrea
           cp C:\k\antrea\bin\antrea-cni.exe C:\opt\cni\bin\antrea.exe -Force
+          cp C:\k\antrea\bin\host-local.exe C:\opt\cni\bin\host-local.exe -Force
+          cp C:\k\antrea\etc\antrea-cni.conflist C:\etc\cni\net.d\10-antrea.conflist -Force
 
           # Get HostIP and set in kubeadm-flags.env
           [Environment]::SetEnvironmentVariable("NODE_NAME", (hostname).ToLower())
@@ -314,11 +316,16 @@ spec:
           # kube-proxy.exe of version v1.21.0 is not working, please see:
           #        https://github.com/kubernetes/kubernetes/issues/101500
           # we have to use v1.21.1 instead although version of our Kubernetes is v1.21.0.
-          if (Test-Path "C:\k\kube-proxy.exe") {
+          if (Test-Path "C:/k/kube-proxy.exe") {
               # Delete v1.21.0 if it exists.
-              rm -Force C:\k\kube-proxy.exe
+              $KubeProxyVer = $(C:/k/kube-proxy.exe --version)
+              if ($KubeProxyVer.startswith('Kubernetes v1.21.0')) {
+                  rm -Force C:/k/kube-proxy.exe
+              }
           }
-          curl.exe -sLo C:\k\kube-proxy.exe https://dl.k8s.io/v1.21.1/bin/windows/amd64/kube-proxy.exe --ssl-no-revoke
+          if (!(Test-Path "C:/k/kube-proxy.exe")) {
+              curl.exe -sLo C:/k/kube-proxy.exe https://dl.k8s.io/v1.21.1/bin/windows/amd64/kube-proxy.exe --ssl-no-revoke
+          }
 
           # Install antrea-agent & ovs
           Import-Module c:/k/antrea/helper.psm1

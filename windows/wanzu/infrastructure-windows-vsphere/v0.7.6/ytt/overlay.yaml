@@ -224,7 +224,7 @@ spec:
       - #@ data.values.VSPHERE_SSH_AUTHORIZED_KEY
       sudo: ALL=(ALL) NOPASSWD:ALL
   replicas: #@ data.values.CONTROL_PLANE_MACHINE_COUNT
-  version: #@ data.values.KUBERNETES_VERSION
+  version: v1.21.0+vmware.2
 
 #@overlay/match by=overlay.subset({"kind":"KubeadmConfigTemplate"})
 ---

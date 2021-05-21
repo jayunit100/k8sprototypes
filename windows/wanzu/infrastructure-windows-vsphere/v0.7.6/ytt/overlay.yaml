@@ -261,11 +261,13 @@ spec:
           # Install Antreaa
           $antreaZipFile = 'C:\k\antrea\antrea-windows-advanced.zip'
           if (!(Test-Path $antreaZipFile)) {
-              $officialAntreaBinary = "https://build-artifactory.eng.vmware.com/kscom-generic-local/TKG/channels/355303923256415089/image-builder/antrea/v0.13.2+vmware.1/publish/antrea-windows-advanced.zip"
+              $officialAntreaBinary = "http://build-squid.eng.vmware.com/build/mts/release/bora-18056847/publish/windows-advanced/antrea-windows-advanced.zip"
               curl.exe -sLo $antreaZipFile $officialAntreaBinary
           }
           Expand-Archive -Force -Path $antreaZipFile -DestinationPath C:\k\antrea
           cp C:\k\antrea\bin\antrea-cni.exe C:\opt\cni\bin\antrea.exe -Force
+          cp C:\k\antrea\bin\host-local.exe C:\opt\cni\bin\host-local.exe -Force
+          cp C:\k\antrea\etc\antrea-cni.conflist C:\etc\cni\net.d\10-antrea.conflist -Force
 
           # Get HostIP and set in kubeadm-flags.env
           [Environment]::SetEnvironmentVariable("NODE_NAME", (hostname).ToLower())
@@ -306,9 +308,28 @@ spec:
               $AntreaToken=$(kubectl --kubeconfig=$KubeConfigFile get secrets -n kube-system -o jsonpath="{.items[?(@.metadata.annotations['kubernetes\.io/service-account\.name']=='antrea-agent')].data.token}")
           } while ($AntreaToken -eq $null)
 
+          # Download kube-proxy in advance to avoid download failure in Install-AntreaAgent.
+          # This is only a workaround because we don't have kube-proxy.exe packed into Windows
+          # OVA, Install-AntreaAgent will check whether the file exists, if not, it will curl
+          # a new one, but there maybe something wrong in that function, curl may fail to get
+          # kube-proxy.exe, to avoid the failure case, we download it here.  Another thing,
+          # kube-proxy.exe of version v1.21.0 is not working, please see:
+          #        https://github.com/kubernetes/kubernetes/issues/101500
+          # we have to use v1.21.1 instead although version of our Kubernetes is v1.21.0.
+          if (Test-Path "C:/k/kube-proxy.exe") {
+              # Delete v1.21.0 if it exists.
+              $KubeProxyVer = $(C:/k/kube-proxy.exe --version)
+              if ($KubeProxyVer.startswith('Kubernetes v1.21.0')) {
+                  rm -Force C:/k/kube-proxy.exe
+              }
+          }
+          if (!(Test-Path "C:/k/kube-proxy.exe")) {
+              curl.exe -sLo C:/k/kube-proxy.exe https://dl.k8s.io/v1.21.1/bin/windows/amd64/kube-proxy.exe --ssl-no-revoke
+          }
+
           # Install antrea-agent & ovs
           Import-Module c:/k/antrea/helper.psm1
-          & Install-AntreaAgent -KubernetesVersion "v1.19.1" -KubernetesHome "c:/k" -KubeConfig "C:/etc/kubernetes/kubelet.conf" -AntreaVersion "v0.13.1" -AntreaHome "c:/k/antrea"
+          & Install-AntreaAgent -KubernetesVersion "v1.21.1" -KubernetesHome "c:/k" -KubeConfig "C:/etc/kubernetes/kubelet.conf" -AntreaVersion "v0.13.2" -AntreaHome "c:/k/antrea"
           New-KubeProxyServiceInterface
           & c:/k/antrea/Install-OVS.ps1 -ImportCertificate $false -LocalFile c:/k/antrea/ovs-win64.zip
           Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False
@@ -437,6 +458,15 @@ data:
       - get
       - list
       - watch
+    - apiGroups:
+      - ""
+      resources:
+      - events
+      verbs:
+      - get
+      - list
+      - watch
+      - create
     ---
     apiVersion: rbac.authorization.k8s.io/v1
     kind: ClusterRoleBinding

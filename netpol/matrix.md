@@ -3,7 +3,7 @@
 Taken from 
 https://storage.googleapis.com/kubernetes-jenkins/logs/ci-kubernetes-e2e-ubuntu-gce-network-policies/1417411869290795008/build-log.txt
 
-Creating pods... 
+## Part 1: Creating pods... 
 
 ```
 I0720 10:17:14.944] Jul 20 10:00:56.142: INFO: Using cluster.local as the default dns domain for this cluster... 
@@ -44,7 +44,7 @@ I0720 10:17:15.120] Jul 20 10:15:06.773: INFO: server 81->81,UDP is ready
 I0720 10:19:32.751] Jul 20 10:17:40.855: INFO: server 81->80,TCP is ready
 ```
 
-then 
+## Part 2: Applying policies to the running pods
 
 ```
 I0720 10:19:32.752] Jul 20 10:17:40.855: INFO: Network Policy creating netpol-3608-x/allow-ns-y-pod-a-via-namespace-pod-selector 
@@ -67,8 +67,7 @@ I0720 10:19:32.753]   policyTypes:
 I0720 10:19:32.753]   - Ingress
 ``` 
 
-now validate:
-
+## Part 3: Validating expected connectivity AFTER POLICY 
 ```
 I0720 10:19:32.753] Jul 20 10:17:40.855: INFO: creating network policy netpol-3608-x/allow-ns-y-pod-a-via-namespace-pod-selector
 I0720 10:19:32.754] Jul 20 10:17:40.896: INFO: Denying all traffic *to* netpol-3608-x/a
@@ -78,7 +77,8 @@ I0720 10:19:32.754] [1mSTEP[0m: Validating reachability matrix... (FIRST TRY)
 I0720 10:19:32.761] Jul 20 10:17:59.600: INFO: ExecWithOptions {Command:[/agnhost connect 10.0.91.168:80 --timeout=1s --protocol=tcp] Namespace:netpol-3608-x PodName:b ContainerName:cont-80-tcp Stdin:<nil> CaptureStdout:true CaptureStderr:true PreserveWhitespace:false Quiet:false}
 ```
 
-final, print matrix: 
+
+## Part 4: Print out results and pass or fail:
 
 ```
 cases ignored

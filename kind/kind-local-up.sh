@@ -8,8 +8,8 @@ CONFIG=${CONFIG:-calico-conf.yaml}
 # Usage examples:
 #CLUSTER=nocni CONFIG="calico-conf.yaml" ./kind-local-up.sh
 #CLUSTER=cipv6 CONFIG=kind-conf-ipv6.yaml ./kind-local-up.sh
-# Calico usage - CLUSTER=calico CONFIG=calico-conf.yaml ./kind-local-up.sh
-# Antrea usage - CLUSTER=antrea CONFIG=calico-conf.yaml ./kind-local-up.sh
+# Calico usage - CLUSTER=calico CONFIG=kind-conf.yaml ./kind-local-up.sh
+# Antrea usage - CLUSTER=antrea CONFIG=kind-conf.yaml ./kind-local-up.sh
 # Cilium usage - CLUSTER=cilium CONFIG=cilium-conf.yaml ./kind-local-up.sh
 
 function check_kind() {

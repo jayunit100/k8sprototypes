@@ -1,0 +1,13 @@
+#@ load("@ytt:overlay", "overlay")
+#@overlay/match by=overlay.subset({"metadata":{"name":"redis-master-dep"}})
+---
+spec:
+  template:
+    spec:
+      containers:
+      #@overlay/match by="name"
+      - name: master
+        resources:
+          requests:
+              #@overlay/match missing_ok=True
+              cpu: 300m

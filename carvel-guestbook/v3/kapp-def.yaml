@@ -1,0 +1,19 @@
+apiVersion: kappctrl.k14s.io/v1alpha1
+kind: App
+metadata:
+  name: guestbook
+  namespace: default
+spec:
+  serviceAccountName: default-ns-sa
+  fetch:
+  - git:
+      url: https://github.com/jayunit100/k8sprototypes
+      ref: origin/master
+
+      # We have a directory, named 'app', in the root of our repo.
+      # Files describing the app (i.e. pod, service) are in that directory.
+      subPath: carvel-guestbook/v1/
+  template:
+  - ytt: {}
+  deploy:
+  - kapp: {}

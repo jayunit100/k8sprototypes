@@ -1,0 +1,38 @@
+# Run a quick sleep pod.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: sleepy-time
+spec:
+  containers:
+  - name: debug
+    command: ["cat"]
+    # This is a pull through cache, but you don't need to use it.
+    image: harbor-repo.vmware.com/dockerhub-proxy-cache/library/ubuntu:latest
+    imagePullPolicy: IfNotPresent
+    tty: true
+    stdin: true
+  tolerations:
+  - effect: NoSchedule
+    key: node-role.kubernetes.io/master
+    operator: Exists
+  - key: CriticalAddonsOnly
+    operator: Exists
+  - effect: NoExecute
+    key: node.alpha.kubernetes.io/notReady
+    operator: Exists
+  - effect: NoExecute
+    key: node.alpha.kubernetes.io/unreachable
+    operator: Exists
+  - effect: NoSchedule
+    key: kubeadmNode
+    operator: Equal
+    value: master
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 300
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 300

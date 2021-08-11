@@ -1,5 +1,7 @@
 #!/bin/bash
 sha=`curl -L http://dl.k8s.io/ci/latest.txt`
+
+# TODO ~ add a way to remeber sha from older 1.22 or 1.21 e2es... 
 # wget  https://storage.googleapis.com/kubernetes-release-dev/ci/${sha}/kubernetes-test-linux-amd64.tar.gz
 wget https://storage.googleapis.com/k8s-release-dev/ci/${sha}/kubernetes-test-linux-amd64.tar.gz
 tar -xvf kubernetes-test-linux-amd64.tar.gz -C /tmp/

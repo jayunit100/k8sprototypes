@@ -1,3 +1,6 @@
+# NOTE https://gist.github.com/aojea/097b5a8418fbbcb2b55e72a4cf6e62f7 has a really good general
+# script to be reused, we should adopt that in the future
+
 #!/bin/bash
 sha=`curl -L http://dl.k8s.io/ci/latest.txt`
 

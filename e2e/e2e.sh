@@ -1,6 +1,7 @@
 #!/bin/bash
 sha=`curl -L http://dl.k8s.io/ci/latest.txt`
-wget  https://storage.googleapis.com/kubernetes-release-dev/ci/${sha}/kubernetes-test-linux-amd64.tar.gz
+# wget  https://storage.googleapis.com/kubernetes-release-dev/ci/${sha}/kubernetes-test-linux-amd64.tar.gz
+wget https://storage.googleapis.com/k8s-release-dev/ci/${sha}/kubernetes-test-linux-amd64.tar.gz
 tar -xvf kubernetes-test-linux-amd64.tar.gz -C /tmp/
 cp /tmp/kubernetes/test/bin/e2e.test ./e2e.test
 chmod 755 ./e2e.test

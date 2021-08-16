@@ -23,7 +23,6 @@ spec:
               - "Add-WindowsFeature Web-Server; Invoke-WebRequest -UseBasicParsing -Uri 'https://dotnetbinaries.blob.core.windows.net/servicemonitor/2.0.1.6/ServiceMonitor.exe' -OutFile 'C:\\ServiceMonitor.exe'; echo '<html><body><br/><br/><marquee><H1>Hello EKS!!!<H1><marquee></body><html>' > C:\\inetpub\\wwwroot\\default.html; C:\\ServiceMonitor.exe 'w3svc'; "
             nodeSelector:
               kubernetes.io/os: windows
-            
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -46,3 +45,32 @@ spec:
                 privileged: true
             nodeSelector:
                 beta.kubernetes.io/os: linux
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: iis
+spec:
+  type: NodePort
+  selector:
+    app: windows-server-iis
+  ports:
+  - port: 80
+    targetPort: 80
+    nodePort: 30001
+---
+# for smoke testing... an ubuntu curl / wget image
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox
+  namespace: default
+spec:
+  containers:
+  - image: harbor-repo.vmware.com/dockerhub-proxy-cache/library/ubuntu:latest
+    command:
+      - sleep
+      - "3600"
+    imagePullPolicy: IfNotPresent
+    name: busybox
+  restartPolicy: Always

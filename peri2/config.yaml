@@ -1,0 +1,225 @@
+CLUSTER_NAME: jay
+TKR_DISCOVER_FREQUENCY: 600
+ENABLE_AUDIT_LOGGING: false
+
+INFRASTRUCTURE_PROVIDER: vsphere
+tkr-bom:
+  a: 1
+
+TKG_VERSION: 1.4
+CNI: antrea
+ANTREA_ENDPOINTSLICE: true
+ANTREA_NODEPORTLOCAL: false
+ANTREA_TRACEFLOW: false
+DISABLE_CRS_FOR_ADDON_TYPE: "true"
+TKG_CUSTOM_IMAGE_REPOSITORY_CA_CERTIFICATE: YQo=
+TKG_HTTP_PROXY: false
+TKG_CUSTOM_IMAGE_REPOSITORY_SKIP_TLS_VERIFY: true
+ENABLE_MHC: false
+OS_NAME: windows
+OS_VERSION: 3.1
+OS_ARCH: amd_64
+TKG_HTTPS_PROXY: false
+TKG_NO_PROXY: "a"
+
+ANTREA_POLICY: false
+CERT_DURATION: ["a"]
+CERT_RENEW_BEFORE: a
+SUPERVISOR_ISSUER_URL: google.com
+SUPERVISOR_ISSUER_CA_BUNDLE_DATA_B64: a
+kindKubeadmConfigSpec:
+- 'kind: Cluster'
+- 'apiVersion: kind.x-k8s.io/v1alpha4'
+- 'kubeadmConfigPatches:'
+- '- |'
+- '  apiVersion: kubeadm.k8s.io/v1beta2'
+- '  kind: ClusterConfiguration'
+- '  imageRepository: projects.registry.vmware.com/tkg'
+- '  etcd:'
+- '    local:'
+- '      imageRepository: projects.registry.vmware.com/tkg'
+- '      imageTag: v3.4.13_vmware.15'
+- '  dns:'
+- '    type: CoreDNS'
+- '    imageRepository: projects.registry.vmware.com/tkg'
+- '    imageTag: v1.8.0_vmware.5'
+
+imageConfig:
+  imageRepository: projects-stg.registry.vmware.com/tkg
+extensions:
+  contour:
+    clusterTypes:
+    - workload
+    managedBy: user
+  dex:
+    clusterTypes:
+    - management
+    managedBy: user
+  fluent-bit:
+    clusterTypes:
+    - workload
+    managedBy: user
+  gangway:
+    clusterTypes:
+    - workload
+    managedBy: user
+  harbor:
+    clusterTypes:
+    - workload
+    managedBy: user
+  prometheus:
+    clusterTypes:
+    - workload
+    managedBy: user
+tkr-bom:
+  imagePath: tkr-bom
+tkr-compatibility:
+  imagePath: v5-v1.4.0-zshippable/tkr-compatibility
+
+TKG_CUSTOM_IMAGE_REPOSITORY: "harbor/blah"
+TKG_DEFAULT_BOM: tkg.yaml
+PROVIDER_TYPE: vsphere-windows
+
+KUBERNETES_RELEASE: v---1.21.2
+KUBERNETES_VERSION: v1.21.2
+
+FILTER_BY_ADDON_TYPE: false
+VSPHERE_USERNAME: a
+VSPHERE_PASSWORD: a
+VSPHERE_SERVER: a
+VSPHERE_DATASTORE: b
+VSPHERE_DATACENTER: a
+VSPHERE_RESOURCE_POOL: a
+VSPHERE_FOLDER: a
+VSPHERE_SSH_AUTHORIZED_KEY: a
+NSXT_POD_ROUTING_ENABLED: b
+
+CLUSTER_NAME: nishad
+VSPHERE_CONTROL_PLANE_ENDPOINT: 1.2.2.3
+TKG_CLUSTER_ROLE: asdf
+CLUSTER_CIDR: 1.2.4.5
+SERVICE_CIDR: 2.3.5.4
+AVI_CONTROL_PLANE_HA_PROVIDER: false
+
+VSPHERE_INSECURE: true
+VSPHERE_CLONE_MODE: none
+VSPHERE_STORAGE_POLICY_ID: 1
+VSPHERE_TEMPLATE:
+
+#! The name of the VM Windows template to be used to create a specific version of
+#! a Tanzu Kubernetes Cluster including WINDOWS node.
+VSPHERE_WINDOWS_TEMPLATE:
+
+#! The content of zone and region infomation is used to deploy CPI and CSI in a
+#! vSphere environment that includes multiple data centers or host clusters.
+VSPHERE_REGION:
+VSPHERE_ZONE:
+
+#! FQDN or IP address to vCenter
+
+#! Full inventory path or names are supported for the following
+#! the former is required if there are multiple entities of the same type and
+#! name in the VC inventory.
+#! Name of an existing resource pool in which to place this Tanzu Kubernetes cluster
+#! Name of the vSphere datastore to deploy the Tanzu Kubernetes cluster
+#! as it appears in the vSphere inventory
+#! name of an existing VM folder in which to place Tanzu Kubernetes Grid VMs
+#! Thumbprint of the vCenter server specified with VSPHERE_SERVER config variable
+#! this value can be skipped if user wants to use insecure connection
+#! by setting VSPHERE_INSECURE to true
+VSPHERE_TLS_THUMBPRINT: ""
+#! Virtual IP address or FQDN for the cluster's control plane nodes
+VSPHERE_CONTROL_PLANE_ENDPOINT_PORT: 6443
+#! NSX-T specific configurations for enabling NSX-T routable pods
+#! set this to true to enable NSX-T routable pods
+NSXT_ROUTER_PATH: ""
+#! NSX-T username
+NSXT_USERNAME: ""
+#! NSX-T password
+NSXT_PASSWORD: ""
+#! NSX-T host
+NSXT_MANAGER_HOST: ""
+#! set this to true if NSX-T uses self-signed cert
+NSXT_ALLOW_UNVERIFIED_SSL: "false"
+#! set this to true if NSX-T uses remote authentication (authentication done through the vIDM)
+NSXT_REMOTE_AUTH: "false"
+NSXT_VMC_ACCESS_TOKEN: ""
+NSXT_VMC_AUTH_HOST: ""
+NSXT_CLIENT_CERT_KEY_DATA: ""
+NSXT_CLIENT_CERT_DATA: ""
+NSXT_ROOT_CA_DATA_B64: ""
+#! SecretName is the secret name for NSX-T username and password
+NSXT_SECRET_NAME: "cloud-provider-vsphere-nsxt-credentials"
+#! SecretNamespace is the secret namespace for NSX-T username and password
+NSXT_SECRET_NAMESPACE: "kube-system"
+
+
+
+
+
+
+
+
+VSPHERE_CONTROL_PLANE_MEM_MIB: 8192
+
+VSPHERE_WORKER_NUM_CPUS: 2
+VSPHERE_WORKER_DISK_GIB: 40
+VSPHERE_WORKER_MEM_MIB: 4096
+
+
+#! The network portgroup to assign each VM node
+VSPHERE_NETWORK: VM Network
+
+#! The name of the VM template to be used to create a specific version of a Tanzu
+#! Kubernetes Cluster. Since the appropriate template is automatically
+#! discovered from the vCenter inventory, the use of this setting is no longer
+#! necessary except to disambiguate among 2 or more applicable VM templates.
+
+#! The name of the VM Windows template to be used to create a specific version of
+#! a Tanzu Kubernetes Cluster including WINDOWS node.
+
+VIP_NETWORK_INTERFACE: "eth0"
+
+#! The contents of the public key to be injected into the VM nodes created
+
+#! The content of zone and region infomation is used to deploy CPI and CSI in a
+#! vSphere environment that includes multiple data centers or host clusters.
+
+#! FQDN or IP address to vCenter
+
+#! Full inventory path or names are supported for the following
+#! the former is required if there are multiple entities of the same type and
+#! name in the VC inventory.
+#! Name of an existing resource pool in which to place this Tanzu Kubernetes cluster
+#! Name of the vSphere datastore to deploy the Tanzu Kubernetes cluster
+#! as it appears in the vSphere inventory
+#! name of an existing VM folder in which to place Tanzu Kubernetes Grid VMs
+#! Thumbprint of the vCenter server specified with VSPHERE_SERVER config variable
+#! this value can be skipped if user wants to use insecure connection
+#! by setting VSPHERE_INSECURE to true
+#! Virtual IP address or FQDN for the cluster's control plane nodes
+#! NSX-T specific configurations for enabling NSX-T routable pods
+#! set this to true to enable NSX-T routable pods
+#! NSX-T username
+#! NSX-T password
+#! NSX-T host
+#! set this to true if NSX-T uses self-signed cert
+#! set this to true if NSX-T uses remote authentication (authentication done through the vIDM)
+#! SecretName is the secret name for NSX-T username and password
+
+TKG_IP_FAMILY: ipv4
+
+
+VSPHERE_CONTROL_PLANE_NUM_CPUS: 1
+CONTROL_PLANE_MACHINE_COUNT: 5
+WORKER_MACHINE_COUNT: 4
+CLUSTER_PLAN: dev
+ENABLE_OIDC: false
+OIDC_ISSUER_URL: asdf
+OIDC_USERNAME_CLAIM: u
+OIDC_GROUPS_CLAIM: a
+OIDC_DEX_CA: a
+IDENTITY_MANAGEMENT_TYPE: None
+NAMESPACE: de
+
+VSPHERE_CONTROL_PLANE_DISK_GIB: 1G

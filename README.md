@@ -20,3 +20,7 @@ https://github.com/jayunit100/k8sprototypes/tree/master/antrea_metrics
 
 ## Some windows recipes that im curating
 https://github.com/jayunit100/k8sprototypes/tree/master/windows
+
+## Home grown carvel recipes exemplifying 4 ways to deploy guestbook 
+https://github.com/jayunit100/k8sprototypes/tree/master/carvel-guestbook
+

@@ -1,3 +1,24 @@
+# Problem
+
+What id like to do is... generate some kind of 
+CAPI skeleton, and match YTT output to it from tanzu framework
+
+```
+targetCluster := Cluster{
+..}
+targetVsphereCluster := VsphereCluster{
+..}
+targetMD := MachineDeployment{
+..}
+
+ginkgo.Describe("should match targets")...
+   ....
+```
+
+
+# Non Solution
+
+Take tanzu framework and generate this and read it by eye :) 
 These files can be used to unit test tanzu framework YTT without having tanzu cli.
 
 Just clone down tanzu-framework, and run 

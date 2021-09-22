@@ -2,6 +2,9 @@
 
 set -e
 
+
+POD_SUBNET="192.168.254.0/30" # for testing exhaustion @peri
+POD_SUBNET="192.168.254.0/16"
 CLUSTER=${CLUSTER:-calico}
 CONFIG=${CONFIG:-calico-conf.yaml}
 
@@ -26,7 +29,7 @@ kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 networking:
   disableDefaultCNI: true # disable kindnet
-  podSubnet: 192.168.0.0/16 # set to Calico's default subnet
+  podSubnet: $POD_SUBNET
 nodes:
 - role: control-plane
 - role: worker

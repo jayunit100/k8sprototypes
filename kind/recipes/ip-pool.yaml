@@ -1,0 +1,19 @@
+apiVersion: crd.projectcalico.org/v1
+kind: IPPool
+metadata:
+  name: external-pool
+spec:
+  cidr: 172.16.1.0/24
+  blockSize: 29
+  ipipMode: Always
+  natOutgoing: true
+---
+apiVersion: crd.projectcalico.org/v1
+kind: IPPool
+metadata:
+  name: internal-pool
+spec:
+  cidr: 172.16.2.0/24
+  blockSize: 16
+  ipipMode: Always
+  natOutgoing: true

@@ -17,6 +17,11 @@ Log file created at: 2021/09/22 14:38:59
 Running on machine: tkg-vc-antrea-md-0-windows-containerd-57756fcb9-j9fp7
 Binary: Built with gc go1.15.3 for windows/amd64
 Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+```
+
+Now the agent starts
+
+```
 I0922 14:38:59.839925    2076 log_file.go:99] Set log file max size to 104857600
 I0922 14:38:59.842928    2076 agent.go:66] Starting Antrea agent (version v0.13.3-unknown)
 W0922 14:38:59.846933    2076 env.go:67] Environment variable POD_NAMESPACE not found
@@ -104,6 +109,9 @@ I0922 14:55:17.504452    2076 server.go:375] Received CmdAdd request cni_args:<c
 " path:"C:/opt/cni/bin" network_configuration:"{\"capabilities\":{\"dns\":true},\"cniVersion\":\"0.3.0\",\"ipam\":{\"type\":\"host-local\"},\"name\":\"antrea\",\"runtimeConfig\":{\"dns\":{\"Servers\":[\"100.64.0.10\"],\"Searches\":[\"hybrid-network-4867.svc.cluster.local\",\"svc.cluster.local\",\"cluster.local\"],\"Options\":[\"ndots:5\"]}},\"type\":\"antrea\"}" >
 I0922 14:55:19.866638    2076 server.go:436] Requested ip addresses for container db072a92158874a6df9dfc4ee12f95dda0d82e3009877c4e7d070ed0ecb5332c: &{0.4.0 [] [{Version:4 Interface:<nil> Address:{IP:100.96.1.2 Mask:ffffff00} Gateway:100.96.1.1}] [] {[]  [] []}}
 I0922 14:55:19.868648    2076 server_windows.go:41] Got runtime DNS configuration: {[100.64.0.10]  [hybrid-network-4867.svc.cluster.local svc.cluster.local cluster.local] []}
+```
+We can see here that a vEther device is being created 
+```
 I0922 14:55:23.548371    2076 pod_configuration_windows.go:47] Waiting for interface vEthernet (pod-f72e-69e818) to be created
 I0922 14:55:23.548371    2076 pod_configuration.go:259] Configured interfaces for container db072a92158874a6df9dfc4ee12f95dda0d82e3009877c4e7d070ed0ecb5332c
 I0922 14:55:23.549486    2076 server.go:461] CmdAdd for container db072a92158874a6df9dfc4ee12f95dda0d82e3009877c4e7d070ed0ecb5332c succeeded
@@ -120,7 +128,47 @@ a0021;IgnoreUnknown=1" path:"C:/opt/cni/bin" network_configuration:"{\"capabilit
 I0922 14:57:03.822487    2076 server.go:469] Received CmdDel request cni_args:<container_id:"f2743784db2a3e3e31fcaa7b35e46318f3026ef6be79b84aa4ddc75c0fea0021" netns:"5948c427-32c3-45a1-bdbc-cc184d8bd918" ifname:"eth0" args:"IgnoreUnknown=1;K8S_POD_NAMESPACE=windows-run-as-username-7991;K8S_POD_NAME=run-as-username-c4b738d7-3537-426f-8009-ffebb8a60b58;K8S_POD_INFRA_CONTAINER_ID=f2743784db2a3e3e31fcaa7b35e46318f3026ef6be7
 9b84aa4ddc75c0fea0021" path:"C:/opt/cni/bin" network_configuration:"{\"capabilities\":{\"dns\":true},\"cniVersion\":\"0.3.0\",\"ipam\":{\"type\":\"host-local\"},\"name\":\"antrea\",\"runtimeConfig\":{\"dns\":{\"Servers\":[\"100.64.0.10\"],\"Searches\":[\"windows-run-as-username-7991.svc.cluster.local\",\"svc.cluster.local\",\"cluster.local\"],\"Options\":[\"ndots:5\"]}},\"type\":\"antrea\"}" >
 I0922 14:57:03.840493    2076 server.go:488] Deleted IP addresses for container f2743784db2a3e3e31fcaa7b35e46318f3026ef6be79b84aa4ddc75c0fea0021
+```
 
+To see the names of pod network endpoints, run
+
+```
+PS C:\Users\capv> hnsdiag list endpoints
+Name             ID                                   Virtual Network Name
+pod-f72e-69e818  18ca0b2b-3203-4c49-98f4-a3fcb812e48c antrea-hnsnetwork
+busybox-719fb3   ea122d28-0e74-401f-8c18-6e87d423cc52 antrea-hnsnetwork
+windows--55662b  dbb6d0dd-ae42-464b-8df4-00813492d83b antrea-hnsnetwork
+```
+
+To test wether pods have networks, run 
+
+```
+PS C:\Users\capv> Get-HnsEndpoint
+
+ActivityId                : B56C3D4B-7225-423E-818A-ED781692053B
+AdditionalParams          : @{attached-mac=; container-id=db072a92158874a6df9dfc4ee12f95dda0d82e3009877c4e7d070ed0ecb5332c; ip-address=100.96.1.2; pod-name=pod-f72ed608-89fd-466b-8c9a-06ec231c66b8; pod-namespace=hybrid-network-4867}
+CreateProcessingStartTime : 132768213198814662
+DNSServerList             : 100.64.0.10
+DNSSuffix                 : hybrid-network-4867.svc.cluster.local,svc.cluster.local,cluster.local
+EncapOverhead             : 0
+GatewayAddress            : 100.96.1.1
+Health                    : @{LastErrorCode=0; LastUpdateTime=132768213198786463}
+ID                        : 18CA0B2B-3203-4C49-98F4-A3FCB812E48C
+IPAddress                 : 100.96.1.2
+MacAddress                : 00-15-5D-25-85-06
+Name                      : pod-f72e-69e818
+Namespace                 : @{ID=12D7094D-EF08-4358-9E45-CC007B65954A; IsDefault=False}
+Policies                  : {}
+PrefixLength              : 24
+RemoveProcessingStartTime : 132768214068678123
+Resources                 : @{AdditionalParams=; AllocationOrder=2; Allocators=System.Object[]; Health=; ID=B56C3D4B-7225-423E-818A-ED781692053B; PortOperationTime=0; State=1; SwitchOperationTime=0; VfpOperationTime=0; parentId=6DC6FD75-C2E0-4BF9-A2BA-E2C0F590290A}
+SharedContainers          : {db072a92158874a6df9dfc4ee12f95dda0d82e3009877c4e7d070ed0ecb5332c}
+StartTime                 : 132768213261881793
+State                     : 3
+Type                      : Transparent
+Version                   : 38654705667
+VirtualNetwork            : 3F2BBA3C-ADF0-4414-8C82-36521B908902
+VirtualNetworkName        : antrea-hnsnetwork
 ```
 
 

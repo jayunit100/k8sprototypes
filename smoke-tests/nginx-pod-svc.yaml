@@ -40,7 +40,8 @@ metadata:
   namespace: default
 spec:
   containers:
-  - image: harbor-repo.vmware.com/dockerhub-proxy-cache/library/ubuntu:latest
+#  - image: harbor-repo.vmware.com/dockerhub-proxy-cache/library/ubuntu:latest
+  - image: busybox:latest
     command:
       - sleep
       - "3600"

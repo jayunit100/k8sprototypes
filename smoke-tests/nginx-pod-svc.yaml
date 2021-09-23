@@ -31,3 +31,19 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 80
+---
+# for smoke testing... an ubuntu curl / wget image
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox
+  namespace: default
+spec:
+  containers:
+  - image: harbor-repo.vmware.com/dockerhub-proxy-cache/library/ubuntu:latest
+    command:
+      - sleep
+      - "3600"
+    imagePullPolicy: IfNotPresent
+    name: busybox
+  restartPolicy: Always

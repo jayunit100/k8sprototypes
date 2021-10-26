@@ -1,0 +1,26 @@
+diff --git a/ci/kind/kind-setup.sh b/ci/kind/kind-setup.sh
+index f7af1668..62726379 100755
+--- a/ci/kind/kind-setup.sh
++++ b/ci/kind/kind-setup.sh
+@@ -19,7 +19,7 @@
+ # and docker bridge network connecting to worker Node.
+ 
+ CLUSTER_NAME=""
+-ANTREA_IMAGE="projects.registry.vmware.com/antrea/antrea-ubuntu:latest"
++ANTREA_IMAGE="projects.registry.vmware.com/antrea/antrea-ubuntu:v1.3.0"
+ IMAGES=$ANTREA_IMAGE
+ ANTREA_CNI=true
+ POD_CIDR="10.10.0.0/16"
+diff --git a/hack/generate-manifest.sh b/hack/generate-manifest.sh
+index 6a779c63..e3e069ca 100755
+--- a/hack/generate-manifest.sh
++++ b/hack/generate-manifest.sh
+@@ -487,7 +487,7 @@ if [ "$MODE" == "dev" ]; then
+         if $COVERAGE; then
+             IMG_NAME="antrea/antrea-ubuntu-coverage:latest"
+         else
+-            IMG_NAME="projects.registry.vmware.com/antrea/antrea-ubuntu:latest"
++            IMG_NAME="projects.registry.vmware.com/antrea/antrea-ubuntu:v1.3.0"
+         fi
+     fi
+ 

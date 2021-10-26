@@ -91,7 +91,10 @@ function install_antrea() {
 	    git clone https://github.com/vmware-tanzu/antrea.git	
 	fi
 	pushd antrea
-	     # exact commit of v1.3.0 tag...
+	     # this patches the container version to v1.3.0
+	     git stash
+	     cp ../antrea.patch .
+	     patch -p 1 < antrea.patch
 	     git checkout 62e25bf1ead28b5d5c8fa5bc93363b758b34686e
 	     pushd ci/kind
     	      ./kind-setup.sh create antrea

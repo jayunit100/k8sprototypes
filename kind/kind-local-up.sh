@@ -91,7 +91,7 @@ function install_antrea() {
 	    git clone https://github.com/vmware-tanzu/antrea.git	
 	fi
 	pushd antrea
-	     git checkout v0.12.0
+	     git checkout v1.3.0
 	     pushd ci/kind
     	      ./kind-setup.sh create antrea
 	     popd

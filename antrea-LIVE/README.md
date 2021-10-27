@@ -1,39 +1,15 @@
+Welcome to ...
+
 ![image](https://github.com/jayunit100/k8sprototypes/raw/master/antrea-LIVE/antrea-LIVE.png)
 
-# Antrea LIVE: Episode 1 (Antrea 1.3.0, FQDN, and K8sNetlook)
+This is the weekly antrea live-stream where we dig through evolution of various
+upstream k8s networking technologies, especially focused around:
 
-## Show Details
+- the CNI ecosystem
+- the Antrea project
+- OpenVSWitch
+- Multi-OS Networking
+- and more !
 
-https://www.youtube.com/watch?v=aWUwxQ58bEQ
-
-## Antrea 1.3.0
-
-- install ~ jayunit100/k8sprototypes/kind/ kind-local-up.sh
-
-## FQDN Policies
-
-```
-apiVersion: crd.antrea.io/v1alpha1
-kind: ClusterNetworkPolicy
-metadata:
-  name: acnp-fqdn-all-foobar
-spec:
-  priority: 1
-  appliedTo:
-  - podSelector:
-      matchLabels:
-        app: client
-  egress:
-  - action: Drop
-    to:
-      - fqdn: "*foobar.com"
-```
-
-## K8sNetLook
-
-- https://github.com/sarun87/k8snetlook
-
-
-
-
-
+If you're interested in doing a show with us, reach out to jayunit100 or yashbhutwala on K8s slack (in the antrea or sig-network rooms)
+or file an issue in this repo!

@@ -11,6 +11,10 @@ upstream k8s networking technologies, especially focused around:
 - Multi-OS Networking
 - and more !
 
+# HOSTS
+- jayunit100 (vmware)
+- sarun87 (staked)
+
 If you're interested in doing a show with us, reach out to jayunit100 or yashbhutwala on K8s slack (in the antrea or sig-network rooms)
 or file an issue in this repo!
 

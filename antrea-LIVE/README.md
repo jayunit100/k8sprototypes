@@ -1,8 +1,8 @@
-# Antrea LIVE: Episode 1 (Antrea 1.3.0, FQDN, and K8sNetlook)
-
 ![image](https://github.com/jayunit100/k8sprototypes/raw/master/antrea-LIVE/antrea-LIVE.png)
 
-# Show Details
+# Antrea LIVE: Episode 1 (Antrea 1.3.0, FQDN, and K8sNetlook)
+
+## Show Details
 
 https://www.youtube.com/watch?v=aWUwxQ58bEQ
 
@@ -11,7 +11,6 @@ https://www.youtube.com/watch?v=aWUwxQ58bEQ
 - install ~ jayunit100/k8sprototypes/kind/ kind-local-up.sh
 
 ## FQDN Policies
-
 
 ```
 apiVersion: crd.antrea.io/v1alpha1
@@ -33,3 +32,8 @@ spec:
 ## K8sNetLook
 
 - https://github.com/sarun87/k8snetlook
+
+
+
+
+

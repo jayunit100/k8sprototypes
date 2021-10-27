@@ -1,6 +1,6 @@
 Welcome to ...
 
-![image](https://github.com/jayunit100/k8sprototypes/raw/master/antrea-LIVE/antrea-LIVE.png)=500x100
+![image](https://github.com/jayunit100/k8sprototypes/raw/master/antrea-LIVE/antrea-LIVE.png 100x20)
 
 This is the weekly antrea live-stream where we dig through evolution of various
 upstream k8s networking technologies, especially focused around:

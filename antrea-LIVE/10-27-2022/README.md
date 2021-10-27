@@ -6,6 +6,7 @@ https://www.youtube.com/watch?v=aWUwxQ58bEQ
 
 ## Antrea 1.3.0
 
+- kubectl apply -f https://github.com/antrea-io/antrea/releases/download/v1.3.0/antrea.yml
 - install ~ jayunit100/k8sprototypes/kind/ kind-local-up.sh
 
 ## FQDN Policies

@@ -32,3 +32,14 @@ spec:
 ## K8sNetLook
 
 - https://github.com/sarun87/k8snetlook
+
+## Notes
+
+- Release Notes: https://github.com/antrea-io/antrea/releases/tag/v1.3.0
+- https://github.com/kubernetes/enhancements/pull/2522
+- `kubectl get acnp`
+- `CLUSTER=antrea CONFIG=kind-conf.yaml ./kind-local-up.sh`
+- https://kubernetes.io/docs/concepts/services-networking/network-policies/
+- https://github.com/sarun87/k8snetlook/blob/master/examples/run-k8s.yaml
+- bitnami/nginx image to avoid docker limits
+- Arun's awesome kubecon talk slides: https://kccncna2021.sched.com/event/lV0b

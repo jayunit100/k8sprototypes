@@ -38,13 +38,13 @@ kind: Pod
 metadata:
   name: busybox
   namespace: default
+  labels:
+    app: antrea
 spec:
   containers:
-#  - image: harbor-repo.vmware.com/dockerhub-proxy-cache/library/ubuntu:latest
   - image: busybox:latest
     command:
-      - sleep
-      - "3600"
+    - sleep
+    - "3600"
     imagePullPolicy: IfNotPresent
     name: busybox
-  restartPolicy: Always

@@ -1,0 +1,15 @@
+### Taken from https://github.com/antrea-io/antrea/blob/main/docs/antrea-network-policy.md#fqdn-based-filtering
+apiVersion: crd.antrea.io/v1alpha1
+kind: ClusterNetworkPolicy
+metadata:
+  name: acnp-fqdn-all-foobar
+spec:
+  priority: 1
+  appliedTo:
+  - podSelector:
+      matchLabels:
+        app: antrea
+  egress:
+  - action: Drop
+    to:
+      - fqdn: "*foobar.com"

@@ -88,14 +88,14 @@ function install_calico() {
 
 function install_antrea() {
 	if [[ ! -d antrea ]] ; then
-	    git clone https://github.com/vmware-tanzu/antrea.git	
+	    git clone https://github.com/vmware-tanzu/antrea.git
 	fi
 	pushd antrea
 	     # this patches the container version to v1.3.0
 	     git stash
 	     cp ../antrea.patch .
-	     patch -p 1 < antrea.patch
 	     git checkout 62e25bf1ead28b5d5c8fa5bc93363b758b34686e
+         patch -p 1 < antrea.patch
 	     pushd ci/kind
     	      ./kind-setup.sh create antrea
 	     popd
@@ -126,7 +126,7 @@ function install_cilium() {
 }
 
 function wait() {
-    sleep 5 ; kubectl -n kube-system get pods 
+    sleep 5 ; kubectl -n kube-system get pods
     echo "will wait for calico/antrea/... to start running now... "
     while true ; do
         kubectl -n kube-system get pods
@@ -135,7 +135,7 @@ function wait() {
 }
 
 function testStatefulSets() {
-   sonobuoy run --e2e-focus "Basic StatefulSet" --e2e-skip ""   
+   sonobuoy run --e2e-focus "Basic StatefulSet" --e2e-skip ""
 }
 
 init_configuration

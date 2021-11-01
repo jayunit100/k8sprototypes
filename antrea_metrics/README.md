@@ -33,7 +33,7 @@ Which creates
 then expose them:
 
 ```
-	kubectl port-forward pod/prometheus-deployment-68b648df9c-28q6d --address 0.0.0.0 9090:9090 -n monitoring
+	kubectl port-forward pod/prometheus-deployment-79fb7d997f-nkbjj -n monitoring --address 0.0.0.0 9090:9090 -n monitoring
 ```
 
 now go to 

@@ -1,4 +1,4 @@
-# Antrea LIVE: Episode 1 (Antrea 1.3.0, FQDN, and K8sNetlook)
+# Antrea LIVE: Episode 2 (antrea CNI and ovs metrics + a new sessionAffinity kubeproxy bug)
 
 # Show Details
 

@@ -1,11 +1,9 @@
 ![image](https://github.com/jayunit100/k8sprototypes/raw/master/antrea-LIVE/antrea-LIVE.png)
 
-# EPISODES
-
-| Show                         | Link           | Guests                                                                               |
-| ---------------------------- | -------------- | ------------------------------------------------------------------------------------ |
-| antrea ovs metrics and a new kubeproxy bug    | https://github.com/jayunit100/k8sprototypes/blob/master/antrea-LIVE/11-04-2022/| n/a |
-| FQDN, 1.3.0, and k8snetlook  | https://github.com/jayunit100/k8sprototypes/tree/master/antrea-LIVE/10-27-2022 | sarun87              |
+| Show | Link | Guests  | DATE |
+| ---- | ---- | ------- | ---- |
+| (ovs metrics + a kubeproxy bug)[11-04-2022/] | n/a | https://www.youtube.com/watch?v=3aUnws6diAY   | 11/2/2021 |
+| (1.3.0 + FQDN + k8snetlook 1.3)[10-27-2022/] | sarun87 | https://www.youtube.com/watch?v=aWUwxQ58bEQ&t | 10/27/2021 |
 
 # antrea-LIVE
 
@@ -17,3 +15,10 @@ upstream k8s networking technologies, especially focused around:
 - OpenVSWitch
 - Multi-OS Networking
 - and more !
+
+# New show instructions
+
+- Edit the antrea-live.png logo (add any mods you want), save the file.
+- Schedule a show on youtube, copy the link, use the above file.
+- add a new directory for the episode like `antrea-LIVE/10-27-2022/README.md`, save the link
+- update the markdown table above with the link to your show directory 

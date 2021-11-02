@@ -4,8 +4,8 @@
 
 | Show                         | Link           | Guests                                                                               |
 | ---------------------------- | -------------- | ------------------------------------------------------------------------------------ |
-| FQDN, 1.3.0, and k8snetlook  | https://github.com/jayunit100/k8sprototypes/tree/master/antrea-LIVE/10-27-2022 | sarun87              |
 | antrea ovs metrics and a new kubeproxy bug    | https://github.com/jayunit100/k8sprototypes/blob/master/antrea-LIVE/11-04-2022/| n/a |
+| FQDN, 1.3.0, and k8snetlook  | https://github.com/jayunit100/k8sprototypes/tree/master/antrea-LIVE/10-27-2022 | sarun87              |
 
 # antrea-LIVE
 

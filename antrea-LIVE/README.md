@@ -18,7 +18,17 @@ upstream k8s networking technologies, especially focused around:
 
 # New show instructions
 
-- Edit the antrea-live.png logo (add any mods you want), save the file.
-- Schedule a show on youtube, copy the link, use the above file.
-- add a new directory for the episode like `antrea-LIVE/10-27-2022/README.md`, save the link
-- update the markdown table above with the link to your show directory 
+- Edit the https://github.com/jayunit100/k8sprototypes/raw/master/antrea-LIVE/antrea-LIVE.png logo and *save the file*.
+- Schedule a show on youtube, copy the link, *use the above file as the thumbnail*.
+- add a new directory for the episode like `antrea-LIVE/10-27-2022/README.md` and *save the link*.
+- update the markdown table above with 
+  - the link
+  - the title
+  - the date
+
+# Want to help?
+
+- join the show, and ask random questions!
+- run a show! you don't need to be an expert, just reach out to jayunit100 or yashbhutwala in `#antrea` on slack.k8s.io 
+- like or subscribe to the youtube videos to spread the news about antrea-LIVE!
+- suggest an episode topic by adding an issue on this repository!

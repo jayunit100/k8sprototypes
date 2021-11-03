@@ -2,8 +2,7 @@
 
 # Show Details
 
-Show link: <TO ADD SHORTLY>
-
+Show link: https://www.youtube.com/watch?v=3aUnws6diAY
 ## Antrea stuff
 - https://github.com/antrea-io/antrea/blob/main/docs/network-flow-visibility.md
 - prometheus installation and OVS monitoring

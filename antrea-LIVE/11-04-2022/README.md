@@ -4,8 +4,10 @@
 
 Show link: <TO ADD SHORTLY>
 
+## Antrea stuff
+- https://github.com/antrea-io/antrea/blob/main/docs/network-flow-visibility.md
+- prometheus installation and OVS monitoring
+  
 ## New in upstream
 - a new kube-proxy affinity bug https://github.com/kubernetes/kubernetes/pull/106030 
 
-## Antrea on Tanzu
-- looking at how antrea boots up, installs, and configures inside VMWare tanzu community edition.

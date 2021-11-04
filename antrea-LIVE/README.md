@@ -1,4 +1,4 @@
-![image](https://github.com/jayunit100/k8sprototypes/raw/master/antrea-LIVE/page-1.jpeg)
+![image](https://github.com/jayunit100/k8sprototypes/raw/master/antrea-LIVE/antrea-live-logo.png)
 
 | Show | Guests  | DATE |
 | ---- | ------- | ---- |

@@ -18,7 +18,9 @@ upstream k8s networking technologies, especially focused around:
 
 # New show instructions
 
-- Edit the https://github.com/jayunit100/k8sprototypes/raw/master/antrea-LIVE/antrea-LIVE.png logo and *save the file*.
+- login to streamyard to start scheduling the show for 4pm EST , wednesday (ask yash/jay for details)
+- login to https://crello.com/user/projects/ and make an antrea-live youtube thumbnail
+  - or just use https://github.com/jayunit100/k8sprototypes/raw/master/antrea-LIVE/antrea-LIVE.png) and we can make one later.
 - Schedule a show on youtube, copy the link, *use the above file as the thumbnail*.
 - add a new directory for the episode like `antrea-LIVE/10-27-2022/README.md` and *save the link*.
 - update the markdown table above with 

@@ -2,7 +2,9 @@ If you are a guest interested in doing a show:
 - ping @jayunit100 or @yashbhutwala on #project-antrea's slack channel, and make a PR here adding your show / date info
 - We'll schedule the youtube together
 
-![image](https://github.com/jayunit100/k8sprototypes/raw/master/antrea-LIVE/antrea-live-logo.png)
+# ANTREA-LIVE !!! 
+
+This is the homepage for the official live upstream focused stream sponsored by `@ProjectAntrea`.
 
 | Show | Guests  | DATE |
 | ---- | ------- | ---- |

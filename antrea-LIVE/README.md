@@ -38,7 +38,6 @@ Join the show, and ask random questions:
 # Want to run a show?
 
 If you are a guest interested in doing a show:
-1. ping @jayunit100 or @yashbhutwala on #project-antrea's slack channel
+1. ping @jayunit100 or @yashbhutwala on *project-antrea* slack channel (slack.k8s.io)
 2. make a PR here adding your show / date info
 3. We'll schedule the youtube together
-

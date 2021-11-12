@@ -1,7 +1,3 @@
-If you are a guest interested in doing a show:
-- ping @jayunit100 or @yashbhutwala on #project-antrea's slack channel, and make a PR here adding your show / date info
-- We'll schedule the youtube together
-
 # ANTREA-LIVE !!! 
 
 This is the homepage for the official live upstream focused stream sponsored by `@ProjectAntrea`.
@@ -33,7 +29,16 @@ Weekly antrea live-stream about all thinkgs CNI and Kubernetes...
 
 # Want to help?
 
-- join the show, and ask random questions!
+Join the show, and ask random questions:
+- like and subscribe if you enjoy it - this will help us to justify the continued time investment and grow the open antrea community.
 - run a show! you don't need to be an expert, just reach out to jayunit100 or yashbhutwala in `#antrea` on slack.k8s.io 
 - like or subscribe to the youtube videos to spread the news about antrea-LIVE!
 - suggest an episode topic by adding an issue on this repository!
+
+# Want to run a show?
+
+If you are a guest interested in doing a show:
+1. ping @jayunit100 or @yashbhutwala on #project-antrea's slack channel
+2. make a PR here adding your show / date info
+3. We'll schedule the youtube together
+

@@ -31,7 +31,11 @@ Weekly antrea live-stream about all thinkgs CNI and Kubernetes...
   - the date
 7. Tweet! i.e. 
 ```
-HEY ! This WEDNESDAY on @ProjectAntrea Antrea-LIVE, me and @YBhutwala will be runnin AntreaProxy (w/ kube proxy 100% off) + diggin into @VMwareTanzu 's CNI FeatureGates are powered by the underlying @carvel_dev stack! See yall in 2 days  https://youtu.be/34K0vTRoXeY at 4pm EST / 1 PM PST !
+HEY ! This WEDNESDAY on @ProjectAntrea Antrea-LIVE, 
+me and @YBhutwala will be runnin AntreaProxy (w/ kube proxy 100% off) + 
+diggin into @VMwareTanzu 's CNI FeatureGates are powered 
+by the underlying @carvel_dev stack! 
+See yall in 2 days  https://youtu.be/34K0vTRoXeY at 4pm EST / 1 PM PST !
 ```
 
 # Want to help?

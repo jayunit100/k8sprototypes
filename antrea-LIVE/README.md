@@ -17,17 +17,22 @@ Weekly antrea live-stream about all thinkgs CNI and Kubernetes...
 - Multi-OS Networking
 - and more !
 
-# New show instructions
+# New show instructions/checklist
 
-- login to streamyard to start scheduling the show for 4pm EST , wednesday (ask yash/jay for details)
-- login to https://crello.com/user/projects/ and make an antrea-live youtube thumbnail
+1. login to streamyard to start scheduling the show for 4pm EST , wednesday (ask yash/jay for details)
+2. login to https://crello.com/user/projects/ and make an antrea-live youtube thumbnail
   - or just use https://github.com/jayunit100/k8sprototypes/raw/master/antrea-LIVE/antrea-LIVE.png) and we can make one later.
-- Schedule a show on youtube, copy the link, *use the above file as the thumbnail*.
-- add a new directory for the episode like `antrea-LIVE/10-27-2022/README.md` and *save the link*.
-- update the markdown table above with 
-  - the link
-  - the title
+3. Schedule a show on youtube, copy the link, *use the above file as the thumbnail* 
+  - for 4PM EST on WEDNESDAY
+5. add a new directory for the episode like `antrea-LIVE/10-27-2022/README.md` and *save the link*.
+6. update the markdown table above with 
+  - the SHORT youtube link
+  - the title i.e. `Antrea LIVE: Episode 1 (Antrea 1.3.0, FQDN, and K8sNetlook)`
   - the date
+7. Tweet! i.e. 
+```
+HEY ! This WEDNESDAY on @ProjectAntrea Antrea-LIVE, me and @YBhutwala will be runnin AntreaProxy (w/ kube proxy 100% off) + diggin into @VMwareTanzu 's CNI FeatureGates are powered by the underlying @carvel_dev stack! See yall in 2 days  https://youtu.be/34K0vTRoXeY at 4pm EST / 1 PM PST !
+```
 
 # Want to help?
 

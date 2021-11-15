@@ -4,8 +4,10 @@ This is the homepage for the official live upstream focused stream sponsored by 
 
 | Show | Guests  | DATE |
 | ---- | ------- | ---- |
-| [ovs metrics + a kubeproxy bug](11-04-2022/) | none | https://www.youtube.com/watch?v=3aUnws6diAY   | 11/2/2021 |
-| [1.3.0 + FQDN + k8snetlook 1.3](10-27-2022/) | sarun87 | https://www.youtube.com/watch?v=aWUwxQ58bEQ&t | 10/27/2021 |
+| [1.4.0 features + Tanzu FeatureGates](11-14-2022/) | none | https://youtu.be/34K0vTRoXeY   | 11/14/2021 |
+| [Multus, Whereabouts, and Telco CNI paradigms](11-7-2022/) | none | https://youtu.be/Q1CBFoMAG2g   | 11/14/2021 |
+| [ovs metrics + a kubeproxy bug](11-04-2022/) | none | https://www.youtube.com/3aUnws6diAY   | 11/2/2021 |
+| [1.3.0 + FQDN + k8snetlook 1.3](10-27-2022/) | sarun87 | https://www.youtube.com/aWUwxQ58bEQ&t | 10/27/2021 |
 
 Weekly antrea live-stream about all thinkgs CNI and Kubernetes...
 

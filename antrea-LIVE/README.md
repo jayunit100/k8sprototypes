@@ -1,6 +1,7 @@
 # ANTREA-LIVE !!! 
 
 This is the homepage for the official live upstream focused stream sponsored by `@ProjectAntrea`.
+LIVE NOTES: https://hackmd.io/wxNOmhZdRNm_hJzZNFKwRg
 
 | Show | Guests  | DATE |
 | ---- | ------- | ---- |

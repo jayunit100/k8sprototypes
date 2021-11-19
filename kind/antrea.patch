@@ -7,7 +7,7 @@ index f7af1668..62726379 100755
  
  CLUSTER_NAME=""
 -ANTREA_IMAGE="projects.registry.vmware.com/antrea/antrea-ubuntu:latest"
-+ANTREA_IMAGE="projects.registry.vmware.com/antrea/antrea-ubuntu:v1.3.0"
++ANTREA_IMAGE="projects.registry.vmware.com/antrea/antrea-ubuntu:v1.4.0"
  IMAGES=$ANTREA_IMAGE
  ANTREA_CNI=true
  POD_CIDR="10.10.0.0/16"
@@ -20,7 +20,7 @@ index 6a779c63..e3e069ca 100755
              IMG_NAME="antrea/antrea-ubuntu-coverage:latest"
          else
 -            IMG_NAME="projects.registry.vmware.com/antrea/antrea-ubuntu:latest"
-+            IMG_NAME="projects.registry.vmware.com/antrea/antrea-ubuntu:v1.3.0"
++            IMG_NAME="projects.registry.vmware.com/antrea/antrea-ubuntu:v1.4.0"
          fi
      fi
  

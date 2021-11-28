@@ -1,0 +1,8 @@
+#@data/values
+---
+init:
+  tarball_base_url: "www.tanzu.com/files"
+  tarball_file: "tanzu.tar.gz"
+  vsphere_url: "10.1.2.3"
+  vsphere_user: "administrator@vsphere.local"
+  vsphere_password: "Admin!23"

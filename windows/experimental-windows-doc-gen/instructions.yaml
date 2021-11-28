@@ -1,0 +1,20 @@
+#@ load("@ytt:data", "data")
+
+steps:
+- step: "Install Mgmt cluster"
+  steps:
+  - "download tarball":
+    - #@ "wget " + data.values.init.tarball_base_url + "/" + data.values.init.tarball_file + " # RUNME"
+  - "unzip tarball":
+    - #@ "tar -xvf " + data.values.init.tarball_file + " # RUNME "
+  - "define vsphere credentials":
+    - #@ "export GOVC_VSPHERE_USER=" + data.values.init.vsphere_user + " # RUNME "
+    - #@ "export GOVC_VSPHERE_PASSWORD=" + data.values.init.vsphere_password + " # RUNME "
+    
+- "run tanzu init"
+- step: "Install Windows cluster"
+  steps:
+  - "make credentials.json # RUNME"
+  - "make windows.json # RUNME"
+  - "update autounattend if needed # RUNME"
+  - "craft docker command w/ subs # RUNME"

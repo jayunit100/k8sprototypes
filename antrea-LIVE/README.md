@@ -5,6 +5,7 @@ LIVE NOTES: https://hackmd.io/wxNOmhZdRNm_hJzZNFKwRg
 
 |    Date    | Show | Guests  | Recording |
 | ---------- | ---- | ------- | --------- |
+| 12/1/2021  | [Antrea in the wild: K3s, GKE, and beyond](12-01-2021/) | Luther | https://youtu.be/JzLmsOqfiq0 |
 | 11/27/2021 | [Antrea, Carvel, and Tanzu AddonsManager](11-27-2021/) | Jon, Dmitry, Arun | https://youtu.be/AxLuT062qHQ |
 | 11/17/2021 | [1.4.0 features + Tanzu FeatureGates](11-14-2021/) | none | https://youtu.be/34K0vTRoXeY |
 | 11/10/2021 | [Multus, Whereabouts, and Telco CNI paradigms](11-7-2021/) | none | https://youtu.be/Q1CBFoMAG2g |

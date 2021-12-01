@@ -30,3 +30,38 @@ ytt -f defaults.yaml -f instructions.yaml
 ```
 
 You essentially get product documentation that can be copied into formal documentation. 
+
+output (docs)
+```
+steps:
+- step: Install Mgmt cluster
+  steps:
+  - download tarball:
+    - wget www.tanzu.com/files/tanzu.tar.gz
+  - unzip tarball:
+    - tar -xvf tanzu.tar.gz
+  - define vsphere credentials:
+    - export GOVC_VSPHERE_USER=administrator@vsphere.local
+    - export GOVC_VSPHERE_PASSWORD=Admin!23
+- run tanzu init
+- step: Install Windows cluster
+  steps:
+  - make credentials.json
+  - make windows.json
+  - update autounattend if needed
+  - craft docker command w/ subs
+```
+
+output (ci)
+```
+ 'wget www.tanzu.com/files/tanzu.tar.gz # RUNME'
+ 'tar
+ 'export GOVC_VSPHERE_USER=administrator@vsphere.local # RUNME '
+ 'export GOVC_VSPHERE_PASSWORD=Admin!23 # RUNME '
+ 'make credentials.json # RUNME'
+ 'make windows.json # RUNME'
+ 'update autounattend if needed # RUNME'
+ 'craft docker command w/ subs # RUNME'
+```
+
+

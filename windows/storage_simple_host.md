@@ -1,7 +1,6 @@
+```
 apiVersion: apps/v1
 kind: Deployment
- 
- 
 metadata:
   name: iis
   labels:
@@ -31,6 +30,7 @@ spec:
         hostPath:
           path: C:/k/
           type: Directory
+```
 
 - Then jump into a shell on the container
 

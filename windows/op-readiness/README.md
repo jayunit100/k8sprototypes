@@ -1,3 +1,6 @@
+Pardon our dust ! This repo is undergoing rapid iteration right now... if you want to run it, 
+contact jayunit100 on upstream k8s.io slack !
+
 # Operational Readiness Specification for windows
 
 To specify your windows cluster's readiness to run workflows:

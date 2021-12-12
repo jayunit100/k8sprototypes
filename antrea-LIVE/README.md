@@ -10,7 +10,7 @@ LIVE NOTES: https://hackmd.io/wxNOmhZdRNm_hJzZNFKwRg
 | 11/27/2021 | [Antrea, Carvel, and Tanzu AddonsManager](11-27-2021/) | Jon, Dmitry, Arun | https://youtu.be/AxLuT062qHQ |
 | 11/17/2021 | [1.4.0 features + Tanzu FeatureGates](11-14-2021/) | none | https://youtu.be/34K0vTRoXeY |
 | 11/10/2021 | [Multus, Whereabouts, and Telco CNI paradigms](11-7-2021/) | none | https://youtu.be/Q1CBFoMAG2g |
-| 11/3/2021  | [ovs metrics + a kubeproxy bug](11-04-2021/) | none | https://www.youtube.com/3aUnws6diAY |
+| 11/3/2021  | [ovs metrics + a kubeproxy bug](11-04-2021/) | none | https://www.youtube.com/watch?v=3aUnws6diAY |
 | 10/27/2021 | [1.3.0 + FQDN + k8snetlook 1.3](10-27-2021/) | sarun87 | https://www.youtube.com/aWUwxQ58bEQ&t |
 
 Weekly antrea live-stream about all thinkgs CNI and Kubernetes...

@@ -3,12 +3,12 @@
     {
       "name":"Networking"
       "focus":"sig-windows",
-      "skip":""
+      "skip":"GMSA|6|Volume"
     },
     {
       "name":"Core"
       "focus":"NetworkPolicy",
-      "skip":""
+      "skip":"udp|6"
     }
   ]
 }

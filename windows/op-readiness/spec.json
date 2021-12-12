@@ -2,12 +2,18 @@
   "spec": [
     {
       "name":"Networking"
-      "focus":"sig-windows",
-      "skip":"GMSA|6|Volume"
+      "focus":"sig-network",
+      "skip":"GMSA|6|Volume|Netpol"
     },
     {
+      "name":"Network Policyes"
+      "focus":"Netpol",
+      "skip":"6"
+    },
+
+    {
       "name":"Core"
-      "focus":"NetworkPolicy",
+      "focus":"sig-windows",
       "skip":"udp|6"
     }
   ]

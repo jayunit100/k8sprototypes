@@ -1,0 +1,14 @@
+{
+  "spec": [
+    {
+      "name":"Networking"
+      "focus":"sig-windows",
+      "skip":""
+    },
+    {
+      "name":"Core"
+      "focus":"NetworkPolicy",
+      "skip":""
+    }
+  ]
+}

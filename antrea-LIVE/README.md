@@ -5,6 +5,7 @@ LIVE NOTES: https://hackmd.io/wxNOmhZdRNm_hJzZNFKwRg
 
 |    Date    | Show | Guests  | Recording |
 | ---------- | ---- | ------- | --------- |
+| 12/15/2021 | [Ingress,Contour,NGINX,AVI](12-15-2021) | Ricardo Katz | https://youtu.be/bfb4tiUr3RI |
 | 12/8/2021  | [CAPA, CNI Datapath](12-08-2021/) | Sedef | https://youtu.be/bb_zpQJo51A | 
 | 12/1/2021  | [Antrea in the wild: K3s, GKE, and beyond](12-01-2021/) | Luther | https://youtu.be/JzLmsOqfiq0 |
 | 11/27/2021 | [Antrea, Carvel, and Tanzu AddonsManager](11-27-2021/) | Jon, Dmitry, Arun | https://youtu.be/AxLuT062qHQ |

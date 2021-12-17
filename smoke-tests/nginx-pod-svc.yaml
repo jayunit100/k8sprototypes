@@ -67,3 +67,12 @@ spec:
     - "3600"
     imagePullPolicy: IfNotPresent
     name: busybox
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kubernetes.io/os
+            operator: In
+            values:
+            - linux

@@ -5,6 +5,7 @@ LIVE NOTES: https://hackmd.io/wxNOmhZdRNm_hJzZNFKwRg
 
 |    Date    | Show | Guests  | Recording |
 | ---------- | ---- | ------- | --------- |
+| 12/21/2021 | [tanzu-customize,1.5 nsxt ++](12-21-2021) | Scott Rosenberg (vrabbi) | https://youtu.be/JZrFBippJlM |
 | 12/15/2021 | [Ingress,Contour,NGINX,AVI](12-15-2021) | Ricardo Katz | https://youtu.be/bfb4tiUr3RI |
 | 12/8/2021  | [CAPA, CNI Datapath](12-08-2021/) | Sedef | https://youtu.be/bb_zpQJo51A | 
 | 12/1/2021  | [Antrea in the wild: K3s, GKE, and beyond](12-01-2021/) | Luther | https://youtu.be/JzLmsOqfiq0 |

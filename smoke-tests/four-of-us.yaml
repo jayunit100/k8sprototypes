@@ -1,0 +1,57 @@
+# Similar to the other yaml but makes both a statefulset, a deployment to demonstrate how multiple pods can fulfill the same service
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx4
+  labels:
+    app: four-of-us
+spec:
+  ports:
+  - port: 80
+    name: web
+  clusterIP: None
+  selector:
+    app: four-of-us
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: web-ss
+spec:
+  serviceName: "nginx"
+  replicas: 2
+  selector:
+    matchLabels:
+      app: four-of-us
+  template:
+    metadata:
+      labels:
+        app: four-of-us
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.7
+        ports:
+        - containerPort: 80
+          name: web
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-dep
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: four-of-us
+  template:
+    metadata:
+      labels:
+        app: four-of-us
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.7
+        ports:
+        - containerPort: 80
+          name: web

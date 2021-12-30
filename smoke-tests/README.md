@@ -1,3 +1,5 @@
+# DNS Exploration
+
 To start off, run this 
 
 kubectl create -f https://github.com/jayunit100/k8sprototypes/blob/master/smoke-tests/nginx-pod-svc.yaml

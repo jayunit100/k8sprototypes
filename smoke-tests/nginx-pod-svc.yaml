@@ -1,3 +1,23 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: busybox-ds
+spec:
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+      - image: gcr.io/google-containers/busybox:1.27
+        command:
+        - sleep
+        - "36000"
+        imagePullPolicy: IfNotPresent
+---
 apiVersion: v1
 kind: Service
 metadata:

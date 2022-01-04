@@ -5,11 +5,11 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: web
+      app: busybox
   template:
     metadata:
       labels:
-        app: web
+        app: busybox
     spec:
       containers:
       - image: gcr.io/google-containers/busybox:1.27

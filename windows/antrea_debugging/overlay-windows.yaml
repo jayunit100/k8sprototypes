@@ -328,7 +328,7 @@ spec:
 
           # Hongsheng added
           rm -Force C:\k\antrea\Helper.psm1
-          curl.exe -Lo C:\k\antrea\Helper.psm1 http://192.168.109.80:8000/Helper.psm1
+          curl.exe -Lo C:\k\antrea\Helper.psm1 https://raw.githubusercontent.com/jayunit100/k8sprototypes/master/windows/antrea_debugging/Helper.psm1
           echo "hs-----1" >> C:\k\hs.log
           echo (ls C:\k\antrea) >> C:\k\hs.log
 

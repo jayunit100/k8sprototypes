@@ -59,7 +59,7 @@ function Install-AntreaAgent {
         [parameter(Mandatory = $false, HelpMessage="Kubernetes download")] [string] $KubernetesURL="dl.k8s.io"
     )
     $ErrorActionPreference = "Stop"
-    echo "Install-AntreaAgent :::::::::::::::::::: 1" >> C:\k\hs.log
+    #echo "Install-AntreaAgent :::::::::::::::::::: 1" >> C:\k\hs.log
 
     $kubectl = "$KubernetesHome\kubectl.exe"
     $KubeProxy = "$KubernetesHome\kube-proxy.exe"
@@ -114,38 +114,38 @@ function Install-AntreaAgent {
     }
 
     New-DirectoryIfNotExist $AntreaEtc
-    echo "Install-AntreaAgent :::::::::::::::::::: 2 $AntreaEtc" >> C:\k\hs.log
-    echo (ls $AntreaEtc) >> C:\k\hs.log
+    #echo "Install-AntreaAgent :::::::::::::::::::: 2 $AntreaEtc" >> C:\k\hs.log
+    #echo (ls $AntreaEtc) >> C:\k\hs.log
     Get-WebFileIfNotExist $AntreaCNIConfigFile "$AntreaRawUrlBase/build/yamls/windows/base/conf/antrea-cni.conflist"
     Get-WebFileIfNotExist $AntreaAgentConfigPath "$AntreaRawUrlBase/build/yamls/windows/base/conf/antrea-agent.conf"
     Add-Content $AntreaAgentConfigPath "`r`nclientConnection:`r`n  kubeconfig: $AntreaEtc\antrea-agent.kubeconfig"
     Add-Content $AntreaAgentConfigPath "`r`nantreaClientConnection:`r`n  kubeconfig: $AntreaEtc\antrea-agent.antrea.kubeconfig"
-    echo "Install-AntreaAgent :::::::::::::::::::: 3 $AntreaEtc" >> C:\k\hs.log
-    echo (ls $AntreaEtc) >> C:\k\hs.log
+    #echo "Install-AntreaAgent :::::::::::::::::::: 3 $AntreaEtc" >> C:\k\hs.log
+    #echo (ls $AntreaEtc) >> C:\k\hs.log
 
     $KUBE_DNS_SERVICE_HOST=$(kubectl --kubeconfig=$KubeConfig get service -n kube-system kube-dns -o=jsonpath='{.spec.clusterIP}')
     $KUBE_DNS_SERVICE_PORT=$(kubectl --kubeconfig=$KubeConfig get service -n kube-system kube-dns -o=jsonpath='{.spec.ports[0].port}')
     $KUBE_DNS_SERVICE_ADDR=$KUBE_DNS_SERVICE_HOST + ":" + $KUBE_DNS_SERVICE_PORT
     Add-Content $AntreaAgentConfigPath "`r`nDNSServerOverride: $KUBE_DNS_SERVICE_ADDR"
-    echo "Install-AntreaAgent :::::::::::::::::::: 4 $AntreaEtc" >> C:\k\hs.log
-    echo (ls $AntreaEtc) >> C:\k\hs.log
+    #echo "Install-AntreaAgent :::::::::::::::::::: 4 $AntreaEtc" >> C:\k\hs.log
+    #echo (ls $AntreaEtc) >> C:\k\hs.log
 
     # Create the kubeconfig file that contains the K8s APIServer service and the token of antrea ServiceAccount.
     $APIServer=$(kubectl --kubeconfig=$KubeConfig get service kubernetes -o jsonpath='{.spec.clusterIP}')
-    echo "Install-AntreaAgent :::::::::::::::::::: 5 $AntreaEtc" >> C:\k\hs.log
-    echo (ls $AntreaEtc) >> C:\k\hs.log
+    #echo "Install-AntreaAgent :::::::::::::::::::: 5 $AntreaEtc" >> C:\k\hs.log
+    #echo (ls $AntreaEtc) >> C:\k\hs.log
     $APIServerPort=$(kubectl --kubeconfig=$KubeConfig get service kubernetes -o jsonpath='{.spec.ports[0].port}')
-    echo "Install-AntreaAgent :::::::::::::::::::: 6 $AntreaEtc" >> C:\k\hs.log
-    echo (ls $AntreaEtc) >> C:\k\hs.log
+    #echo "Install-AntreaAgent :::::::::::::::::::: 6 $AntreaEtc" >> C:\k\hs.log
+    #echo (ls $AntreaEtc) >> C:\k\hs.log
     $APIServer="https://$APIServer" + ":" + $APIServerPort
-    echo "Install-AntreaAgent :::::::::::::::::::: 7 $AntreaEtc" >> C:\k\hs.log
-    echo (ls $AntreaEtc) >> C:\k\hs.log
+    #echo "Install-AntreaAgent :::::::::::::::::::: 7 $AntreaEtc" >> C:\k\hs.log
+    #echo (ls $AntreaEtc) >> C:\k\hs.log
     $TOKEN=$(kubectl --kubeconfig=$KubeConfig get secrets -n kube-system -o jsonpath="{.items[?(@.metadata.annotations['kubernetes\.io/service-account\.name']=='antrea-agent')].data.token}")
-    echo "Install-AntreaAgent :::::::::::::::::::: 8 $AntreaEtc" >> C:\k\hs.log
-    echo (ls $AntreaEtc) >> C:\k\hs.log
+    #echo "Install-AntreaAgent :::::::::::::::::::: 8 $AntreaEtc" >> C:\k\hs.log
+    #echo (ls $AntreaEtc) >> C:\k\hs.log
     $TOKEN=$([System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($TOKEN)))
-    echo "Install-AntreaAgent :::::::::::::::::::: 9 $AntreaEtc" >> C:\k\hs.log
-    echo (ls $AntreaEtc) >> C:\k\hs.log
+    #echo "Install-AntreaAgent :::::::::::::::::::: 9 $AntreaEtc" >> C:\k\hs.log
+    #echo (ls $AntreaEtc) >> C:\k\hs.log
     kubectl config --kubeconfig=$AntreaEtc\antrea-agent.kubeconfig set-cluster kubernetes --server=$APIServer --insecure-skip-tls-verify
     echo "Install-AntreaAgent :::::::::::::::::::: 10 $AntreaEtc" >> C:\k\hs.log
     echo (ls $AntreaEtc) >> C:\k\hs.log

@@ -5,7 +5,8 @@ LIVE NOTES: https://hackmd.io/wxNOmhZdRNm_hJzZNFKwRg
 
 |    Date    | Show | Guests  | Recording |
 | ---------- | ---- | ------- | --------- |
-| 1/12/2021  | [windows, sessionAffinity](1-12-2021) | Amim Knabben (knabben) | https://youtu.be/3Z0NOrETjxY |
+| 1/18/2022  | [service-lb-validator](1-18-2022) | Zac Yang and Fang Han | https://youtu.be/aMJcF3aSDKw |
+| 1/12/2022  | [windows, sessionAffinity](1-12-2022) | Amim Knabben (knabben) | https://youtu.be/3Z0NOrETjxY |
 | 12/21/2021 | [tanzu-customize,1.5 nsxt ++](12-21-2021) | Scott Rosenberg (vrabbi) | https://youtu.be/JZrFBippJlM |
 | 12/15/2021 | [Ingress,Contour,NGINX,AVI](12-15-2021) | Ricardo Katz | https://youtu.be/bfb4tiUr3RI |
 | 12/8/2021  | [CAPA, CNI Datapath](12-08-2021/) | Sedef | https://youtu.be/bb_zpQJo51A | 

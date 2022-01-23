@@ -1,0 +1,9 @@
+Vagrant.configure("2") do |config|
+  config.vm.define "v1" do |v1|
+    v1.vm.box = "oxdev/debian-buster-x64"
+  end
+
+  config.vm.define "v2" do |v2|
+    v2.vm.box = "oxdev/debian-buster-x64"
+  end
+end

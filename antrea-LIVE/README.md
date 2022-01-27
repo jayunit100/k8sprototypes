@@ -5,6 +5,7 @@ LIVE NOTES: https://hackmd.io/wxNOmhZdRNm_hJzZNFKwRg
 
 |    Date    | Show | Guests  | Recording |
 | ---------- | ---- | ------- | --------- |
+| 1/26/2022  | [AVI Load Balancing](1-26-2022) | Bhushan Pai and Xinqi Li | https://youtu.be/Fb_2r-X7Qhc |
 | 1/19/2022  | [service-lb-validator](1-18-2022) | Zac Yang and Fang Han | https://youtu.be/aMJcF3aSDKw |
 | 1/12/2022  | [windows, sessionAffinity](1-12-2022) | Amim Knabben (knabben) | https://youtu.be/3Z0NOrETjxY |
 | 12/21/2021 | [tanzu-customize,1.5 nsxt ++](12-21-2021) | Scott Rosenberg (vrabbi) | https://youtu.be/JZrFBippJlM |
@@ -57,6 +58,6 @@ Join the show, and ask random questions:
 # Want to run a show?
 
 If you are a guest interested in doing a show:
-1. ping @jayunit100 or @yashbhutwala on *project-antrea* slack channel (slack.k8s.io)
+1. ping @jayunit100 or @yashbhutwala or @Xinqi Li on *project-antrea* slack channel (slack.k8s.io)
 2. make a PR here adding your show / date info
 3. We'll schedule the youtube together

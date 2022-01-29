@@ -95,7 +95,7 @@ kind: Pod
 metadata:
   annotations:
     ### Reminder that this nodeport was overwritten from the original value
-    nodeportlocal.antrea.io: '[{"podPort":80,"nodeIP":"10.186.56.87","nodePort":61000}]'
+    nodeportlocal.antrea.io: '[{"podPort":80,"nodeIP":"10.186.56.87","nodePort":61234}]'
   creationTimestamp: "2022-01-29T15:20:27Z"
 ```
 
@@ -104,7 +104,7 @@ metadata:
 ```
 kubo@jumper:~$ kubectl get pods -o yaml | grep nodeport
 ```
-Reveals that antrea autoassigned monotonically increasing nodeport addresses... 
+Reveals that antrea autoassigned monotonically increasing nodeport addresses... so the 61234 thing is kinda irrelevant 
 ```
       nodeportlocal.antrea.io: '[{"podPort":80,"nodeIP":"10.186.56.87","nodePort":61003}]'
             f:nodeportlocal.antrea.io: {}

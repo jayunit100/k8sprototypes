@@ -5,6 +5,7 @@ LIVE NOTES: https://hackmd.io/wxNOmhZdRNm_hJzZNFKwRg
 
 |    Date    | Show | Guests  | Recording |
 | ---------- | ---- | ------- | --------- |
+| 2/2/2022   | [IPv6 on Tanzu](2-2-2022) | Aidan Obley | TODO: Add YouTube Link |
 | 1/26/2022  | [AVI Load Balancing](1-26-2022) | Bhushan Pai and Xinqi Li | https://youtu.be/Fb_2r-X7Qhc |
 | 1/19/2022  | [service-lb-validator](1-18-2022) | Zac Yang and Fang Han | https://youtu.be/aMJcF3aSDKw |
 | 1/12/2022  | [windows, sessionAffinity](1-12-2022) | Amim Knabben (knabben) | https://youtu.be/3Z0NOrETjxY |

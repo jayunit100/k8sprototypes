@@ -31,6 +31,7 @@ Weekly antrea live-stream about all thinkgs CNI and Kubernetes...
 
 1. login to streamyard to start scheduling the show for 4pm EST , wednesday (ask yash/jay for details)
 2. login to https://crello.com/user/projects/ and make an antrea-live youtube thumbnail
+  - pick one pic from here, you can just copy the image of an NFT created by yzaccc@github! https://opensea.io/collection/propelling-lens, no worries, you do not own the NFT if you just copy the image.
   - or just use https://github.com/jayunit100/k8sprototypes/raw/master/antrea-LIVE/antrea-LIVE.png) and we can make one later.
 3. Schedule a show on youtube, copy the link, *use the above file as the thumbnail* 
   - for 4PM EST on WEDNESDAY

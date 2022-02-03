@@ -12,7 +12,8 @@ spec:
         app: busybox
     spec:
       containers:
-      - image: gcr.io/google-containers/busybox:1.27
+      - name: david
+        image: gcr.io/google-containers/busybox:1.27
         command:
         - sleep
         - "36000"

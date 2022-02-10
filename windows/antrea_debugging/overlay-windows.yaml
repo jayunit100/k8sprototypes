@@ -329,8 +329,8 @@ spec:
           # Hongsheng added
           rm -Force C:\k\antrea\Helper.psm1
           curl.exe -Lo C:\k\antrea\Helper.psm1 https://raw.githubusercontent.com/jayunit100/k8sprototypes/master/windows/antrea_debugging/Helper.psm1
-          #echo "hs-----1" >> C:\k\hs.log
-          #echo (ls C:\k\antrea) >> C:\k\hs.log
+          echo "hs-----1" >> C:\k\hs.log
+          echo (ls C:\k\antrea) >> C:\k\hs.log
 
           # Get HostIP and set in kubeadm-flags.env
           [Environment]::SetEnvironmentVariable("NODE_NAME", (hostname).ToLower())

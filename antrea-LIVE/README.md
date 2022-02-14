@@ -5,6 +5,7 @@ LIVE NOTES: https://hackmd.io/wxNOmhZdRNm_hJzZNFKwRg
 
 |    Date    | Show | Guests  | Recording |
 | ---------- | ---- | ------- | --------- |
+| 2/9/2022   | [Routable Pods and LB operator](2-9-2022) | Scott Rosenberg and Xinqi Li | https://www.youtube.com/watch?v=a_T1-JfiRO0 |
 | 2/2/2022   | [IPv6 on Tanzu](2-2-2022) | Aidan Obley | https://www.youtube.com/watch?v=mR-9eLusRs8 |
 | 1/26/2022  | [AVI Load Balancing](1-26-2022) | Bhushan Pai and Xinqi Li | https://youtu.be/Fb_2r-X7Qhc |
 | 1/19/2022  | [service-lb-validator](1-18-2022) | Zac Yang and Fang Han | https://youtu.be/aMJcF3aSDKw |

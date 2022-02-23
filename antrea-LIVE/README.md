@@ -5,6 +5,7 @@ LIVE NOTES: https://hackmd.io/wxNOmhZdRNm_hJzZNFKwRg
 
 |    Date    | Show | Guests  | Recording |
 | ---------- | ---- | ------- | --------- |
+| 2/23/2022  | [CNI The Manual Way](2-23-2022) | Michael Zappa  | https://www.youtube.com/watch?v=fDouBZM4BAo | 
 | 2/16/2022  | [CNI plugin specification part 1](2-16-2022) | Jay and Amim | https://youtu.be/XgT2VlRF9ho | 
 | 2/9/2022   | [Routable Pods and LB operator](2-9-2022) | Scott Rosenberg and Xinqi Li | https://www.youtube.com/watch?v=a_T1-JfiRO0 |
 | 2/2/2022   | [IPv6 on Tanzu](2-2-2022) | Aidan Obley | https://www.youtube.com/watch?v=mR-9eLusRs8 |

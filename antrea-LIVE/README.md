@@ -5,7 +5,7 @@ LIVE NOTES: https://hackmd.io/wxNOmhZdRNm_hJzZNFKwRg
 
 |    Date    | Show | Guests  | Recording |
 | ---------- | ---- | ------- | --------- |
-| 3/2/2022   |  | Eleanour  | https://www.youtube.com/watch?v=ZePPz6L2cNQ&list=PLuzde2hYeDBfHDD0zMbmG4QoVaSbkJChZ&index=1 | 
+| 3/2/2022   | [The application pod data path](3-2-2022) | Eleanour/vivek/bhushan| https://www.youtube.com/watch?v=ZePPz6L2cNQ&list=PLuzde2hYeDBfHDD0zMbmG4QoVaSbkJChZ&index=1
 | 2/23/2022  | [CNI The Manual Way](2-23-2022) | Michael Zappa  | https://www.youtube.com/watch?v=fDouBZM4BAo | 
 | 2/16/2022  | [CNI plugin specification part 1](2-16-2022) | Jay and Amim | https://youtu.be/XgT2VlRF9ho | 
 | 2/9/2022   | [Routable Pods and LB operator](2-9-2022) | Scott Rosenberg and Xinqi Li | https://www.youtube.com/watch?v=a_T1-JfiRO0 |

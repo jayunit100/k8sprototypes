@@ -5,6 +5,7 @@ LIVE NOTES: https://hackmd.io/wxNOmhZdRNm_hJzZNFKwRg
 
 |    Date    | Show | Guests  | Recording |
 | ---------- | ---- | ------- | --------- |
+| 4/13/2022. | [etcd](4-22-2022) | Jay, Ricardo, Matt | https://www.youtube.com/watch?v=ZaO5W3QlaqY |
 | 3/23/2022  | [Antrea Policy](3-23-2022) | Yang Ding and Grayson Wu  | https://www.youtube.com/watch?v=q9BN3dU9Xn8 |
 | 3/9/2022  | [Antrea Egress](3-9-2022) | Wenqi Qiu and Jianjun Shen  | https://www.youtube.com/watch?v=4JcCltW8K48&list=PLuzde2hYeDBfHDD0zMbmG4QoVaSbkJChZ |
 | 3/2/2022   | [The application pod data path](3-2-2022) | Eleanour/vivek/bhushan| https://www.youtube.com/watch?v=ZePPz6L2cNQ&list=PLuzde2hYeDBfHDD0zMbmG4QoVaSbkJChZ&index=1

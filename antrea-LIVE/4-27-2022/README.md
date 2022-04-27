@@ -1,6 +1,16 @@
 
 # Antrea LIVE Episode 26 etcd and CRDs and stuff
 
+getting started on adv. windowsy networking policy test improvements 
+```https://github.com/kubernetes/kubernetes/issues/107853
+
+..........
+ubuntu@jay-build-box-6 [21:09:28] [~/SOURCE/kubernetes/test/e2e/network/netpol] [31dba0a435e *]
+-> % ### /home/ubuntu/SOURCE/kubernetes/e2e.test --provider=local --kubeconfig=/home/ubuntu/.kube/config --dump-logs-on-failure=false --ginkgo.focus="sig-network" --ginkgo.skip="Driver|Slow|Driver" --ginkgo.dryRun=true
+ubuntu@jay-build-box-6 [21:10:11] [~/SOURCE/kubernetes/test/e2e/network/netpol] [31dba0a435e *]
+-> % make WHAT=test/e2e/e2e.test
+make: *** No targets specified and no makefile found.  Stop.
+```
 
 ## THE SECOND ANT LIVE CODING CHALLENGE EVER
 

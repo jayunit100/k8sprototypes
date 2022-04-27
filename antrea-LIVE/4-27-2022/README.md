@@ -3,6 +3,12 @@
 
 
 ## THE FIRST ANT LIVE CODING CHALLENGE EVER
+test snippet
+
+```
+-> % for i in {1..10} ; do NAME=$i ./crd-race.sh  ; done
+```
+
 
 MAKE THIS REPRODOCE https://github.com/kubernetes/kubernetes/issues/65517 
 ```

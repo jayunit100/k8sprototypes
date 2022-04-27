@@ -2,6 +2,25 @@
 # Antrea LIVE Episode 26 etcd and CRDs and stuff
 
 
+## THE SECOND ANT LIVE CODING CHALLENGE EVER
+
+```
+kubectl patch deployment patch-demo --patch "{\"spec\":{\"template\":{\"spec\":{\"containers\":[{\"name\":\"patch-demo-ctr-${i}\",\"image\":\"redis\"}]}}}}"
+``` 
+- randomly create 100 deployments
+- put this into a pod w/ a kubectl, wrap it in bacsh and see if you can use it to 
+contintuously patch a those deployment objects
+- figure out a way to compare the object as seen in the script over time, depending on what node in the
+daemonset was running a get on that resource that is constantly being mutated
+- see if things get out of sync....
+
+
+```
+--------------> wether things get out of sync -------------> 
+etcdctl --endpoints="https://localhost:2379" --cacert="/etc/kubernetes/pki/etcd/ca.crt" --cert="/etc/kubernetes/pki/etcd/server.crt" --key=/etc/kubernetes/pki/etcd/server.key endpoint status --cluster
+``` 
+
+
 ## THE FIRST ANT LIVE CODING CHALLENGE EVER
 test snippet
 

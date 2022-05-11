@@ -5,6 +5,7 @@ LIVE NOTES: https://hackmd.io/wxNOmhZdRNm_hJzZNFKwRg
 
 |    Date    | Show | Guests  | Recording |
 | ---------- | ---- | ------- | --------- |
+| 5/11/2022 | [K8s 1.24 + KEPs](5-11-2022) | Jay | https://www.youtube.com/watch?v=6rXT0OYQhXM&list=LLmPCko6ezFDUwnQaV9CvOIQ |
 | 4/27/2022 | [CRD, apiserver, etcd](4-27-2022) | Jay/Mustafa| https://www.youtube.com/watch?v=AS0RB2lP2kc  |
 | 4/13/2022. | [etcd](4-22-2022) | Jay, Ricardo, Matt | https://www.youtube.com/watch?v=ZaO5W3QlaqY |
 | 3/23/2022  | [Antrea Policy](3-23-2022) | Yang Ding and Grayson Wu  | https://www.youtube.com/watch?v=q9BN3dU9Xn8 |

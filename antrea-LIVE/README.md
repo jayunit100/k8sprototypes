@@ -5,6 +5,7 @@ LIVE NOTES: https://hackmd.io/wxNOmhZdRNm_hJzZNFKwRg
 
 |    Date    | Show | Guests  | Recording |
 | ---------- | ---- | ------- | --------- |
+| 6/29/2022 | [KPNG-ebpf](6-29-2022) | Jay,Stoyocos | https://youtube.com/playlist?list=PLuzde2hYeDBfHDD0zMbmG4QoVaSbkJChZ |
 | 5/26/2022 | [GRPC and PROTOBUF](5-26-2022) | Jay,Vlad,Amim,Stoyocos | https://www.youtube.com/watch?v=MmChA7_vKtk |
 | 5/11/2022 | [K8s 1.24 + KEPs](5-11-2022) | Jay | https://www.youtube.com/watch?v=6rXT0OYQhXM&list=LLmPCko6ezFDUwnQaV9CvOIQ |
 | 4/27/2022 | [CRD, apiserver, etcd](4-27-2022) | Jay/Mustafa| https://www.youtube.com/watch?v=AS0RB2lP2kc  |

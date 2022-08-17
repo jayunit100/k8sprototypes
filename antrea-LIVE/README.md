@@ -5,6 +5,7 @@ LIVE NOTES: https://hackmd.io/wxNOmhZdRNm_hJzZNFKwRg
 
 |    Date    | Show | Guests  | Recording |
 | ---------- | ---- | ------- | --------- |
+| 8/17/2022 | [WASM-rustlet-adminnetpol](8-17-2022) | Amim, Jay,Stoyocos |  https://www.youtube.com/watch?v=8tV83RpXrw4 |
 | 6/29/2022 | [KPNG-ebpf](6-29-2022) | Jay,Stoyocos |  https://www.youtube.com/watch?v=vJ49_BniUwI |
 | 5/26/2022 | [GRPC and PROTOBUF](5-26-2022) | Jay,Vlad,Amim,Stoyocos | https://www.youtube.com/watch?v=MmChA7_vKtk |
 | 5/11/2022 | [K8s 1.24 + KEPs](5-11-2022) | Jay | https://www.youtube.com/watch?v=6rXT0OYQhXM&list=LLmPCko6ezFDUwnQaV9CvOIQ |

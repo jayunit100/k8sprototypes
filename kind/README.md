@@ -1,5 +1,12 @@
-# how to run this
+# How to Run these ! 
 
+
+```
+CLUSTER=calico ./kind-local-up.sh
+CLUSTER=antrea ./kind-local-up.sh
+CLUSTER=cillium ./kind-local-up.sh
+
+```
 Run the kind-local-up.sh script.  It will create a kind cluster w/ a real CNI (antrea/calico/cillium) for you.  
 
 ##  antrea: 

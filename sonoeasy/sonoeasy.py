@@ -155,17 +155,28 @@ class ConformanceTest:
         except Exception as e:
             print("fail",e)
 
-def main ():
+import os
+
+def main():
+    root = "./k8s-conformance/v1.22/"
+    for dirr in os.listdir(root):
+        print("########",dirr,"########")
+        process(root+dirr+"/junit_01.xml")
+
+
+def process (f):
     run = ConformanceRun()
-    Load_XML = xml.dom.minidom.parse('./junit_01.xml')
-    print (Load_XML.nodeName)
+
+    Load_XML = xml.dom.minidom.parse(f)
+    print (Load_XML.firstChild.getAttribute("time"))
+    
     while Load_XML.firstChild.childNodes.length > 1:
         try:
             node = Load_XML.firstChild.childNodes.pop()
             if type(node) == xml.dom.minidom.Element:
                 confTest = ConformanceTest(node)
                 if confTest.valid():
-                    run.add(confTest)                 
+                    run.add(confTest)
         except Exception as e:
             print(type(node),"<-ERROR", e)
 

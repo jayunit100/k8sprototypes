@@ -44,7 +44,8 @@ class ConformanceRun:
         sig-win -> x
                    y 
     '''
-    allTests = []
+    def __init__(self):
+        self.allTests = []
 
     def summary(self) -> str: 
         return str(" ---> " + str(len(self.allTests)))

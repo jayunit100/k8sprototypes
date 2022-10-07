@@ -4,32 +4,32 @@ import xml.dom.minidom
 import statistics
 # valid tags, from https://github.com/kubernetes/test-infra/blob/master/jobs/validOwners.json 
 TAGS = {
-   #"sig-api-machinery",
+   "sig-api-machin",
    "sig-apps",
-   #"sig-auth",
-   #"sig-autoscaling",
-   # "sig-azure",
-   #"sig-big-data",
+   "sig-auth",
+#   "sig-autoscaling",
+#    "sig-azure",
+#   "sig-big-data",
    "sig-cli",
-   #"sig-cloud-provider-gcp",
-   #"sig-cluster-lifecycle",
-   #"sig-contributor-experience",
-   #"sig-docs",
-   #"sig-multicluster",
-   #"sig-instrumentation",
-   "sig-network",
+#   "sig-cloud-provider-gcp",
+#   "sig-cluster-lifecycle",
+#   "sig-contributor-experience",
+#   "sig-docs",
+#   "sig-multicluster",
+   "sig-instrum",
+   "sig-netw",
    "sig-node",
-   # "sig-onprem",
-   # "sig-openstack",
-   # "kubernetes-release",
-   #"sig-scalability",
+#    "sig-onprem",
+#    "sig-openstack",
+#    "kubernetes-release",
+#   "sig-scalability",
    "sig-scheduling",
-   #"sig-service-catalog",
+#   "sig-service-catalog",
    "sig-storage",
-   #"sig-testing",
-   #"sig-ui",
-   #"sig-windows"
-   #"sig-release"
+#   "sig-testing",
+#   "sig-ui",
+#   "sig-windows"
+#  "sig-release"
 }
 
 def string(confTest):
@@ -79,6 +79,8 @@ class ConformanceRun:
         all = []
         for i in f:
             all.append(i.time)
+        if len(all) == 0:
+            return 0
         return statistics.stdev(all)
 
     def average(self, tags) -> float:
@@ -88,15 +90,21 @@ class ConformanceRun:
         for i in f:
             total += 1
             sum += i.time
+        if total == 0:
+            return 0
         return sum / total
 
-    def longest(self, tags) -> float:
+    def longest(self, tags):
         #print("longest {tags}",tags)
         f = self.filter(tags)
         maxx = -1
+        confTest = None
         for i in f:
-            maxx = max(i.time, maxx )  
-        return maxx
+            maxx = max(i.time, maxx )
+            # it changed, so update the return val.
+            if i.time == maxx:
+                confTest = i
+        return confTest
 
     def shortest(self, tags) -> float:
         minn = 100000
@@ -163,17 +171,35 @@ def main ():
 
     #print(run.summary())
     print("*****************************")
-    print(f"\t\tshrt \t avg \t dev \t  long \t cnt")
+    print(f"\t\tshrt \t avg \t dev \t  long \t cnt \t totaltime(s)")
+    summarys = {}
+    table = []
+
+    # CSV output of all timings... 
     for t in TAGS:
         s = format(run.shortest([t]), '.1f')
         a = format(run.average([t]), '.1f')
         d = format(run.stddev([t]), '.1f')
-        l = format(run.longest([t]), '.1f')
+
+        l = "x"
+        longestDesc = "x"
+
+        confTest = run.longest([t])
+        if confTest is not None:
+            l = format(confTest.time , '.1f')
+            summarys[f"longest {t}"]=f"{confTest.name} {confTest.time}"
+
         c = run.count([t])
         to = format(run.total([t]),'.1f')
 
+        table.append([t,s,a,d,l,c,to])
+
         print(f"{t} \t {s}s \t {a} \t {d} \t {l}s\t {c}\t {to}")
 
+    for t in summarys:
+        print()
+        print(t,":",summarys[t])
+        
 if __name__ == "__main__":
     main()
 

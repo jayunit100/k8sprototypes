@@ -21,10 +21,10 @@ var (
 	//go:embed cluster.yaml
 	ClusterConfig string
 
-	//go:embed 2_management-cluster.sh
+	//go:embed 2_management_cluster.sh
 	ManagementClusterInstall string
 
-	//go:embed
+	// //go:embed image_builder.sh
 	ImageBuilderScript string
 )
 
@@ -32,9 +32,9 @@ var (
 // they can be hacked up by the user after running tkgprotoform init the first time.
 func files() map[string]string {
 	return map[string]string{
-		"cluster.yaml":          ClusterConfig,
-		"management_cluster.sh": ManagementClusterInstall,
-		"image_builder.sh":      ImageBuilderScript,
+		"cluster.yaml":            ClusterConfig,
+		"2_management_cluster.sh": ManagementClusterInstall,
+		"image_builder.sh":        ImageBuilderScript,
 	}
 }
 

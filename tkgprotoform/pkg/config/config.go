@@ -1,13 +1,13 @@
 package config
 
 import (
-	"corgon.com/corgon/pkg/tf"
 	"flag"
 	"fmt"
 	"github.com/spf13/viper"
 	"io"
 	log "k8s.io/klog/v2"
 	"strings"
+	"tkgprotoform.com/protoform/pkg/tf"
 )
 
 func init() {
@@ -98,7 +98,7 @@ func GetConf() *Config {
 	}
 
 	if conf.Debug == false {
-		log.Info("Disabling klog. Set debug to true if you wanna know whats going on.")
+		log.Infof("Disabling klog. Set debug to true if you wanna know whats going on.")
 		// disable
 		log.SetOutput(io.Discard)
 		flags := &flag.FlagSet{}

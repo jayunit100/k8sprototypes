@@ -1,7 +1,6 @@
 package files
 
 import (
-	"k8s.io/klog/v2"
 	"strings"
 	config "tkgprotoform.com/protoform/pkg/config"
 	"tkgprotoform.com/protoform/pkg/util"
@@ -21,7 +20,7 @@ var (
 	//go:embed cluster.yaml
 	ClusterConfig string
 
-	//go:embed management-cluster.sh
+	//go:embed 2_management-cluster.sh
 	ManagementClusterInstall string
 
 	//go:embed

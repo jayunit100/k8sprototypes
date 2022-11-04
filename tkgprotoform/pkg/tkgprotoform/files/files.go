@@ -1,6 +1,7 @@
 package files
 
 import (
+	"fmt"
 	"k8s.io/klog/v2"
 	"strings"
 	config "tkgprotoform.com/protoform/pkg/config"
@@ -18,10 +19,10 @@ import (
 )
 
 var (
-	//go:embed cluster.yaml
+	//go:embed 1.6/cluster.yaml
 	ClusterConfig string
 
-	//go:embed 2_management_cluster.sh
+	//go:embed 1.6/2_management_cluster.sh
 	ManagementClusterInstall string
 
 	// //go:embed image_builder.sh
@@ -30,7 +31,7 @@ var (
 
 // files has all the files we are going to write to disk, so that
 // they can be hacked up by the user after running tkgprotoform init the first time.
-func files() map[string]string {
+func files(version string) map[string]string {
 	return map[string]string{
 		"cluster.yaml":            ClusterConfig,
 		"2_management_cluster.sh": ManagementClusterInstall,
@@ -45,20 +46,35 @@ func files() map[string]string {
 // - other parameters specific to this program (i.e. MIN_CLUSTERS, MAX_CLUSTERS, ...)
 // - see the various "files/" for other customizations, or, just run this program, and
 // look in the outputted shell scripts.
-func WriteAllToLocal(conf *config.Config) {
-	klog.Infof("Writing out %v static files to local directory.", len(files()))
-	for file, contents := range files() {
-		if util.FileExists(file) {
+// ... returns debugging info for unit tests as an array of strings...
+func WriteAllToLocal(conf *config.Config, version string) []string {
+	klog.Infof("Writing out %v static files to local directory.", len(files(version)))
+	returnVal := []string{}
+
+	for file, contents := range files(version) {
+		outputFileLoc := func() string {
+			return conf.OutputFilesPath + "/" + file
+		}
+		fmt.Println(outputFileLoc())
+		if util.FileExists(outputFileLoc()) {
 			klog.Infof("File exists %v , not writing...", file)
+			returnVal = append(returnVal, fmt.Sprintf("skip %v", file))
 		} else {
 			klog.Infof("File not exists %v, writing...", file)
 
 			if file == ImageBuilderScript {
 				contents = ImageBuilderSubstitutions(conf, contents)
 			}
-			util.StringToFile(contents, conf.OutputFilesPath+"/"+file)
+			output := util.StringToFile(contents, outputFileLoc())
+			if output != nil {
+				fmt.Println("ERRORrrr ", output)
+				returnVal = append(returnVal, "ERROR")
+			} else {
+				returnVal = append(returnVal, "success_"+outputFileLoc())
+			}
 		}
 	}
+	return returnVal
 }
 
 func ImageBuilderSubstitutions(conf *config.Config, contents string) string {

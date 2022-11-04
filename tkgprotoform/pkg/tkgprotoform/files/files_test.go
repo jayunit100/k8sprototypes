@@ -6,23 +6,26 @@ import (
 	conf "tkgprotoform.com/protoform/pkg/config"
 )
 
-func TestFiles(t *testing.T) {
+func TestFileTemplates(t *testing.T) {
 
-	c := &conf.Config{}
-
-	os.Remove("./.tests")
-	os.Mkdir("./.tests", 0777)
-	c.OutputFilesPath = "./.tests/"
-	WriteAllToLocal(c)
-
-	for filename, _ := range files() {
+	for filename, _ := range files("1.6") {
 		fileinfo, err := os.Stat(filename)
 		if err != nil {
 			t.Log("Missing or error file", fileinfo, err)
 			t.Fail()
-
 		} else {
 			t.Log("file", fileinfo)
 		}
 	}
+}
+
+func TestFilesWriting(t *testing.T) {
+
+	c := &conf.Config{}
+	c.Debug = true
+	os.Remove("./.tests")
+	os.Mkdir("./.tests", 0777)
+	c.OutputFilesPath = "./.tests"
+	out := WriteAllToLocal(c, "1.6")
+	t.Logf("%v", out)
 }

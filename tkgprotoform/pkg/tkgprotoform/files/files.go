@@ -1,6 +1,7 @@
 package files
 
 import (
+	"k8s.io/klog/v2"
 	"strings"
 	config "tkgprotoform.com/protoform/pkg/config"
 	"tkgprotoform.com/protoform/pkg/util"
@@ -38,9 +39,12 @@ func files() map[string]string {
 }
 
 // WriteAllToLocal writes the shell scripts and yaml files
-// to your local directory.  It takes a config.yaml as input... that way
-// if you have a specific home directory or whatever, it eventually
-// can infer that.
+// to your local directory.  It takes a config.yaml as input...
+// Thus, the only input to this program is the config.yaml, which accepts:
+// - any Tanzu config parameter
+// - other parameters specific to this program (i.e. MIN_CLUSTERS, MAX_CLUSTERS, ...)
+// - see the various "files/" for other customizations, or, just run this program, and
+// look in the outputted shell scripts.
 func WriteAllToLocal(conf *config.Config) {
 	klog.Infof("Writing out %v static files to local directory.", len(files()))
 	for file, contents := range files() {

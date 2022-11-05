@@ -12,22 +12,23 @@ func FileExists(path string) bool {
 	return false
 }
 
-func StringToFile(s string, filename string) {
+func WriteStringToFile(s string, filename string) error {
 	f, err := os.Create(filename)
 	if err != nil {
 		fmt.Println(err)
-		return
+		return err
 	}
 	l, err := f.WriteString(s)
 	if err != nil {
 		fmt.Println(err)
 		f.Close()
-		return
+		return err
 	}
 	fmt.Println(l, "bytes written successfully")
 	err = f.Close()
 	if err != nil {
 		fmt.Println(err)
-		return
+		return err
 	}
+	return nil
 }

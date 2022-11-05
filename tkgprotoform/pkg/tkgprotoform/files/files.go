@@ -40,13 +40,7 @@ func files(version string) map[string]string {
 }
 
 // WriteAllToLocal writes the shell scripts and yaml files
-// to your local directory.  It takes a config.yaml as input...
-// Thus, the only input to this program is the config.yaml, which accepts:
-// - any Tanzu config parameter
-// - other parameters specific to this program (i.e. MIN_CLUSTERS, MAX_CLUSTERS, ...)
-// - see the various "files/" for other customizations, or, just run this program, and
-// look in the outputted shell scripts.
-// ... returns debugging info for unit tests as an array of strings...
+// to your local directory.  It takes a config.yaml as input.
 func WriteAllToLocal(conf *config.Config, version string) []string {
 	klog.Infof("Writing out %v static files to local directory.", len(files(version)))
 	returnVal := []string{}
@@ -63,9 +57,9 @@ func WriteAllToLocal(conf *config.Config, version string) []string {
 			klog.Infof("File not exists %v, writing...", file)
 
 			if file == ImageBuilderScript {
-				contents = ImageBuilderSubstitutions(conf, contents)
+				contents = GetImageBuilderSubstituted(conf, contents)
 			}
-			output := util.StringToFile(contents, outputFileLoc())
+			output := util.WriteStringToFile(contents, outputFileLoc())
 			if output != nil {
 				fmt.Println("ERRORrrr ", output)
 				returnVal = append(returnVal, "ERROR")
@@ -77,7 +71,7 @@ func WriteAllToLocal(conf *config.Config, version string) []string {
 	return returnVal
 }
 
-func ImageBuilderSubstitutions(conf *config.Config, contents string) string {
+func GetImageBuilderSubstituted(conf *config.Config, contents string) string {
 	contents = strings.ReplaceAll(contents, "blah_iso_xyz", conf.ImageBuilderInputs["iso_path"])
 	return contents
 }

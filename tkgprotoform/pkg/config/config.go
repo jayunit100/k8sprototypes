@@ -26,9 +26,10 @@ var (
 	conf *Config
 )
 
+// tfInputs returns the config values that are relevant to tanzu.
 func tfInputs() []string {
-	// subset of parameters in tanzu framework that we care about.
-	// todo, really, we should just slurp everything and use reflection ?
+	// TODO: Parse other ones as we find use cases for them,
+	// or use reflection.
 	tfInputs := []string{
 		tf.ConfigVariableVsphereControlPlaneEndpoint,
 		tf.ConfigVariableVsphereSSHAuthorizedKey,

@@ -7,7 +7,6 @@ import (
 )
 
 func TestFileTemplates(t *testing.T) {
-
 	for filename, _ := range files("1.6") {
 		fileinfo, err := os.Stat(filename)
 		if err != nil {
@@ -20,7 +19,6 @@ func TestFileTemplates(t *testing.T) {
 }
 
 func TestFilesWriting(t *testing.T) {
-
 	c := &conf.Config{}
 	c.Debug = true
 	os.Remove("./.tests")

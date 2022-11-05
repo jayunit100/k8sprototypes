@@ -18,34 +18,12 @@ import (
 	_ "embed"
 )
 
-var (
-	//go:embed 1.6/cluster.yaml
-	ClusterConfig string
-
-	//go:embed 1.6/2_management_cluster.sh
-	ManagementClusterInstall string
-
-	// //go:embed image_builder.sh
-	ImageBuilderScript string
-)
-
-// files has all the files we are going to write to disk, so that
-// they can be hacked up by the user after running tkgprotoform init the first time.
-func files(version string) map[string]string {
-	return map[string]string{
-		"cluster.yaml":            ClusterConfig,
-		"2_management_cluster.sh": ManagementClusterInstall,
-		"image_builder.sh":        ImageBuilderScript,
-	}
-}
-
 // WriteAllToLocal writes the shell scripts and yaml files
 // to your local directory.  It takes a config.yaml as input.
-func WriteAllToLocal(conf *config.Config, version string) []string {
-	klog.Infof("Writing out %v static files to local directory.", len(files(version)))
+// returns debugging info.
+func WriteAllToLocal(conf *config.Config, files map[string]string) []string {
 	returnVal := []string{}
-
-	for file, contents := range files(version) {
+	for file, contents := range files {
 		outputFileLoc := func() string {
 			return conf.OutputFilesPath + "/" + file
 		}
@@ -56,12 +34,11 @@ func WriteAllToLocal(conf *config.Config, version string) []string {
 		} else {
 			klog.Infof("File not exists %v, writing...", file)
 
-			if file == ImageBuilderScript {
-				contents = GetImageBuilderSubstituted(conf, contents)
-			}
+			// mostly a no-op right now
+			contents = Hydrate(conf, contents)
 			output := util.WriteStringToFile(contents, outputFileLoc())
 			if output != nil {
-				fmt.Println("ERRORrrr ", output)
+				fmt.Println("ERROR ", output)
 				returnVal = append(returnVal, "ERROR")
 			} else {
 				returnVal = append(returnVal, "success_"+outputFileLoc())
@@ -71,7 +48,12 @@ func WriteAllToLocal(conf *config.Config, version string) []string {
 	return returnVal
 }
 
-func GetImageBuilderSubstituted(conf *config.Config, contents string) string {
+// Hydrate reads your configuration and returns
+func Hydrate(conf *config.Config, contents string) string {
+
+	// image builder substitutions...
 	contents = strings.ReplaceAll(contents, "blah_iso_xyz", conf.ImageBuilderInputs["iso_path"])
+
+	// other substitutions...
 	return contents
 }

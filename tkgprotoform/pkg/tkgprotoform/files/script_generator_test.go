@@ -61,6 +61,11 @@ func TestFilesWriting(t *testing.T) {
 			t.Log("missing file", v)
 			t.Fail()
 		}
+		if util.SearchFileForString(v, "$") {
+			t.Logf("Unsubstituted chars in %v", v)
+			t.Fail()
+		}
+
 	}
 
 }

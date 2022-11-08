@@ -54,6 +54,15 @@ func Hydrate(conf *config.Config, contents string) string {
 	// image builder substitutions...
 	contents = strings.ReplaceAll(contents, "blah_iso_xyz", conf.ImageBuilderInputs["iso_path"])
 
+	// read all the inputs and swap them out
+	for k, v := range conf.TanzuInputs {
+		contents = strings.ReplaceAll(contents, fmt.Sprintf("$%v", k), v)
+	}
+	// read all the inputs and swap them out
+	for k, v := range conf.ImageBuilderInputs {
+		contents = strings.ReplaceAll(contents, fmt.Sprintf("$%v", k), v)
+	}
+
 	// other substitutions...
 	return contents
 }

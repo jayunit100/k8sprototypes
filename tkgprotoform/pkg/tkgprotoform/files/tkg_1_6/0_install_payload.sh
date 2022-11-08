@@ -19,3 +19,5 @@ cp cli/core/v0.25.0/tanzu-core-* ./tanzu
 ./tanzu plugin list
 
 popd
+
+# Note image-builder is at https://developer.vmware.com/samples/7984/tkg-image-builder-for-kubernetes-v1.23.8-on-tkg-v1.6.0?h=Image%20Builder

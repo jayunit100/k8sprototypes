@@ -25,8 +25,15 @@ func TestFilesWriting(t *testing.T) {
 
 	dir := ".generated"
 	expected := []string{
-		dir + "/2_management_cluster.sh",
 		dir + "/cluster.yaml",
+		dir + "/0_install_payload.sh",
+		dir + "/2_management_cluster.sh",
+		dir + "/2_swap_tkr.sh",
+		dir + "/3_workload_cluster.sh",
+		dir + "/image-builder.json",
+		dir + "/image-builder-credentials.json",
+		dir + "/image-builder-customizations.json",
+		dir + "/image-builder-tkg.json",
 		dir + "/image_builder.sh",
 	}
 

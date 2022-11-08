@@ -23,17 +23,20 @@ func TestFileTemplates(t *testing.T) {
 
 func TestFilesWriting(t *testing.T) {
 
+	dir := ".generated"
 	expected := []string{
-		".tests/2_management_cluster.sh",
-		".tests/cluster.yaml",
-		".tests/image_builder.sh",
+		dir + "/2_management_cluster.sh",
+		dir + "/cluster.yaml",
+		dir + "/image_builder.sh",
 	}
 
 	c := &conf.Config{}
 	c.Debug = true
-	os.RemoveAll("./.tests")
-	os.Mkdir("./.tests", 0777)
-	c.OutputFilesPath = "./.tests"
+	if util.FileExists(dir) {
+		os.RemoveAll(dir)
+	}
+	os.Mkdir(dir, 0777)
+	c.OutputFilesPath = dir
 
 	// confirm files dont exist
 	for _, v := range expected {
@@ -52,4 +55,5 @@ func TestFilesWriting(t *testing.T) {
 			t.Fail()
 		}
 	}
+
 }

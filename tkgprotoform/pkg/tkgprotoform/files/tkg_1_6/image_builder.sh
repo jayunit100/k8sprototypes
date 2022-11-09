@@ -12,7 +12,22 @@ unzip ./TKG-Image-Builder-for-Kubernetes-v1.23.8-on-TKG-v1.6.0-master.zip
 pushd  TKG-Image-Builder-for-Kubernetes-v1.23.8-on-TKG-v1.6.0-master
   pushd TKG-Image-Builder-for-Kubernetes-v1_23_8---vmware_2-tkg_v1_6_0
 
+mkdir /home/kubo/geetika/
+mkdir /home/kubo/geetika/output
 
+docker run -it --rm \
+  -v /home/kubo/geetika/tkgprotoform/image-builder-credentials.json:/home/imagebuilder/vsphere.json \
+  -v /home/kubo/geetika/tkgprotoform/image-builder-tkg.json:/home/imagebuilder/tkg.json \
+  -v /home/kubo/geetika/tkg:/home/imagebuilder/tkg \
+  -v /home/kubo/geetika/cis:/home/imagebuilder/cis \
+  -v /home/kubo/geetika/goss/vsphere-ubuntu-1.23.10+vmware.2-goss-spec.yaml:/home/imagebuilder/goss/goss.yaml \
+  -v /home/kubo/geetika/metadata.json:/home/imagebuilder/metadata.json \
+  -v /home/kubo/geetika/output:/home/imagebuilder/output \
+  --env PACKER_VAR_FILES="tkg.json vsphere.json" \
+  --env OVF_CUSTOM_PROPERTIES=/home/kubo/geetika/metadata.json \
+  --env IB_OVFTOOL=1 \
+  projects.registry.vmware.com/tkg/image-builder:v0.1.11_vmware.3 \
+  build-node-ova-vsphere-ubuntu-2004-efi
 
   # pop out of 1_6_0
   popd

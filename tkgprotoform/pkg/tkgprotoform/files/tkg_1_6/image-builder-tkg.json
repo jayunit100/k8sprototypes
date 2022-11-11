@@ -1,8 +1,7 @@
 {
   "build_version": "{{user `build_name`}}-kube-v1.23.8",
-  "pause_image": "$URL/files/kubernetes/v1.23.8+vmware.2/bin/linux/amd64/pause.tar",
   "containerd_sha256": "48f4327570dd7543464a28893160ab3bc9719ed2553f0a529a884b40f6dafd29",
-  "containerd_url": "$URL/files/containerd/cri-containerd-v1.6.6+vmware.2.linux-amd64.tar",
+  "containerd_url": "10.206.178.73:3000/files/containerd/cri-containerd-v1.6.6+vmware.2.linux-amd64.tar",
   "containerd_version": "v1.6.6+vmware.2",
   "crictl_sha256": "",
   "crictl_url": "",
@@ -16,11 +15,12 @@
   "kubernetes_series": "v1.23",
   "kubernetes_semver": "v1.23.8+vmware.2",
   "kubernetes_source_type": "http",
-  "kubernetes_http_source": "$URL/files/kubernetes",
+  "kubernetes_http_source": "10.206.178.73:3000/files/kubernetes",
   "kubernetes_container_registry": "projects.registry.vmware.com/tkg",
   "kubernetes_cni_semver": "v1.1.1+vmware.6",
   "kubernetes_cni_source_type": "http",
-  "kubernetes_cni_http_source": "$URL/files/cni_plugins",
+  "pause_image": "10.206.178.73:3000/files/kubernetes/v1.23.8+vmware.2/bin/linux/amd64/pause.tar",
+  "kubernetes_cni_http_source": "10.206.178.73:3000/files/cni_plugins",
   "kubernetes_cni_http_checksum": "",
   "kubernetes_load_additional_imgs": "true"
 }

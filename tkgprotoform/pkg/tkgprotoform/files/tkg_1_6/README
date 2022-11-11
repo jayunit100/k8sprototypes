@@ -1,0 +1,29 @@
+Common failures...
+
+# HTTP Urls
+
+```
+    vsphere: TASK [containerd : download containerd] ****************************************
+    vsphere: fatal: [default]: FAILED! => {"changed": false, "dest": "/tmp/containerd.tar.gz", "elapsed": 0, "msg": "Request failed: <urlopen error unknown url type: 10.206.178.73>", "url": "10.206.178.73:3000/
+files/containerd/cri-containerd-v1.6.6+vmware.2.linux-amd64.tar"}
+```
+
+SolutionL Add http to containerd url:
+
+```
+containerd_url": "10.206.178.73
+containerd_url": "http://10.206.178.73
+```
+
+
+# /tkg-tmp
+
+These might not be created properly `projects.registry.vmware.com/tkg/image-builder:v0.1.11_vmware.3`
+```
+{
+
+  "goss_download_path": "/tkg-tmp/goss-linux-amd64",
+  "goss_remote_folder": "/tkg-tmp",
+  "goss_remote_path": "/tkg-tmp/goss",
+}
+```

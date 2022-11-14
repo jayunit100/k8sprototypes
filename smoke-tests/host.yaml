@@ -1,0 +1,17 @@
+# For debugging situations in the hostnetwork
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox
+  namespace: default
+  labels:
+    app: antrea
+spec:
+  containers:
+    - image: gcr.io/google-containers/busybox:1.27
+      command:
+      - sleep
+      - "3600"
+      imagePullPolicy: IfNotPresent
+      name: busybox
+  hostNetwork: true

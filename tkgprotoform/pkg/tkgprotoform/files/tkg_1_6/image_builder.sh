@@ -15,20 +15,21 @@ pushd  TKG-Image-Builder-for-Kubernetes-v1.23.8-on-TKG-v1.6.0-master
 mkdir /home/kubo/geetika/
 mkdir /home/kubo/geetika/output
 
-# /tkg-tmp
-rm -rf output/ ; sudo chmod -R 777 ./goss ; mkdir output/ ; sudo chmod -R 777 ./output ;
-
-docker run -it --rm   -v /home/kubo/geetika/tkgprotoform/image-builder-credentials.json:/home/imagebuilder/vsphere.json \
--v /home/kubo/geetika/tkgprotoform/image-builder-tkg.json:/home/imagebuilder/tkg.json \
--v /home/kubo/geetika/tkg:/home/imagebuilder/tkg \
--v /home/kubo/geetika/cis:/home/imagebuilder/cis \
--v /home/kubo/geetika/goss/vsphere-ubuntu-1.23.10+vmware.2-goss-spec.yaml:/home/imagebuilder/goss/goss.yaml \
--v /home/kubo/geetika/metadata.json:/home/imagebuilder/metadata.json \
--v /home/kubo/geetika/output:/home/imagebuilder/output --env PACKER_VAR_FILES="tkg.json vsphere.json" \
---env OVF_CUSTOM_PROPERTIES=/home/kubo/geetika/metadata.json --env IB_OVFTOOL=1 \
-projects-stg.registry.vmware.com/tkg/image-builder:v0.1.13_vmware.1 build-node-ova-vsphere-ubuntu-2004-efi
-
-  # pop out of 1_6_0
+# 1.6.0 another mechanism is used then stig (CIS)
+# 1.6.1 need stig
+ govc vm.destroy /dc0/vm/dc0/vm/ubuntu-2004-efi-kube-v1.23.8 ; rm -rf output/ ; sudo chmod -R 777 ./goss ; mkdir output/ ; sudo chmod -R 777 output ;
+ docker run -it --rm -v /home/kubo/geetika/cis:/home/imagebuilder/cis \
+ -v /home/kubo/geetika/tkgprotoform/image-builder-credentials.json:/home/imagebuilder/vsphere.json \
+ -v /home/kubo/geetika/tkgprotoform/image-builder-tkg.json:/home/imagebuilder/tkg.json \
+ -v /home/kubo/geetika/TKG-Image-Builder-for-Kubernetes-v1_23_10---vmware_1-tkg_v1_6_1/tkg:/home/imagebuilder/tkg \
+ -v /home/kubo/geetika/TKG-Image-Builder-for-Kubernetes-v1_23_10---vmware_1-tkg_v1_6_1/stig-ubuntu-2004:/home/imagebuilder/stig-ubuntu-2004 \
+ -v /home/kubo/geetika/cis:/home/imagebuilder/cis \
+ -v /home/kubo/geetika/goss/vsphere-ubuntu-1.23.10+vmware.2-goss-spec.yaml:/home/imagebuilder/goss/goss.yaml \
+ -v /home/kubo/geetika/metadata.json:/home/imagebuilder/metadata.json \
+ -v /home/kubo/geetika/output:/home/imagebuilder/output \
+ --env PACKER_VAR_FILES="tkg.json vsphere.json" \
+ --env OVF_CUSTOM_PROPERTIES=/home/kubo/geetika/metadata.json \
+ --env IB_OVFTOOL=1 projects-stg.registry.vmware.com/tkg/image-builder:v0.1.13_vmware.1 build-node-ova-vsphere-ubuntu-2004-efi .1 build-node-ova-vsphere-ubuntu-2004-efi
   popd
 # pop out of TKG-v1.6.0-master
 popd

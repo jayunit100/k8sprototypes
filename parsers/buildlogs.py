@@ -15,7 +15,7 @@ class LogLine:
 
     def parse(self, f):
         self.string=f
-        if f.find("-") > -1 and f.find(":") > -1:
+        if "2022" in self.string and self.string.find("-") > -1 and self.string.find(":") > -1:
             self.date = f.split(" ")[0]
             if len(f.split(" ")) < 3:
                 self.error = f
@@ -48,8 +48,8 @@ class LogLine:
             return -3
 
 
-filename="gobuilds.log.1"
-
+filename="gobuilds.log"
+filename="gobuild.log"
 # These are filters.  For example, anything with "sql" or "database" will be tagged with the "SQL" key.
 # That way we can print out all log lines about things doing "SQL oriented" stuff during a given time bucket.
 filters = {
@@ -77,9 +77,13 @@ filters = {
     "SHA":["sha256"],
     "z_":[""],
     "zip":["gzip -c"],
-    "X_COMPILE":["for os in windows linux darwin"]
+    "X_COMPILE":["for os in windows linux darwin"],
+    "POLL_HOST":["connecting to host"]
 }
 
+# converts a map to an array of strings with sorted keys for printing
+# input: { a: 1, b: 2}
+# output: ["a:1", "b:2"]
 def format_map(m):
     t = []
     for k in sorted(m):
@@ -87,6 +91,11 @@ def format_map(m):
             t.append(str(k)+":"+str(m[k]))
     return t
 
+# read a string and return a map of all the tags which the string
+# contains.
+# input : "The brown cow is nice"
+# output: { animals:1 , colors:1} 
+# reads the global "filters" variable as the source. 
 def tag(f):
     vals = {}
     for k in filters:
@@ -98,6 +107,9 @@ def tag(f):
                 else:
                     vals[k]+=1
     return vals
+
+
+
 
 with open(filename,'r') as f:
     lines = f.readlines()
@@ -149,7 +161,6 @@ with open(filename,'r') as f:
             if task not in global_counts_of_all_labels:
                 global_counts_of_all_labels[task] = 0
             global_counts_of_all_labels[task] += labels_for_timebucket[key][task]
-
 
 
     print("***************** global *********************")

@@ -67,7 +67,7 @@ filters = {
     "GOMOD":["go: downloading"],
     "TF2_CORE":["cli/core"],
     "GOLANG_BUILD":["/usr/local/go/bin/go","build -o"],
-    #"GIT":["git"],
+    "GIT_ARCHIVE":["git archive"],
     "PLUGIN":["building plugin"],
     "PLUGIN_DONE":["succesfully built local"],
     "STANDALONG_PLUG":["standalone-plugins"],

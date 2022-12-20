@@ -1,0 +1,75 @@
+kind: Cluster
+metadata:
+  annotations:
+    osInfo: ubuntu,20.04,amd64
+    tkg.tanzu.vmware.com/cluster-controlplane-endpoint: 172.16.202.129
+    tkg/plan: dev
+  labels:
+    tkg.tanzu.vmware.com/cluster-name: aasdf0
+  name: aasdf0
+  namespace: default
+spec:
+  clusterNetwork:
+    pods:
+      cidrBlocks:
+      - 100.96.0.0/11
+    services:
+      cidrBlocks:
+      - 100.64.0.0/13
+  topology:
+    class: tkg-vsphere-default-v1.0.0
+    controlPlane:
+      metadata:
+        annotations:
+          run.tanzu.vmware.com/resolve-os-image: image-type=ova,os-name=ubuntu
+      replicas: 1
+    variables:
+    - name: controlPlaneCertificateRotation
+      value:
+        activate: true
+        daysBefore: 90
+    - name: auditLogging
+      value:
+        enabled: false
+    - name: apiServerEndpoint
+      value: 172.16.202.129
+    - name: aviAPIServerHAProvider
+      value: false
+    - name: vcenter
+      value:
+        cloneMode: fullClone
+        datacenter: /Edge2
+        datastore: /Edge2/datastore/edge2-vsanDatastore
+        folder: /Edge2/vm/TKG
+        network: /Edge2/network/Edge2-TKG-WKL
+        resourcePool: /Edge2/host/Edge2-Cluster/Resources/tkg-vsphere-edge-Workload
+        server: edge-vcenter.eqix.vmwedge.com
+        storagePolicyID: ""
+        template: /Edge2/vm/ubuntu-2004-kube-v1.24.6
+        tlsThumbprint: ""
+    - name: user
+      value:
+        sshAuthorizedKeys:
+        - ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA6VfBKd6hqd5h7k5f+AtjJSV1hdW5u9/3uAolK3SD2/5GD9+rn+FMSdbtkeaKuuVJPi2HjnsVMO+r8WcuyN5ZSYHywiSoh4S7PamAxra1CLISsFHPYFlGrtdHC70wnoT7+/wAJk2D3CYkCNMWIxs5eR0cefDOytipBfDplhkJByyrcnXuhI8St3XJzpjlXu454diJOxfsk6axanWLOr/WZFmUi1U6V4gRE7XtKG9WFUm1bmNgkgd7lehKzi+isTjnI+b4tnD0yIzKFcsgIvLdGJTI6Lluj33CeBHIocwu0LbvowTyYSqhP6DzGhGuKfK9rMnJh/ll0Bnu1xf/ok0NSQ==
+    - name: controlPlane
+      value:
+        machine:
+          diskGiB: 40
+          memoryMiB: 8192
+          numCPUs: 2
+    - name: worker
+      value:
+        count: 1
+        machine:
+          diskGiB: 40
+          memoryMiB: 4096
+          numCPUs: 2
+    version: v1.24.6+vmware.1
+    workers:
+      machineDeployments:
+      - class: tkg-worker
+        metadata:
+          annotations:
+            run.tanzu.vmware.com/resolve-os-image: image-type=ova,os-name=ubuntu
+        name: md-0
+        replicas: 1

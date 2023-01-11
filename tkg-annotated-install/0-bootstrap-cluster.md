@@ -1,4 +1,4 @@
-# TKG Client installation
+# TKG Client and Kind Bootstrapping
 
 ```
 [2023-01-10T19:36:11.674Z] + curl https://build-artifactory.eng.vmware.com/kscom-generic-local/TKG/channels/442519250544895703/_boltArtifacts/tkg-v2.1.0-rc.2.buildinfo.yaml

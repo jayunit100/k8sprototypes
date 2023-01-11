@@ -1,10 +1,28 @@
-# This is an annotated log of tanzu installation
+# Tanzu installation logs, Annotated
 
-IT takes all of the logs from a typical TKG CI job for
+- [TKG Client and Kind Bootstrapping](0-bootstrap-cluster.md#tkg-client-and-kind-bootstrapping)
+  * [Making sure the client plugins are there...](0-bootstrap-cluster.md#making-sure-the-client-plugins-are-there)
+- [Uploading the OVAs to Vsphere](0-bootstrap-cluster.md#uploading-the-ovas-to-vsphere)
+- [Create the bootstrap cluster](0-bootstrap-cluster.md#tkg-kind-cluster--create-the-bootstrap--ie-kind----management-cluster--)
+  * [Kind ClusterTKG And ClusterClass customizations](0-bootstrap-cluster.md#kind-cluster--tkg-and-clusterclass-customizations)
+  * [InitRegion: Cluster API installation onto the Kind cluster](0-bootstrap-cluster.md#initregion--cluster-api-installation-onto-the-kind-cluster)
+    + [Telling bootstrap about CAPI](0-bootstrap-cluster.md#tell-kind-about-capi)
+- [Kind Cert Manager setup](0-bootstrap-cluster.md#kind-cert-manager-setup)
+- [Installing CAPI objects onto the Kind cluster](0-bootstrap-cluster.md#installing-capi-objects-onto-the-kind-cluster)
+- [Wait for CAPI PRoviders on the kind cluster](0-bootstrap-cluster.md#wait-for-capi-providers-on-the-kind-cluster)
+- [MAGIC PART: tkg-pkg and "Waiting for package" hot loop](0-bootstrap-cluster.md#magic-part--tkg-pkg-and--waiting-for-package--hot-loop)
+  * [Now, we wait for PackageInstall's to complete on the kind cluster...](0-bootstrap-cluster.md#now--we-wait-for-packageinstall-s-to-complete-on-the-kind-cluster)
 
-- Installing a Kind cluster / Bootstrapping TKG Client (https://github.com/jayunit100/k8sprototypes/tree/master/tkg-annotated-install/glasgow/0-bootstrap-cluster.md).
-- Installing a Mgmt cluster on that kind cluster (https://github.com/jayunit100/k8sprototypes/tree/master/tkg-annotated-install/glasgow/1-mgmt-cluster.log.md).
-- Installing a workload cluster (https://github.com/jayunit100/k8sprototypes/tree/master/tkg-annotated-install/glasgow/2-workload-cluster.md).
+- [TKG Management Cluster Creation (post-kind bootstrapping)](1-mgmt-cluster.log.md#tkg-management-cluster-creation--post-kind-bootstrapping-)
+  * [Create the CAPI object](1-mgmt-cluster.log.md#create-the-capi-object)
+        * [These logs from from tanzu cli,](1-mgmt-cluster.log.md#these-logs-from-from-tanzu-cli-)
+- [Wait for CAPI Providers on the management cluster](1-mgmt-cluster.log.md#wait-for-capi-providers-on-the-management-cluster)
+- [MAGIC PART: tkg-pkg and "Waiting for package" hot loop](1-mgmt-cluster.log.md#magic-part--tkg-pkg-and--waiting-for-package--hot-loop)
+  * [Performing the move](1-mgmt-cluster.log.md#performing-the-move)
+    + [Move: part 0,  Discovery](1-mgmt-cluster.log.md#move--part-0---discovery)
+    + [Move: part 1, Now we know WHAT to move to the mgmt cluster](1-mgmt-cluster.log.md#move--part-1--now-we-know-what-to-move-to-the-mgmt-cluster)
+    + [Move: part 2,Patch the management cluster after the fact](1-mgmt-cluster.log.md#move--part-2-patch-the-management-cluster-after-the-fact)
+
 
 # Some things worth noting
 

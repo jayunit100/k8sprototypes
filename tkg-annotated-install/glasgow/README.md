@@ -1,4 +1,12 @@
-# Tanzu installation logs, Annotated
+# Phases of TKG Installation (Glasgow)
+
+The below chronicles all of the common logs that youll see during TKG installation, and what phases of the overall
+Tanzu Framework and TKG installation process they correspond to.  If you have a broken test environment for TKG, 
+scanning through these might help you to identify the specific reason/component/codebase associated with your failure.
+
+This is a work in progress, PRs welcome !
+
+## Part 0: Tanzu cli installation and Kind Cluster
 
 - [TKG Client and Kind Bootstrapping](0-bootstrap-cluster.md#tkg-client-and-kind-bootstrapping)
   * [Making sure the client plugins are there...](0-bootstrap-cluster.md#making-sure-the-client-plugins-are-there)
@@ -7,11 +15,16 @@
   * [Kind ClusterTKG And ClusterClass customizations](0-bootstrap-cluster.md#kind-cluster--tkg-and-clusterclass-customizations)
   * [InitRegion: Cluster API installation onto the Kind cluster](0-bootstrap-cluster.md#initregion--cluster-api-installation-onto-the-kind-cluster)
     + [Telling bootstrap about CAPI](0-bootstrap-cluster.md#tell-kind-about-capi)
+
 - [Kind Cert Manager setup](0-bootstrap-cluster.md#kind-cert-manager-setup)
+
+### Part 0: Tanzu Customization ~ Setting up the kind cluster w/ TKG and CAPI capabilities
 - [Installing CAPI objects onto the Kind cluster](0-bootstrap-cluster.md#installing-capi-objects-onto-the-kind-cluster)
 - [Wait for CAPI PRoviders on the kind cluster](0-bootstrap-cluster.md#wait-for-capi-providers-on-the-kind-cluster)
 - [MAGIC PART: tkg-pkg and "Waiting for package" hot loop](0-bootstrap-cluster.md#magic-part--tkg-pkg-and--waiting-for-package--hot-loop)
   * [Now, we wait for PackageInstall's to complete on the kind cluster...](0-bootstrap-cluster.md#now--we-wait-for-packageinstall-s-to-complete-on-the-kind-cluster)
+
+## Part 1: Migrating Kind to the Management Cluster 
 
 - [TKG Management Cluster Creation (post-kind bootstrapping)](1-mgmt-cluster.log.md#tkg-management-cluster-creation--post-kind-bootstrapping-)
   * [Create the CAPI object](1-mgmt-cluster.log.md#create-the-capi-object)
@@ -22,6 +35,8 @@
     + [Move: part 0,  Discovery](1-mgmt-cluster.log.md#move--part-0---discovery)
     + [Move: part 1, Now we know WHAT to move to the mgmt cluster](1-mgmt-cluster.log.md#move--part-1--now-we-know-what-to-move-to-the-mgmt-cluster)
     + [Move: part 2,Patch the management cluster after the fact](1-mgmt-cluster.log.md#move--part-2-patch-the-management-cluster-after-the-fact)
+
+## Part 2: Workload Cluster Creation
 
 - [TKG Workload Cluster Creation](2-workload-cluster.log.md#tkg-workload-cluster-creation)
   * [Now we create our first workload cluster:](2-workload-cluster.log.md#now-we-create-our-first-workload-cluster-)
@@ -56,11 +71,3 @@ I havent vetted these statements 100% yet, but it appears to be that they are tr
 
 This could be published somewhere else.  Theres probably some things that arent well annotated and need more description.  Feel free to PR if theres something
 you understand that isnt described properly here!
-
-
-
-
-
-
-
-

@@ -1,47 +1,47 @@
 # TKG Client and Kind Bootstrapping
 
 ```
-[2023-01-10T19:36:11.674Z] + curl https://build-artifactory.eng.vmware.com/kscom-generic-local/TKG/channels/442519250544895703/_boltArtifacts/tkg-v2.1.0-rc.2.buildinfo.yaml
+  [2023-01-10T19:36:11.674Z] + curl https://build-artifactory.eng.vmware.com/kscom-generic-local/TKG/channels/442519250544895703/_boltArtifacts/tkg-v2.1.0-rc.2.buildinfo.yaml
 ```
 
 ```
-sudo -S -p '[sudo] password: ' ln -sf $(realpath /home/kubo/tanzu_tools/cli/core/v0.28.0-dev/ INFO:root:====== 99   CMD: tanzu config get | yq eval '.clientOptions.features.global.context-aware-cli-for-plugins' -
- true
- INFO:root:context-aware-cli-for-plugins is ON
+  sudo -S -p '[sudo] password: ' ln -sf $(realpath /home/kubo/tanzu_tools/cli/core/v0.28.0-dev/ INFO:root:====== 99   CMD: tanzu config get | yq eval '.clientOptions.features.global.context-aware-cli-for-plugins' -
+  true
+  INFO:root:context-aware-cli-for-plugins is ON
 
-tanzu plugin clean
- ✔  successfully cleaned up all plugins 
+  tanzu plugin clean
+  ✔  successfully cleaned up all plugins 
 
 
-tanzu plugin repo update -b tanzu-cli-framework core
- ✔  successfully updated repository configuration for core
+  tanzu plugin repo update -b tanzu-cli-framework core
+  ✔  successfully updated repository configuration for core
 ```
 
 ##  Making sure the client plugins are there... 
 ```
-ℹ  Installing plugin 'pinniped-auth:v0.28.0-dev'
-ℹ  Installing plugin 'secret:v0.28.0-dev' with target 'kubernetes'
-ℹ  Installing plugin 'telemetry:v0.28.0-dev' with target 'kubernetes'
-ℹ  Installing plugin 'isolated-cluster:v0.28.0-dev'
-ℹ  Installing plugin 'login:v0.28.0-dev'
-ℹ  Installing plugin 'management-cluster:v0.28.0-dev' with target 'kubernetes'
-ℹ  Installing plugin 'package:v0.28.0-dev' with target 'kubernetes'
-ℹ  Successfully installed all required plugins 
-✔  Done 
-INFO:root:====== 103  CMD: tanzu plugin list
-Standalone Plugins
-  NAME                DESCRIPTION                                                        TARGET      DISCOVERY  VERSION      STATUS  
-  isolated-cluster    isolated-cluster operations                                                    default    v0.28.0-dev  installe
-  login               Login to the platform                                                          default    v0.28.0-dev  installe
-  pinniped-auth       Pinniped authentication operations (usually not directly invoked)              default    v0.28.0-dev  installe
-  management-cluster  Kubernetes management-cluster operations                           kubernetes  default    v0.28.0-dev  installe
-  package             Tanzu package management                                           kubernetes  default    v0.28.0-dev  installe
-  secret              Tanzu secret management                                            kubernetes  default    v0.28.0-dev  installe
-  telemetry           Configure cluster-wide telemetry settings                          kubernetes  default    v0.28.0-dev  installe
-INFO:root:====== 104  CMD: tanzu version
-version: v0.28.0-dev
-buildDate: 2023-01-09
-sha: d293a0881-dirty
+  ℹ  Installing plugin 'pinniped-auth:v0.28.0-dev'
+  ℹ  Installing plugin 'secret:v0.28.0-dev' with target 'kubernetes'
+  ℹ  Installing plugin 'telemetry:v0.28.0-dev' with target 'kubernetes'
+  ℹ  Installing plugin 'isolated-cluster:v0.28.0-dev'
+  ℹ  Installing plugin 'login:v0.28.0-dev'
+  ℹ  Installing plugin 'management-cluster:v0.28.0-dev' with target 'kubernetes'
+  ℹ  Installing plugin 'package:v0.28.0-dev' with target 'kubernetes'
+  ℹ  Successfully installed all required plugins 
+  ✔  Done 
+  INFO:root:====== 103  CMD: tanzu plugin list
+  Standalone Plugins
+    NAME                DESCRIPTION                                                        TARGET      DISCOVERY  VERSION      STATUS  
+    isolated-cluster    isolated-cluster operations                                                    default    v0.28.0-dev  installe
+    login               Login to the platform                                                          default    v0.28.0-dev  installe
+    pinniped-auth       Pinniped authentication operations (usually not directly invoked)              default    v0.28.0-dev  installe
+    management-cluster  Kubernetes management-cluster operations                           kubernetes  default    v0.28.0-dev  installe
+    package             Tanzu package management                                           kubernetes  default    v0.28.0-dev  installe
+    secret              Tanzu secret management                                            kubernetes  default    v0.28.0-dev  installe
+    telemetry           Configure cluster-wide telemetry settings                          kubernetes  default    v0.28.0-dev  installe
+  INFO:root:====== 104  CMD: tanzu version
+  version: v0.28.0-dev
+  buildDate: 2023-01-09
+  sha: d293a0881-dirty
 ```
 
 # Uploading the OVAs to Vsphere
@@ -55,7 +55,6 @@ temp_ova_dir-NVZOBCZG
 # TKG Kind Cluster: Create the bootstrap (i.e. kind + "Management Cluster") 
 
 The `InitRegion` function lives inside Tanzu CLI.  IT has ALL the logic for kind and mgmt cluster bootstrapping.  
-
 
 - You can't have a workload cluster w/o a persistent management cluster.
 - You can't have a persistent management cluster without a kind bootstrap cluster.
@@ -305,24 +304,24 @@ Still in the bootstrap cluster: Next, we'll wait for packages.
 
 Below we'll "wait for package", i.e. we'll wait for individual packages to come online:
 ```
-[2023-01-10T19:50:48.603Z]  Added installed package 'tkg-pkg'waiting for package: tkg-pkg
-[2023-01-10T19:50:48.604Z] waiting for package: tanzu-addons-manager
+  [2023-01-10T19:50:48.603Z]  Added installed package 'tkg-pkg'waiting for package: tkg-pkg
+  [2023-01-10T19:50:48.604Z] waiting for package: tanzu-addons-manager
 
-[2023-01-10T19:50:48.604Z] waiting for package: tanzu-auth <--- not surey we need THIS PACKAEG on the bootstrap cluster though???
+  [2023-01-10T19:50:48.604Z] waiting for package: tanzu-auth <--- not surey we need THIS PACKAEG on the bootstrap cluster though???
 
-[2023-01-10T19:50:48.604Z] waiting for package: tanzu-cliplugins
-[2023-01-10T19:50:48.604Z] waiting for package: tanzu-core-management-plugins
-[2023-01-10T19:50:48.604Z] waiting for resource tanzu-addons-manager of type *v1alpha1.PackageInstall to be up and running
-[2023-01-10T19:50:48.604Z] waiting for package: tanzu-featuregates
-[2023-01-10T19:50:48.604Z] waiting for package: tanzu-framework
-[2023-01-10T19:50:48.604Z] waiting for package: tkg-clusterclass
-[2023-01-10T19:50:48.604Z] waiting for resource tanzu-cliplugins of type *v1alpha1.PackageInstall to be up and running
-[2023-01-10T19:50:48.604Z] waiting for package: tkg-clusterclass-vsphere
-[2023-01-10T19:50:48.604Z] waiting for package: tkr-service
-[2023-01-10T19:50:48.604Z] waiting for resource tanzu-framework of type *v1alpha1.PackageInstall to be up and running
-[2023-01-10T19:50:48.604Z] waiting for package: tkr-source-controller
-[2023-01-10T19:50:48.604Z] waiting for package: tkr-vsphere-resolver
-...
+  waiting for package: tanzu-cliplugins
+  waiting for package: tanzu-core-management-plugins
+  waiting for resource tanzu-addons-manager of type *v1alpha1.PackageInstall to be up and running
+  waiting for package: tanzu-featuregates
+  waiting for package: tanzu-framework
+  waiting for package: tkg-clusterclass
+  waiting for resource tanzu-cliplugins of type *v1alpha1.PackageInstall to be up and running
+  waiting for package: tkg-clusterclass-vsphere
+  waiting for package: tkr-service
+  waiting for resource tanzu-framework of type *v1alpha1.PackageInstall to be up and running
+  waiting for package: tkr-source-controller
+  waiting for package: tkr-vsphere-resolver
+
 ```
 
 ## Now, we wait for PackageInstall's to complete on the kind cluster...

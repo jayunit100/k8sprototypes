@@ -29,7 +29,7 @@ We dont make old clusters, instead we use cluster class for everything...
 [2023-01-10T20:10:26.403Z] Setting ALLOW_LEGACY_CLUSTER to "false"
 ```
 
-# Todo remainder... 
+## Telling Tanzu cli to create a WL cluster
 
 ```
     [2023-01-10T20:10:26.403Z] Fetching File="cluster-template-definition-devcc.yaml" Provider="vsphere" Type="InfrastructureProvider" Version="v1.5.1"

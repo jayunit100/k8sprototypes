@@ -23,6 +23,18 @@
     + [Move: part 1, Now we know WHAT to move to the mgmt cluster](1-mgmt-cluster.log.md#move--part-1--now-we-know-what-to-move-to-the-mgmt-cluster)
     + [Move: part 2,Patch the management cluster after the fact](1-mgmt-cluster.log.md#move--part-2-patch-the-management-cluster-after-the-fact)
 
+- [TKG Workload Cluster Creation](2-workload-cluster.log.md#tkg-workload-cluster-creation)
+  * [Now we create our first workload cluster:](2-workload-cluster.log.md#now-we-create-our-first-workload-cluster-)
+  * [This is normal, b/c we dont usually install pinniped in testbeds.](2-workload-cluster.log.md#this-is-normal--b-c-we-dont-usually-install-pinniped-in-testbeds)
+  * [We dont make old clusters, instead we use cluster class for everything...](2-workload-cluster.log.md#we-dont-make-old-clusters--instead-we-use-cluster-class-for-everything)
+  * [Telling Tanzu cli to create a WL cluster](2-workload-cluster.log.md#Telling-Tanzu-cli-to-create-a-WL-cluster)
+  * [Why do we patch the workload cluster object ?](2-workload-cluster.log.md#why-do-we-patch-the-workload-cluster-object--)
+  * [Wait a while...](2-workload-cluster.log.md#wait-a-while)
+  * [Wait for controlplane...](2-workload-cluster.log.md#wait-for-controlplane)
+  * [Control plane up now.... now we can poll the workload cluster till its up:](2-workload-cluster.log.md#control-plane-up-now-now-we-can-poll-the-workload-cluster-till-its-up-)
+  * [Waiting for addons packages (like antrea) to come online:](2-workload-cluster.log.md#waiting-for-addons-packages--like-antrea--to-come-online-)
+  * [Heres where we loop through all the packages:](2-workload-cluster.log.md#heres-where-we-loop-through-all-the-packages-)
+  * [Now some of the packages start appearing as installed.](2-workload-cluster.log.md#now-some-of-the-packages-start-appearing-as-installed)
 
 # Some things worth noting
 

@@ -38,7 +38,11 @@ func RoundTripperFor(config *restclient.Config) (http.RoundTripper, Upgrader, er
 	if err != nil {
 		return nil, nil, err
 	}
-	upgradeRoundTripper := spdy.NewRoundTripper(tlsConfig, true, false)
+	proxy := http.ProxyFromEnvironment
+	if config.Proxy != nil {
+		proxy = config.Proxy
+	}
+	upgradeRoundTripper := spdy.NewRoundTripperWithProxy(tlsConfig, true, false, proxy)
 	wrapper, err := restclient.HTTPWrappersForConfig(config, upgradeRoundTripper)
 	if err != nil {
 		return nil, nil, err
@@ -81,23 +85,14 @@ func Negotiate(upgrader Upgrader, client *http.Client, req *http.Request, protoc
 	for i := range protocols {
 		req.Header.Add(httpstream.HeaderProtocolVersion, protocols[i])
 	}
-	fmt.Println("n1")
 	resp, err := client.Do(req)
-	fmt.Println("n11")
-
 	if err != nil {
-		fmt.Println("n1111", req)
-		fmt.Println(err)
 		return nil, "", fmt.Errorf("error sending request: %v", err)
 	}
-	fmt.Println(req)
 	defer resp.Body.Close()
 	conn, err := upgrader.NewConnection(resp)
 	if err != nil {
-		fmt.Println("shitttttt")
-		fmt.Println(err)
 		return nil, "", err
 	}
-	fmt.Println("New conn returning from spdy", httpstream.HeaderProtocolVersion)
 	return conn, resp.Header.Get(httpstream.HeaderProtocolVersion), nil
 }

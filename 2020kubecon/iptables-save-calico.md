@@ -92,7 +92,7 @@ Now, we make sure that INVALID conntrack connections are immediately dropped.  W
     -A KUBE-FORWARD -m conntrack --ctstate INVALID -j DROP
 ```
 
-Similar to the above, we use 0x4000 as the makr for ACCEPTING traffic.   This is traffic that has been masked earlier on.  See the NAT table.
+Similar to the above, we use 0x4000 as the mark for ACCEPTING traffic.   This is traffic that has been masked earlier on.  See the NAT table.
 ```
     -A KUBE-FORWARD -m comment --comment "kubernetes forwarding rules" -m mark --mark 0x4000/0x4000 -j ACCEPT
 ```
@@ -103,7 +103,7 @@ Continuing with the accpetance of ongoing conntrack connctions...
     -A KUBE-FORWARD -m comment --comment "kubernetes forwarding conntrack pod destination rule" -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
 ```
 
-In this case, kube-dns had no endpoints up yet at the time this cluster was running.... A good excersize here would be to scale down coredns, and see if
+In this case, kube-dns had no endpoints up yet at the time this cluster was running.... A good exercise here would be to scale down coredns, and see if
 in a live cluster, you see this rule existing or not.
 
 ```

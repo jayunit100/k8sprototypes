@@ -1,3 +1,7 @@
+# Contributors Welcome !
+
+... If you file a PR, i might miss it, ping me on kubernetes slack to merge it !!!  ...
+
 # Projects in this repository
 
 This project has a variety of prototypes for utilities, tools that are being developed as POCs of working K8s extensions and applications.

@@ -1,3 +1,22 @@
+apiVersion: node.k8s.io/v1
+kind: RuntimeClass
+metadata:
+  name: windows-2019
+### Note you dont need this runtime class... but its elegant
+### The containerd default "handler" for windows is runhcs-wcow-process
+### This would allow you to make pods that, rather than directly targetting
+### windows w/ taints, actually just lets the runtime class substitute the tolerations for you.
+handler: runhcs-wcow-process
+scheduling:
+  nodeSelector:
+    kubernetes.io/os: 'windows'
+    kubernetes.io/arch: 'amd64'
+    node.kubernetes.io/windows-build: '10.0.17763'
+  tolerations:
+  - effect: NoSchedule
+    key: os
+    operator: Equal
+    value: "windows"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -7,7 +26,7 @@ spec:
     selector:
         matchLabels:
             app: windows-server-iis
-    replicas: 1
+    replicas: 2
     template:
         metadata:
             labels:
@@ -15,7 +34,7 @@ spec:
         spec:
             containers:
             - name: windows-server-iis
-              image: mcr.microsoft.com/windows/servercore:1809
+              image: harbor-repo.vmware.com/dockerhub-proxy-cache/mcr.microsoft.com/windows/servercore:1809
               imagePullPolicy: IfNotPresent
               command:
               - powershell.exe

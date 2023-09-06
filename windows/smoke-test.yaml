@@ -34,7 +34,7 @@ spec:
         spec:
             containers:
             - name: windows-server-iis
-              image: harbor-repo.vmware.com/dockerhub-proxy-cache/mcr.microsoft.com/windows/servercore:1809
+              image: mcr.microsoft.com/windows/servercore:1809
               imagePullPolicy: IfNotPresent
               command:
               - powershell.exe

@@ -48,6 +48,8 @@ $WorkDir = [System.IO.Path]::GetDirectoryName($myInvocation.MyCommand.Definition
 $OVSDownloadDir = $WorkDir
 $PowerShellModuleBase = "C:\Windows\System32\WindowsPowerShell\v1.0\Modules"
 
+Write-Output "ttttt Using patches OVS ps1 installer, which will try to use local SSL, or download from https://github.com/IndySockets/... tttt"
+
 if (!$LocalFile) {
 	$OVSZip = "$OVSDownloadDir\ovs-win64.zip"
 } else {
@@ -209,6 +211,8 @@ function InstallOVS() {
 }
 
 function InstallDependency() {
+        Log "ttttt Using patches OVS ps1 installer, which will try to use local SSL, or download from https://github.com/IndySockets/..."
+
 	# Check if SSL library has been installed
 	$paths = $env:Path.Split(";")
 	foreach($path in $paths) {

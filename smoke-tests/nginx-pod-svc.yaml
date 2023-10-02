@@ -111,3 +111,34 @@ spec:
             operator: In
             values:
             - linux
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-tester
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: service-tester
+  template:
+    metadata:
+      labels:
+        app: service-tester
+    spec:
+      containers:
+      - name: service-tester
+        image: appropriate/curl:latest
+        command: ["/bin/sh"]
+        args:
+        - "-c"
+        - |
+          while true; do
+            echo "Testing kube-vip-example-tkg"
+            curl kube-vip-example-tkg.default.svc.cluster.local:80
+            echo "Testing headless-svc"
+            curl headless-svc.default.svc.cluster.local:80
+            echo "Testing nginx"
+            curl nginx.default.svc.cluster.local:80
+            sleep 5
+          done

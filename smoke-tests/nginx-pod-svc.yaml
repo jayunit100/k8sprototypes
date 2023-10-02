@@ -128,7 +128,7 @@ spec:
     spec:
       containers:
       - name: service-tester
-        image: appropriate/curl:latest
+        image: harbor-repo.vmware.com/dockerhub-proxy-cache/nicolaka/netshoot:latest
         command: ["/bin/sh"]
         args:
         - "-c"

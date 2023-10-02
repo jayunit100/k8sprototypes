@@ -117,6 +117,7 @@ kind: Deployment
 metadata:
   name: service-tester
 spec:
+  #### Modify this to your desired scale factor
   replicas: 1
   selector:
     matchLabels:
@@ -128,6 +129,7 @@ spec:
     spec:
       containers:
       - name: service-tester
+        # Modify this to point to your internal registry...
         image: harbor-repo.vmware.com/dockerhub-proxy-cache/nicolaka/netshoot:latest
         command: ["/bin/sh"]
         args:

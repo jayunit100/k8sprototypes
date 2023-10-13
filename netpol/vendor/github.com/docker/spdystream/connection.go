@@ -207,7 +207,6 @@ type Connection struct {
 // NewConnection creates a new spdy connection from an existing
 // network connection.
 func NewConnection(conn net.Conn, server bool) (*Connection, error) {
-	fmt.Println("--qw--")
 	framer, framerErr := spdy.NewFramer(conn, conn)
 	if framerErr != nil {
 		return nil, framerErr

@@ -1,11 +1,12 @@
-##### Example of using nonlocal
+##### Example of using Class and nonlocal variables...
 Class Solution:
-    # Class Variables, accessed via Solution.Vowels
+    ### CLASS  Variables, accessed via Solution.Vowels
     VOWELS = ("a","e","i","o","u")
     def maxVowels(self, s: str, k: int) -> int:
         curr_max = 0
 
         def update_talley(num_vowels: int):
+            ### LOCAL variables, accessed via nonlocal
             nonlocal curr_max
             curr_max = max(curr_max, num_vowels)
 

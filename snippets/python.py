@@ -1,5 +1,12 @@
-# Pet Store Simulator
+##### Example of using nonlocal
+def maxVowels(self, s: str, k: int) -> int:
+    curr_max = 0
+    vowels = ("a","e","i","o","u")
+    def update_talley(vowels):
+        nonlocal curr_max
+        curr_max = (max(vowels, curr_max))    
 
+##### Pet Store Simulator
 from collections import Counter
 from typing import List
 import math

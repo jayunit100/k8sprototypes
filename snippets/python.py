@@ -1,10 +1,13 @@
 ##### Example of using nonlocal
-def maxVowels(self, s: str, k: int) -> int:
-    curr_max = 0
-    vowels = ("a","e","i","o","u")
-    def update_talley(vowels):
-        nonlocal curr_max
-        curr_max = (max(vowels, curr_max))    
+Class Solution:
+    # Class Variables, accessed via Solution.Vowels
+    VOWELS = ("a","e","i","o","u")
+    def maxVowels(self, s: str, k: int) -> int:
+        curr_max = 0
+
+        def update_talley(num_vowels: int):
+            nonlocal curr_max
+            curr_max = max(curr_max, num_vowels)
 
 ##### Pet Store Simulator
 from collections import Counter

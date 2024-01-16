@@ -1,61 +1,80 @@
+# Pet Store Simulator
 
-a = {
-    "food":{"popcorn","soda"},
-    "beer":{"corona","dos equis"}
+from collections import Counter
+from typing import List
+import math
+
+##### Map of Maps for pet categories and their items
+inventory = {
+    "food": {"dog food", "cat food"},
+    "toys": {"ball", "mouse toy"}
 }
 
-print(a)
+##### Classes for Pets and Store
+class Pet:
+    def __init__(self, name: str, species: str):
+        self.name = name
+        self.species = species
 
-##### Sets 
+    def __str__(self):
+        return f"{self.species} named {self.name}"
 
-x = "ABCDE"
-for i in range(1,5):
-    print(i)
-     
-x = set()
-x.clear()
-x.add("a")
+class PetStore:
+    def __init__(self):
+        self.pets = []
+        self.sales = Counter()
 
-print(max(10,1))
+    # Function Definitions with arguments and return type
+    def add_pet(self, pet: Pet) -> None:
+        self.pets.append(pet)
 
-##### Maps and numbers 
+    # Lambda Function for sorting pets by name
+    def list_pets(self) -> List[str]:
+        return sorted(self.pets, key=lambda pet: pet.name)
 
-x = 0
-x +=1
+    # File Operations for sales record
+    def record_sale(self, item: str) -> None:
+        self.sales[item] += 1
+        with open("sales.txt", "a") as file:
+            file.write(f"Sold {item}\n")
 
-m = {}
+    def read_sales(self) -> None:
+        try:
+            with open("sales.txt", "r") as file:
+                print(file.read())
+        except FileNotFoundError:
+            print("Sales file not found.")
 
-if "a" in m:
-    print("not em")
-    
-from collections import Counter
-l = ['rose','tulips','sunflowers','tulips','rose']
-my_count = Counter(l)
-print(my_count, "list")
+# Creating instance of PetStore
+store = PetStore()
 
-### Sorting a list
+##### Adding Pets (Using Class)
+store.add_pet(Pet("Buddy", "Dog"))
+store.add_pet(Pet("Whiskers", "Cat"))
 
-l = [99999,1,2,3,4,0,10]
-l.sort()
-print(l)
+##### List Comprehensions for inventory check
+available_food = [item for item in inventory["food"]]
+print(f"Available food: {available_food}")
 
+##### Sorting a List of pets
+sorted_pets = store.list_pets()
+print("Pets in store:", sorted_pets)
 
-l.extend(["a", "b"])
-print(l)
+##### Adding More Elements to List and Map of Maps
+inventory["accessories"] = {"leash", "collar"}
 
+##### Exception Handling in File Operations
+store.record_sale("dog food")
+store.read_sales()
 
-###### Classes ######
+##### Modules and Import Statements - Using math
+print(f"Square root of 16 (using math module): {math.sqrt(16)}")
 
-from typing import List
+##### Generator Expressions for pet names
+pet_names = (pet.name for pet in store.pets)
+for name in pet_names:
+    print(f"Pet name: {name}")
 
-class Car:
-    # drive returns thea list of stops a car made while driving 'm' miles....
-    def drive(miles int) -> List[int]:
-        return 4
-
-print("a")
-x = Car()
-
-
-
-
+##### Dictionary Comprehensions for pet species count
+species_count = {pet.species: store.pets.count(pet) for pet in store.pets}
+print("Pet species count:", species_count)

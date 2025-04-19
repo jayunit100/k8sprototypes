@@ -14,6 +14,19 @@ class Pet:
 class PetStore:
     def __init__(self):
         self.pets = deque()  # Using deque for efficient appends and pops
+    def total_pets(self) -> int:
+        return len(self.pets)
+
+    def average_pet_name_length(self) -> float:
+        if not self.pets:
+            return 0.0
+        total_length = sum(map(lambda p: len(p.name), self.pets))
+        return total_length / len(self.pets)
+
+    def species_percentages(self) -> dict:
+        counts = self.count_pet_species()
+        total = len(self.pets)
+        return {species: (count / total) * 100 for species, count in counts.items()}
 
     def add_pet(self, name: str, species: str) -> None:
         pet = Pet(name, species)
@@ -59,3 +72,7 @@ print("Pet species count:", store.count_pet_species())
 
 # Print the oldest pet
 print("Oldest pet in the store:", store.oldest_pet())
+print("Total pets:", store.total_pets())
+print("Average pet name length:", store.average_pet_name_length())
+print("Species percentages:", store.species_percentages())
+

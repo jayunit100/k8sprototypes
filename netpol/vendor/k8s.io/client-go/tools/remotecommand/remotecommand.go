@@ -118,7 +118,6 @@ func (e *streamExecutor) Stream(options StreamOptions) error {
 		e.protocols...,
 	)
 	if err != nil {
-		fmt.Println("failed at spdy negotiationnnnn")
 		return err
 	}
 	defer conn.Close()
@@ -138,6 +137,6 @@ func (e *streamExecutor) Stream(options StreamOptions) error {
 	case remotecommand.StreamProtocolV1Name:
 		streamer = newStreamProtocolV1(options)
 	}
-	fmt.Println("starting stream")
+
 	return streamer.stream(conn)
 }

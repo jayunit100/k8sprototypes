@@ -64,7 +64,7 @@ func NewServerConnection(conn net.Conn, newStreamHandler httpstream.NewStreamHan
 // will be invoked when the server receives a newly created stream from the
 // client.
 func newConnection(conn *spdystream.Connection, newStreamHandler httpstream.NewStreamHandler) httpstream.Connection {
- 	c := &connection{conn: conn, newStreamHandler: newStreamHandler}
+	c := &connection{conn: conn, newStreamHandler: newStreamHandler}
 	go conn.Serve(c.newSpdyStream)
 	return c
 }

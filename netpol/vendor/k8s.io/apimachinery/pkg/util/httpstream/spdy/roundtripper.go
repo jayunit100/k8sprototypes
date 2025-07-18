@@ -297,38 +297,28 @@ func (s *SpdyRoundTripper) RoundTrip(req *http.Request) (*http.Response, error) 
 // NewConnection validates the upgrade response, creating and returning a new
 // httpstream.Connection if there were no errors.
 func (s *SpdyRoundTripper) NewConnection(resp *http.Response) (httpstream.Connection, error) {
-	fmt.Println("--sdf  --sasdf")
 	connectionHeader := strings.ToLower(resp.Header.Get(httpstream.HeaderConnection))
 	upgradeHeader := strings.ToLower(resp.Header.Get(httpstream.HeaderUpgrade))
-	fmt.Println("enter ", resp)
 	if (resp.StatusCode != http.StatusSwitchingProtocols) || !strings.Contains(connectionHeader, strings.ToLower(httpstream.HeaderUpgrade)) || !strings.Contains(upgradeHeader, strings.ToLower(HeaderSpdy31)) {
-		fmt.Println((resp.StatusCode != http.StatusSwitchingProtocols), !strings.Contains(connectionHeader, strings.ToLower(httpstream.HeaderUpgrade)), !strings.Contains(upgradeHeader, strings.ToLower(HeaderSpdy31)))
-
 		defer resp.Body.Close()
 		responseError := ""
 		responseErrorBytes, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			fmt.Println("whoops ")
 			responseError = "unable to read error from server response"
-			fmt.Println(err, responseError)
 		} else {
 			// TODO: I don't belong here, I should be abstracted from this class
-			fmt.Println(err)
-
 			if obj, _, err := statusCodecs.UniversalDecoder().Decode(responseErrorBytes, nil, &metav1.Status{}); err == nil {
 				if status, ok := obj.(*metav1.Status); ok {
-					fmt.Println("error a a a a aaa a a a a a", *status, ok, obj)
 					return nil, &apierrors.StatusError{ErrStatus: *status}
 				}
 			}
 			responseError = string(responseErrorBytes)
 			responseError = strings.TrimSpace(responseError)
-			fmt.Println(responseError)
 		}
-		fmt.Println("failng?")
+
 		return nil, fmt.Errorf("unable to upgrade connection: %s", responseError)
 	}
-	fmt.Println("making new ")
+
 	return NewClientConnection(s.conn)
 }
 

@@ -5,8 +5,8 @@ github.com/davecgh/go-spew/spew
 ## explicit
 github.com/docker/spdystream
 github.com/docker/spdystream/spdy
-# github.com/gogo/protobuf v1.2.2-0.20190723190241-65acae22fc9d
-## explicit
+# github.com/gogo/protobuf v1.3.2
+## explicit; go 1.15
 github.com/gogo/protobuf/proto
 github.com/gogo/protobuf/sortkeys
 # github.com/golang/protobuf v1.3.2
